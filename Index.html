@@ -1,0 +1,2536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Invader Type Shooter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            overscroll-behavior: none;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            overflow: hidden;
+            background: radial-gradient(ellipse at center, #1a2942 0%, #0a1628 50%, #000814 100%);
+            color: white;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            -webkit-overflow-scrolling: touch;
+            touch-action: none;
+            overscroll-behavior: none;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(2px 2px at 60% 70%, white, transparent),
+                radial-gradient(1px 1px at 50% 50%, white, transparent),
+                radial-gradient(1px 1px at 80% 10%, white, transparent),
+                radial-gradient(2px 2px at 90% 60%, white, transparent),
+                radial-gradient(1px 1px at 33% 80%, white, transparent),
+                radial-gradient(1px 1px at 15% 55%, white, transparent),
+                radial-gradient(2px 2px at 70% 25%, white, transparent),
+                radial-gradient(1px 1px at 45% 15%, white, transparent),
+                radial-gradient(1px 1px at 25% 90%, white, transparent);
+            background-size: 200% 200%, 300% 300%, 250% 250%, 280% 280%, 220% 220%, 
+                             260% 260%, 290% 290%, 240% 240%, 270% 270%, 230% 230%;
+            background-position: 0% 0%, 40% 60%, 50% 50%, 80% 10%, 90% 60%, 
+                                 33% 80%, 15% 55%, 70% 25%, 45% 15%, 25% 90%;
+            background-repeat: repeat;
+            opacity: 0.6;
+            z-index: 0;
+        }
+
+        #gameContainer {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh; /* Use dynamic viewport height for mobile browsers */
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 1;
+            background: radial-gradient(ellipse at center, #1a2942 0%, #0a1628 50%, #000814 100%);
+            overflow: hidden;
+            touch-action: none;
+            /* Safe area insets for notched devices */
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+
+        #gameContainer::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(2px 2px at 60% 70%, white, transparent),
+                radial-gradient(1px 1px at 50% 50%, white, transparent),
+                radial-gradient(1px 1px at 80% 10%, white, transparent),
+                radial-gradient(2px 2px at 90% 60%, white, transparent),
+                radial-gradient(1px 1px at 33% 80%, white, transparent),
+                radial-gradient(1px 1px at 15% 55%, white, transparent),
+                radial-gradient(2px 2px at 70% 25%, white, transparent),
+                radial-gradient(1px 1px at 45% 15%, white, transparent),
+                radial-gradient(1px 1px at 25% 90%, white, transparent);
+            background-size: 200% 200%, 300% 300%, 250% 250%, 280% 280%, 220% 220%, 
+                             260% 260%, 290% 290%, 240% 240%, 270% 270%, 230% 230%;
+            background-position: 0% 0%, 40% 60%, 50% 50%, 80% 10%, 90% 60%, 
+                                 33% 80%, 15% 55%, 70% 25%, 45% 15%, 25% 90%;
+            background-repeat: repeat;
+            opacity: 0.6;
+            z-index: 0;
+        }
+
+        #gameContainer.hidden {
+            display: none;
+        }
+
+        /* Top side - Invader area */
+        #topSide {
+            width: 100%;
+            height: 70%;
+            position: relative;
+            background: linear-gradient(to bottom, #16213e, transparent);
+        }
+
+        /* Bottom side - Spaceship area */
+        #bottomSide {
+            width: 100%;
+            height: 30%;
+            background: linear-gradient(to top, #0f3460, transparent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 500;
+        }
+        
+        /* Create a mask to hide lasers below the rocket */
+        #bottomSide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, 
+                radial-gradient(ellipse at center, #1a2942 0%, #0a1628 50%, #000814 100%) 0%, 
+                transparent 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #gun {
+            font-size: 80px;
+            transform: rotate(-45deg);
+            transition: transform 0.3s ease;
+            position: relative;
+            z-index: 510;
+        }
+
+        #gun.shoot {
+            transform: rotate(-45deg) scale(1.2);
+        }
+
+        #gun.aiming {
+            transition: transform 0.3s ease;
+        }
+
+        #inputDisplay {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.85);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 15px 30px;
+            font-size: 24px;
+            font-weight: bold;
+            min-width: 200px;
+            text-align: center;
+            box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            transform-origin: center;
+            /* Show by default on desktop */
+            opacity: 1;
+            visibility: visible;
+            z-index: 510;
+        }
+        
+        /* Hide when empty (no content) */
+        #inputDisplay:empty {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #inputDisplay.active {
+            transform: translateX(-50%) scale(1);
+            min-width: 300px;
+        }
+
+        #inputDisplay .typed {
+            color: white;
+            opacity: 1;
+        }
+
+        #inputDisplay .untyped {
+            color: white;
+            opacity: 0.3;
+        }
+
+        #inputDisplay.error {
+            animation: inputShake 0.3s;
+            border-color: rgba(255, 68, 68, 0.6);
+            background: rgba(255, 68, 68, 0.1);
+        }
+
+        @keyframes inputShake {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            25% { transform: translateX(calc(-50% - 5px)) scale(1); }
+            75% { transform: translateX(calc(-50% + 5px)) scale(1); }
+        }
+
+        /* Hidden mobile input for keyboard */
+        #mobileInput {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            opacity: 0.01;
+            z-index: 9999;
+            border: none;
+            background: transparent;
+            color: transparent;
+            font-size: 16px;
+            caret-color: transparent;
+            pointer-events: auto;
+        }
+        
+        #mobileInput:focus {
+            outline: none;
+        }
+        
+        /* On-screen keyboard - HIDDEN ON DESKTOP */
+        #onScreenKeyboard {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            padding: 20px 15px;
+            background: transparent;  /* Remove dark background */
+            border-radius: 0;  /* Remove border radius */
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 510;
+        }
+        
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 0;  /* No gap - keys will be sized by media queries */
+        }
+        
+        .key {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            font-family: 'Press Start 2P', cursive;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.1s;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .key:active {
+            background: rgba(16, 185, 129, 0.5);
+            transform: scale(0.95);
+        }
+        
+        .key.pressed {
+            background: rgba(255, 215, 0, 0.7) !important;
+            border-color: rgba(255, 215, 0, 1) !important;
+        }
+        
+        .key.active {
+            background: rgba(22, 160, 133, 0.7) !important;
+            border-color: rgba(22, 160, 133, 1) !important;
+        }
+        
+        /* Show keyboard ONLY on mobile */
+        @media (max-width: 768px) {
+            #onScreenKeyboard {
+                display: flex;
+                gap: 0;  /* Remove gap between rows */
+                padding: 10px 0;  /* Reduce padding */
+            }
+            
+            #mobileInput {
+                display: none;
+            }
+            
+            #inputDisplay {
+                bottom: 230px;
+                /* Always hide on mobile/tablet since we show keyboard */
+                display: none !important;
+            }
+            
+            .keyboard-row {
+                gap: 0;  /* Remove gap between keys */
+            }
+            
+            .key {
+                width: calc(100% / 10);  /* 10 keys in first row - equal width */
+                height: 52px;  /* Increased height */
+                font-size: 18px;
+                border-radius: 0;  /* Remove border radius for seamless look */
+                border-right: 0.5px solid rgba(255, 255, 255, 0.1);  /* Subtle separator */
+                border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            .keyboard-row:first-child .key {
+                width: calc(100% / 10);  /* 10 keys */
+            }
+            
+            .keyboard-row:nth-child(2) .key {
+                width: calc(100% / 9);  /* 9 keys */
+            }
+            
+            .keyboard-row:nth-child(3) .key {
+                width: calc(100% / 9);  /* 9 keys (7 letters + 2 buttons) */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .key {
+                height: 50px;  /* Slightly smaller for small screens */
+                font-size: 16px;
+            }
+            
+            #onScreenKeyboard {
+                gap: 0;
+                padding: 8px 0;
+            }
+            
+            #inputDisplay {
+                bottom: 210px;
+            }
+            
+            #gun {
+                font-size: 40px;
+                margin-bottom: 160px;
+            }
+        }
+        
+        @media (max-width: 375px) {
+            .key {
+                height: 48px;  /* Slightly smaller for very small screens */
+                font-size: 14px;
+            }
+            
+            #onScreenKeyboard {
+                gap: 0;
+                padding: 8px 0;
+            }
+            
+            #inputDisplay {
+                bottom: 200px;
+            }
+        }
+
+        /* Invader styling */
+        .invader {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        .invader-emoji {
+            font-size: 40px;
+            margin-bottom: 5px;
+        }
+
+        .invader-word {
+            background: rgba(255, 255, 255, 0.8);
+            color: #16213e;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            --progress: 0%;
+        }
+
+        .invader-word::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: var(--progress);
+            background: rgba(16, 185, 129, 0.8);
+            transition: width 0.1s ease;
+            z-index: 0;
+            border-radius: 15px;
+        }
+
+        .invader-word .char {
+            position: relative;
+            z-index: 1;
+        }
+
+        .invader-word.typing {
+            background: rgba(16, 185, 129, 0.8);
+            color: white;
+        }
+
+        .invader-word.typing::before {
+            width: 100%;
+        }
+
+        .invader.dying {
+            animation: die 0.5s forwards;
+        }
+
+        @keyframes die {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* Bullet styling */
+        .bullet {
+            position: absolute;
+            width: 3px;
+            height: 0px;
+            background: linear-gradient(to bottom, 
+                rgba(255, 50, 50, 1) 0%,
+                rgba(255, 100, 100, 0.9) 50%,
+                rgba(255, 50, 50, 1) 100%);
+            box-shadow: 
+                0 0 10px rgba(255, 50, 50, 0.8),
+                0 0 20px rgba(255, 50, 50, 0.6),
+                0 0 30px rgba(255, 50, 50, 0.4);
+            z-index: 100;
+            transform-origin: top center;
+            pointer-events: none;
+        }
+        
+        .bullet::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, 
+                rgba(255, 255, 255, 1) 0%,
+                rgba(255, 100, 100, 1) 40%,
+                rgba(255, 50, 50, 0.8) 70%,
+                transparent 100%);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 15px rgba(255, 50, 50, 1),
+                0 0 25px rgba(255, 50, 50, 0.8);
+        }
+
+        /* Topbar Container */
+        #topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;  /* Reduced from 20px to match tablet */
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        #topbar.show {
+            display: flex;
+        }
+
+        #leftControls {
+            display: flex;
+            gap: 7.5px;  /* Reduced by half (was 15px) */
+            align-items: center;
+        }
+
+        #rightControls {
+            display: flex;
+            gap: 7.5px;  /* Reduced by half (was 15px) */
+            align-items: center;
+        }
+
+        /* UI Elements */
+        #score {
+            font-size: 12px;  /* Reduced from 20px to match tablet */
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;  /* Reduced by 2px (was 12px) */
+            padding: 6px 10px;  /* Reduced from 8px 16px to match tablet */
+            box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            height: 32px;  /* Reduced from 40px to match tablet */
+        }
+
+        #scoreValue {
+            position: relative;
+            display: inline-block;
+            transition: color 0.3s ease;
+        }
+
+        #scoreValue.score-increase {
+            animation: scoreUp 0.5s ease-out;
+        }
+
+        #scoreValue.score-decrease {
+            animation: scoreDown 0.5s ease-out;
+            color: #ff4444;
+        }
+
+        @keyframes scoreUp {
+            0% {
+                transform: scale(1.3);
+                opacity: 0.7;
+                color: #4ecca3;
+            }
+            50% {
+                transform: scale(1.15);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+                color: inherit;
+            }
+        }
+
+        @keyframes scoreDown {
+            0% {
+                transform: scale(1.3);
+                opacity: 0.7;
+                color: #ff4444;
+            }
+            50% {
+                transform: scale(1.15);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+                color: #ff4444;
+            }
+        }
+
+        #difficultyDisplay {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;  /* Reduced by 2px (was 12px) */
+            padding: 6px 10px;  /* Reduced from 8px 16px to match tablet */
+            box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            height: 32px;  /* Reduced from 40px to match tablet */
+            font-size: 12px;  /* Reduced from 20px to match tablet */
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #difficultyDisplay:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        #categoryDisplay {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;  /* Reduced by 2px (was 12px) */
+            padding: 6px 10px;  /* Reduced from 8px 16px to match tablet */
+            box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            height: 32px;  /* Reduced from 40px to match tablet */
+            font-size: 12px;  /* Reduced from 20px to match tablet */
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #categoryDisplay:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        #pauseBtn {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0;
+            width: 32px;  /* Reduced from 40px to match tablet */
+            height: 32px;  /* Reduced from 40px to match tablet */
+            font-size: 12px;  /* Reduced from 16px to match tablet */
+            font-weight: bold;
+            border-radius: 10px;  /* Reduced by 2px (was 12px) */
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #pauseBtn .material-symbols-outlined {
+            font-size: 18px;  /* Increased to 18px (was 16px) */
+            line-height: 1;
+        }
+
+        #pauseBtn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        #restartGameBtn {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0;
+            width: 32px;  /* Reduced from 40px to match tablet */
+            height: 32px;  /* Reduced from 40px to match tablet */
+            font-size: 12px;  /* Reduced from 16px to match tablet */
+            font-weight: bold;
+            border-radius: 10px;  /* Reduced by 2px (was 12px) */
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #restartGameBtn .material-symbols-outlined {
+            font-size: 18px;  /* Increased to 18px (was 16px) */
+            line-height: 1;
+        }
+
+        #restartGameBtn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Game Over Screen */
+        #gameOver {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            height: 100dvh; /* Dynamic viewport height for mobile */
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            overflow: hidden;
+        }
+
+        #gameOver.show {
+            display: flex;
+        }
+
+        #gameOver h1 {
+            font-size: 72px;
+            margin-bottom: 20px;
+            color: #ff4757;
+            text-shadow: 0 0 20px rgba(255, 71, 87, 0.5);
+        }
+
+        #finalScore {
+            font-size: 36px;
+            margin-bottom: 30px;
+        }
+
+        #restartBtn {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        #restartBtn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Pause Overlay */
+        #pauseOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1500;
+            cursor: pointer;
+        }
+
+        #pauseOverlay.show {
+            display: flex;
+        }
+
+        #pauseIcon {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 20px;  /* Changed to accommodate text */
+            border-radius: 10px;
+            box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        #pauseIcon:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        #pauseIcon .material-symbols-outlined {
+            font-size: 23px;  /* 30% bigger than 18px */
+            line-height: 1;
+        }
+        
+        #pauseIcon .pause-text {
+            font-size: 16px;
+            font-weight: bold;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        /* Time Selection Screen */
+        #timeSelection {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            height: 100dvh; /* Dynamic viewport height for mobile */
+            background: radial-gradient(ellipse at center, #1a2942 0%, #0a1628 50%, #000814 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            padding: 20px;
+        }
+
+        #timeSelection::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(2px 2px at 60% 70%, white, transparent),
+                radial-gradient(1px 1px at 50% 50%, white, transparent),
+                radial-gradient(1px 1px at 80% 10%, white, transparent),
+                radial-gradient(2px 2px at 90% 60%, white, transparent),
+                radial-gradient(1px 1px at 33% 80%, white, transparent),
+                radial-gradient(1px 1px at 15% 55%, white, transparent),
+                radial-gradient(2px 2px at 70% 25%, white, transparent),
+                radial-gradient(1px 1px at 45% 15%, white, transparent),
+                radial-gradient(1px 1px at 25% 90%, white, transparent);
+            background-size: 200% 200%, 300% 300%, 250% 250%, 280% 280%, 220% 220%, 
+                             260% 260%, 290% 290%, 240% 240%, 270% 270%, 230% 230%;
+            background-position: 0% 0%, 40% 60%, 50% 50%, 80% 10%, 90% 60%, 
+                                 33% 80%, 15% 55%, 70% 25%, 45% 15%, 25% 90%;
+            background-repeat: repeat;
+            opacity: 0.6;
+            z-index: 0;
+        }
+
+        #timeSelection > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        #timeSelection.hidden {
+            display: none;
+        }
+
+        #startScreenContent {
+            background: rgba(26, 41, 66, 0.6);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 20px 24px;  /* Match tablet size */
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            max-width: 480px;  /* Keep this for desktop max-width */
+        }
+
+        #rocketIcon {
+            font-size: 36px;  /* Match tablet size */
+            text-align: center;
+            margin-bottom: 20px;
+            animation: rotate360 8s linear infinite;
+        }
+
+        @keyframes rotate360 {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #gameTitle {
+            font-size: 16px;  /* Match tablet size */
+            font-weight: bold;
+            background: linear-gradient(135deg, #ff8c00 0%, #ff0000 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+
+        #gameSubtitle {
+            font-size: 9px;  /* Match tablet size */
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        #difficultyOptions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .difficulty-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 14px;  /* Match tablet size */
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .difficulty-option:hover {
+            background: rgba(78, 205, 196, 0.2);
+            border-color: rgba(78, 205, 196, 0.6);
+            transform: scale(1.05);
+        }
+
+        .difficulty-name {
+            font-size: 13px;  /* Match tablet size */
+            font-weight: bold;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .difficulty-desc {
+            font-size: 9px;  /* Match tablet size */
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Screen shake animation */
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0); }
+            10%, 30%, 50%, 70%, 90% { transform: translate(-5px, 5px); }
+            20%, 40%, 60%, 80% { transform: translate(5px, -5px); }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                overflow: hidden;
+            }
+            
+            #gun {
+                font-size: 50px;
+                margin-bottom: 180px;
+            }
+            
+            #inputDisplay {
+                font-size: 16px;
+                padding: 10px 20px;
+                min-width: 150px;
+                bottom: 15px;
+            }
+            
+            #inputDisplay.active {
+                min-width: 220px;
+            }
+            
+            .invader-emoji {
+                font-size: 28px;
+            }
+            .invader-word {
+                font-size: 11px;
+                padding: 4px 8px;
+            }
+            
+            #topbar {
+                padding: 8px 12px;
+            }
+            
+            #difficultyDisplay {
+                font-size: 12px;
+                padding: 6px 10px;
+                height: 32px;
+            }
+            
+            #categoryDisplay {
+                font-size: 12px;
+                padding: 6px 10px;
+                height: 32px;
+            }
+            
+            #score {
+                font-size: 12px;
+                padding: 6px 10px;
+                height: 32px;
+            }
+            
+            #pauseBtn, #restartGameBtn {
+                width: 32px;
+                height: 32px;
+                font-size: 12px;
+            }
+            
+            #pauseBtn {
+                display: none;  /* Hide pause button on mobile */
+            }
+            
+            #pauseBtn .material-symbols-outlined,
+            #restartGameBtn .material-symbols-outlined {
+                font-size: 18px;  /* Increased to 18px (was 16px) */
+            }
+            
+            /* Game Over Screen Mobile */
+            #gameOver h1 {
+                font-size: 48px;
+                margin-bottom: 15px;
+            }
+            
+            #finalScore {
+                font-size: 24px;
+                margin-bottom: 25px;
+            }
+            
+            #restartBtn {
+                font-size: 16px;
+                padding: 12px 30px;
+            }
+            
+            /* Start Screen Mobile */
+            #startScreenContent {
+                padding: 20px 24px;  /* Reduced by 20% (was 25px 30px) */
+                max-width: 90%;
+            }
+            
+            #rocketIcon {
+                font-size: 36px;  /* Reduced by 20% (was 45px) */
+            }
+            
+            #gameTitle {
+                font-size: 16px;  /* Reduced by 20% (was 20px in desktop, keeping proportion) */
+            }
+            
+            #gameSubtitle {
+                font-size: 9px;  /* Reduced proportionally */
+            }
+            
+            .difficulty-option {
+                padding: 12px 14px;  /* Reduced by 20% (was 15px 18px) */
+            }
+            
+            .difficulty-name {
+                font-size: 13px;  /* Reduced by ~20% (was 16px) */
+            }
+            
+            .difficulty-desc {
+                font-size: 9px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #gun {
+                font-size: 40px;
+                margin-bottom: 160px;
+            }
+            
+            #inputDisplay {
+                font-size: 14px;
+                padding: 8px 16px;
+                min-width: 120px;
+                bottom: 10px;
+            }
+            
+            #inputDisplay.active {
+                min-width: 180px;
+            }
+            
+            .invader-emoji {
+                font-size: 24px;
+            }
+            
+            .invader-word {
+                font-size: 10px;
+                padding: 3px 7px;
+            }
+            
+            #topbar {
+                padding: 6px 10px;
+            }
+            
+            #difficultyDisplay {
+                font-size: 10px;
+                padding: 5px 8px;
+                height: 28px;
+            }
+            
+            #categoryDisplay {
+                font-size: 10px;
+                padding: 5px 8px;
+                height: 28px;
+            }
+            
+            #score {
+                font-size: 10px;
+                padding: 5px 8px;
+                height: 28px;
+            }
+            
+            #pauseBtn, #restartGameBtn {
+                width: 28px;
+                height: 28px;
+                font-size: 10px;
+            }
+            
+            #pauseBtn .material-symbols-outlined,
+            #restartGameBtn .material-symbols-outlined {
+                font-size: 14px;
+            }
+            
+            #leftControls {
+                gap: 10px;
+            }
+            
+            #rightControls {
+                gap: 10px;
+            }
+            
+            /* Game Over Screen Small Mobile */
+            #gameOver {
+                padding: 20px;
+            }
+            
+            #gameOver h1 {
+                font-size: 36px;
+                margin-bottom: 12px;
+            }
+            
+            #finalScore {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+            
+            #restartBtn {
+                font-size: 14px;
+                padding: 10px 25px;
+            }
+            
+            /* Start Screen Small Mobile */
+            #startScreenContent {
+                padding: 16px 20px;  /* Reduced by 20% (was 20px 25px) */
+                max-width: 95%;
+            }
+            
+            #rocketIcon {
+                font-size: 32px;  /* Reduced by 20% (was 40px) */
+            }
+            
+            #gameTitle {
+                font-size: 16px;  /* Keeping consistent with main mobile breakpoint */
+            }
+            
+            #gameSubtitle {
+                font-size: 8px;  /* Reduced by 20% (was 10px) */
+            }
+            
+            #difficultyOptions {
+                gap: 10px;  /* Reduced slightly (was 12px) */
+            }
+            
+            .difficulty-option {
+                padding: 12px 15px;
+            }
+            
+            .difficulty-name {
+                font-size: 14px;
+            }
+            
+            .difficulty-desc {
+                font-size: 8px;
+            }
+        }
+        
+        /* Extra small screens (iPhone SE, etc) */
+        @media (max-width: 375px) {
+            #gameOver h1 {
+                font-size: 32px;
+            }
+            
+            #finalScore {
+                font-size: 18px;
+            }
+            
+            #restartBtn {
+                font-size: 12px;
+                padding: 8px 20px;
+            }
+            
+            #gameTitle {
+                font-size: 14px;  /* Reduced by ~30% from 20px */
+            }
+            
+            .difficulty-name {
+                font-size: 11px;  /* Reduced slightly (was 13px) */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="topbar">
+        <div id="leftControls">
+            <div id="score">Score: <span id="scoreValue">0</span></div>
+            <div id="difficultyDisplay">Easy</div>
+            <div id="categoryDisplay">All</div>
+        </div>
+        <div id="rightControls">
+            <button id="pauseBtn"><span class="material-symbols-outlined">pause</span></button>
+            <button id="restartGameBtn"><span class="material-symbols-outlined">refresh</span></button>
+        </div>
+    </div>
+
+    <div id="gameContainer" tabindex="0">
+        <div id="topSide"></div>
+        <div id="bottomSide">
+            <div id="gun">🚀</div>
+            <div id="inputDisplay"></div>
+            <input type="text" id="mobileInput" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+            
+            <!-- On-screen keyboard -->
+            <div id="onScreenKeyboard">
+                <div class="keyboard-row">
+                    <button class="key" data-key="q">Q</button>
+                    <button class="key" data-key="w">W</button>
+                    <button class="key" data-key="e">E</button>
+                    <button class="key" data-key="r">R</button>
+                    <button class="key" data-key="t">T</button>
+                    <button class="key" data-key="y">Y</button>
+                    <button class="key" data-key="u">U</button>
+                    <button class="key" data-key="i">I</button>
+                    <button class="key" data-key="o">O</button>
+                    <button class="key" data-key="p">P</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="key" data-key="a">A</button>
+                    <button class="key" data-key="s">S</button>
+                    <button class="key" data-key="d">D</button>
+                    <button class="key" data-key="f">F</button>
+                    <button class="key" data-key="g">G</button>
+                    <button class="key" data-key="h">H</button>
+                    <button class="key" data-key="j">J</button>
+                    <button class="key" data-key="k">K</button>
+                    <button class="key" data-key="l">L</button>
+                </div>
+                <div class="keyboard-row">
+                    <button class="key" data-key="z">Z</button>
+                    <button class="key" data-key="x">X</button>
+                    <button class="key" data-key="c">C</button>
+                    <button class="key" data-key="v">V</button>
+                    <button class="key" data-key="b">B</button>
+                    <button class="key" data-key="n">N</button>
+                    <button class="key" data-key="m">M</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Selection Screen (outside gameContainer) -->
+    <div id="timeSelection">
+        <div id="startScreenContent">
+            <div id="rocketIcon">🚀</div>
+            <h1 id="gameTitle">Type To Shoot!</h1>
+            <p id="gameSubtitle">Show your typing skills</p>
+            
+            <div id="difficultyOptions">
+                <div class="difficulty-option" data-difficulty="easy">
+                    <div class="difficulty-name">Easy</div>
+                    <div class="difficulty-desc">Slow invaders, more time</div>
+                </div>
+                
+                <div class="difficulty-option" data-difficulty="medium">
+                    <div class="difficulty-name">Medium</div>
+                    <div class="difficulty-desc">Balanced challenge</div>
+                </div>
+                
+                <div class="difficulty-option" data-difficulty="hard">
+                    <div class="difficulty-name">Hard</div>
+                    <div class="difficulty-desc">Fast invaders, quick typing</div>
+                </div>
+                
+                <div class="difficulty-option" data-difficulty="superhard">
+                    <div class="difficulty-name">Superb</div>
+                    <div class="difficulty-desc">Expert typers only!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Game Over Screen (outside gameContainer) -->
+    <div id="gameOver">
+        <h1>GAME OVER</h1>
+        <div id="finalScore"></div>
+        <button id="restartBtn">Restart Game</button>
+    </div>
+
+    <!-- Pause Overlay -->
+    <div id="pauseOverlay">
+        <div id="pauseIcon">
+            <span class="material-symbols-outlined">play_arrow</span>
+            <span class="pause-text">Continue</span>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        const game = {
+            score: 0,
+            currentInput: '',
+            invaders: [],
+            bullets: [],
+            targetInvader: null,
+            isGameOver: false,
+            isPaused: false,
+            difficulty: 'easy',
+            lastSpawn: 0,
+            spawnInterval: 2500,
+            invaderSpeed: 0.3,
+            maxInvaders: 3
+        };
+
+        // Word list for invaders - diverse vocabulary to avoid repetition
+        // Categorized word lists - ALL REAL WORDS
+        const wordCategories = {
+            all: [
+                // Common animals
+                'dog', 'cat', 'lion', 'tiger', 'bear', 'wolf', 'fox', 'deer',
+                'rabbit', 'mouse', 'rat', 'snake', 'frog', 'fish', 'bird', 'eagle',
+                'hawk', 'owl', 'crow', 'duck', 'goose', 'swan', 'horse', 'cow',
+                'pig', 'sheep', 'goat', 'chicken', 'turkey', 'elephant', 'rhino', 'hippo',
+                
+                // Common plants
+                'rose', 'tulip', 'daisy', 'lily', 'orchid', 'violet', 'jasmine', 'sunflower',
+                'oak', 'pine', 'maple', 'birch', 'willow', 'palm', 'bamboo', 'cactus',
+                'fern', 'moss', 'ivy', 'grass', 'wheat', 'rice', 'corn', 'tomato',
+                'potato', 'carrot', 'lettuce', 'spinach', 'basil', 'mint', 'sage', 'thyme',
+                
+                // General words
+                'house', 'tree', 'water', 'fire', 'earth', 'wind', 'stone', 'metal',
+                'wood', 'glass', 'paper', 'book', 'pen', 'desk', 'chair', 'table',
+                'door', 'window', 'wall', 'floor', 'roof', 'garden', 'park', 'road',
+                'bridge', 'river', 'lake', 'ocean', 'mountain', 'valley', 'forest', 'field',
+                'cloud', 'rain', 'snow', 'sun', 'moon', 'star', 'night', 'day',
+                'morning', 'evening', 'spring', 'summer', 'autumn', 'winter', 'season', 'year'
+            ],
+            
+            animals: [
+                'dog', 'cat', 'lion', 'tiger', 'bear', 'wolf', 'fox', 'deer',
+                'rabbit', 'mouse', 'rat', 'hamster', 'guinea', 'squirrel', 'beaver', 'otter',
+                'snake', 'lizard', 'turtle', 'frog', 'toad', 'newt', 'salamander', 'gecko',
+                'fish', 'shark', 'whale', 'dolphin', 'seal', 'walrus', 'octopus', 'squid',
+                'bird', 'eagle', 'hawk', 'falcon', 'owl', 'crow', 'raven', 'parrot',
+                'duck', 'goose', 'swan', 'penguin', 'ostrich', 'emu', 'peacock', 'heron',
+                'horse', 'donkey', 'zebra', 'cow', 'bull', 'buffalo', 'bison', 'ox',
+                'pig', 'boar', 'sheep', 'ram', 'goat', 'llama', 'alpaca', 'camel',
+                'chicken', 'rooster', 'turkey', 'pheasant', 'quail', 'pigeon', 'dove', 'sparrow',
+                'elephant', 'rhino', 'hippo', 'giraffe', 'zebra', 'antelope', 'gazelle', 'impala',
+                'monkey', 'ape', 'gorilla', 'chimp', 'lemur', 'baboon', 'gibbon', 'orangutan',
+                'kangaroo', 'koala', 'wombat', 'wallaby', 'platypus', 'echidna', 'possum', 'bandicoot',
+                'bee', 'wasp', 'ant', 'beetle', 'butterfly', 'moth', 'fly', 'mosquito',
+                'spider', 'scorpion', 'mantis', 'cricket', 'grasshopper', 'dragonfly', 'ladybug', 'firefly'
+            ],
+            
+            plants: [
+                'rose', 'tulip', 'daisy', 'lily', 'orchid', 'violet', 'jasmine', 'sunflower',
+                'poppy', 'peony', 'iris', 'carnation', 'marigold', 'zinnia', 'petunia', 'begonia',
+                'oak', 'pine', 'maple', 'birch', 'willow', 'elm', 'ash', 'beech',
+                'palm', 'cedar', 'spruce', 'fir', 'cypress', 'redwood', 'sequoia', 'mahogany',
+                'bamboo', 'cactus', 'succulent', 'aloe', 'agave', 'yucca', 'jade', 'ficus',
+                'fern', 'moss', 'lichen', 'algae', 'seaweed', 'kelp', 'ivy', 'vine',
+                'grass', 'wheat', 'rice', 'corn', 'barley', 'oats', 'rye', 'millet',
+                'tomato', 'potato', 'carrot', 'onion', 'garlic', 'pepper', 'cucumber', 'lettuce',
+                'spinach', 'cabbage', 'broccoli', 'cauliflower', 'celery', 'radish', 'turnip', 'beet',
+                'basil', 'mint', 'sage', 'thyme', 'oregano', 'parsley', 'cilantro', 'dill',
+                'lavender', 'rosemary', 'chamomile', 'hibiscus', 'lotus', 'azalea', 'camellia', 'magnolia',
+                'apple', 'orange', 'banana', 'grape', 'cherry', 'peach', 'pear', 'plum',
+                'mango', 'papaya', 'coconut', 'pineapple', 'melon', 'berry', 'lemon', 'lime'
+            ]
+        };
+        
+        // Current game state
+        let currentCategory = 'all';
+        let words = wordCategories.all;
+
+
+        // DOM elements
+        const gunElement = document.getElementById('gun');
+        const inputDisplay = document.getElementById('inputDisplay');
+        const mobileInput = document.getElementById('mobileInput');
+        const topSide = document.getElementById('topSide');
+        const scoreElement = document.getElementById('score');
+        const scoreValue = document.getElementById('scoreValue');
+        const difficultyDisplay = document.getElementById('difficultyDisplay');
+        const categoryDisplay = document.getElementById('categoryDisplay');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const restartGameBtn = document.getElementById('restartGameBtn');
+        const gameOverScreen = document.getElementById('gameOver');
+        const finalScoreElement = document.getElementById('finalScore');
+        const restartBtn = document.getElementById('restartBtn');
+        const gameContainer = document.getElementById('gameContainer');
+        const timeSelection = document.getElementById('timeSelection');
+        const topbar = document.getElementById('topbar');
+
+        // Invader class
+        class Invader {
+            constructor() {
+                // 1 in 5 chance to be a UFO
+                this.isUfo = Math.random() < 0.2;
+                
+                // Get words already on screen
+                const usedWords = game.invaders
+                    .filter(z => !z.isDying)
+                    .map(z => z.word);
+                
+                if (this.isUfo) {
+                    // UFO gets longer words (combine two words)
+                    let word1, word2;
+                    do {
+                        word1 = words[Math.floor(Math.random() * words.length)];
+                        word2 = words[Math.floor(Math.random() * words.length)];
+                        this.word = word1 + word2;
+                    } while (usedWords.includes(this.word));
+                    this.emoji = '🛸';
+                } else {
+                    // Pick a word not already on screen
+                    let availableWords = words.filter(w => !usedWords.includes(w));
+                    // If all words are used, just pick any word
+                    if (availableWords.length === 0) {
+                        availableWords = words;
+                    }
+                    this.word = availableWords[Math.floor(Math.random() * availableWords.length)];
+                    this.emoji = '👾';
+                }
+                
+                this.x = Math.random() * (window.innerWidth - 100);
+                this.y = 0;
+                this.speedY = game.invaderSpeed * (0.8 + Math.random() * 0.4);
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.element = this.createElement();
+                this.isDying = false;
+            }
+
+            createElement() {
+                const invader = document.createElement('div');
+                invader.className = 'invader';
+                
+                // Wrap each character in a span for progress effect
+                const wordSpans = this.word.split('').map(char => `<span class="char">${char}</span>`).join('');
+                
+                invader.innerHTML = `
+                    <div class="invader-word">${wordSpans}</div>
+                    <div class="invader-emoji">${this.emoji}</div>
+                `;
+                invader.style.left = this.x + 'px';
+                invader.style.top = this.y + 'px';
+                gameContainer.appendChild(invader);
+                this.wordElement = invader.querySelector('.invader-word');
+                return invader;
+            }
+
+            update() {
+                if (this.isDying) return;
+
+                this.y += this.speedY;
+                this.x += this.speedX;
+
+                // Bounce off left and right edges
+                if (this.x < 0 || this.x > window.innerWidth - 100) {
+                    this.speedX *= -1;
+                }
+
+                this.element.style.left = this.x + 'px';
+                this.element.style.top = this.y + 'px';
+
+                // Start fading when approaching the rocket area (70% down)
+                const fadeStart = window.innerHeight * 0.65;
+                const fadeEnd = window.innerHeight * 0.70;
+                
+                if (this.y >= fadeStart && this.y < fadeEnd) {
+                    // Fade out as invader approaches the boundary
+                    const fadeProgress = (this.y - fadeStart) / (fadeEnd - fadeStart);
+                    const opacity = Math.max(0, 1 - fadeProgress);
+                    this.element.style.opacity = opacity;
+                }
+
+                // Check if reached the rocket area (70% down the screen)
+                if (this.y >= fadeEnd) {
+                    this.reachedBottomSide();
+                }
+            }
+
+            reachedBottomSide() {
+                if (!this.isDying) {
+                    // Deduct score based on word length (1 point per character)
+                    const penalty = this.word.length;
+                    const oldScore = game.score;
+                    game.score = Math.max(0, game.score - penalty);
+                    
+                    // Animate score decrease
+                    scoreValue.classList.remove('score-increase', 'score-decrease');
+                    void scoreValue.offsetWidth; // Force reflow
+                    scoreValue.classList.add('score-decrease');
+                    
+                    // Animate the counter from old value to new value (counting down)
+                    animateValue(scoreValue, oldScore, game.score, 400);
+                    
+                    // Remove red color after animation
+                    setTimeout(() => {
+                        scoreValue.classList.remove('score-decrease');
+                    }, 500);
+                    
+                    // Check if game over
+                    if (game.score === 0) {
+                        gameOver();
+                    }
+                    
+                    this.die();
+                }
+            }
+
+            die() {
+                this.isDying = true;
+                this.element.classList.add('dying');
+                setTimeout(() => {
+                    this.element.remove();
+                }, 500);
+            }
+
+            getCenter() {
+                return {
+                    x: this.x + 25,
+                    y: this.y + 40
+                };
+            }
+        }
+
+        // Bullet class
+        class Bullet {
+            constructor(targetX, targetY) {
+                // Get rocket position and calculate tip based on current rotation
+                const gunRect = gunElement.getBoundingClientRect();
+                const gunCenterX = gunRect.left + gunRect.width / 2;
+                const gunCenterY = gunRect.top + gunRect.height / 2;
+                
+                // Get current rotation from transform
+                const transform = window.getComputedStyle(gunElement).transform;
+                let angle = -45; // default angle
+                if (transform && transform !== 'none') {
+                    const values = transform.split('(')[1].split(')')[0].split(',');
+                    const a = parseFloat(values[0]);
+                    const b = parseFloat(values[1]);
+                    angle = Math.atan2(b, a) * (180 / Math.PI);
+                }
+                
+                // Calculate tip offset - rocket emoji tip is roughly at the top-left when unrotated
+                // We need to find where the tip is after rotation
+                const tipDistance = 50; // distance from center to visual tip (increased from 40)
+                const tipAngle = angle - 45; // The tip is 45 degrees counter-clockwise from the rocket's rotation
+                const angleRad = tipAngle * Math.PI / 180;
+                
+                this.x = gunCenterX + tipDistance * Math.cos(angleRad);
+                this.y = gunCenterY + tipDistance * Math.sin(angleRad);
+                this.targetX = targetX;
+                this.targetY = targetY;
+                
+                const distance = Math.sqrt(
+                    Math.pow(targetX - this.x, 2) + 
+                    Math.pow(targetY - this.y, 2)
+                );
+                
+                const speed = 49.5; // Increased by 50% (was 33)
+                this.speedX = (targetX - this.x) / distance * speed;
+                this.speedY = (targetY - this.y) / distance * speed;
+                
+                this.element = this.createElement();
+                this.distanceTraveled = 0;
+                this.maxDistance = distance;
+            }
+
+            createElement() {
+                const bullet = document.createElement('div');
+                bullet.className = 'bullet';
+                
+                // Calculate angle for rotation
+                const angle = Math.atan2(this.targetY - this.y, this.targetX - this.x);
+                const degrees = angle * (180 / Math.PI);
+                
+                // Fixed short beam length (like a bullet)
+                const beamLength = 40; // Short laser bullet (was distance-based)
+                
+                // Offset by half the beam width (1.5px) to center it on the tip
+                bullet.style.left = (this.x - 1.5) + 'px';
+                bullet.style.top = this.y + 'px';
+                bullet.style.height = beamLength + 'px';
+                bullet.style.transform = `rotate(${degrees + 90}deg)`; // +90 because beam extends downward by default
+                bullet.style.transformOrigin = 'top center';
+                
+                gameContainer.appendChild(bullet);
+                return bullet;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.distanceTraveled += Math.sqrt(
+                    this.speedX * this.speedX + 
+                    this.speedY * this.speedY
+                );
+
+                // Calculate angle
+                const angle = Math.atan2(this.targetY - this.y, this.targetX - this.x);
+                const degrees = angle * (180 / Math.PI);
+                
+                // Fixed short beam length (like a bullet) - stays constant
+                const beamLength = 40;
+                
+                // Update position with center offset
+                this.element.style.left = (this.x - 1.5) + 'px';
+                this.element.style.top = this.y + 'px';
+                this.element.style.height = beamLength + 'px';
+                this.element.style.transform = `rotate(${degrees + 90}deg)`;
+
+                return this.distanceTraveled < this.maxDistance + 50;
+            }
+
+            remove() {
+                this.element.remove();
+            }
+        }
+
+        // Spawn invader
+        function spawnInvader() {
+            // Only spawn if under the max invader limit
+            const activeInvaders = game.invaders.filter(z => !z.isDying).length;
+            if (activeInvaders < game.maxInvaders) {
+                const invader = new Invader();
+                game.invaders.push(invader);
+            }
+        }
+
+        // Shoot gun
+        function shoot(invader) {
+            gunElement.classList.add('shoot');
+            setTimeout(() => gunElement.classList.remove('shoot'), 100);
+
+            const center = invader.getCenter();
+            const bullet = new Bullet(center.x, center.y);
+            game.bullets.push(bullet);
+
+            playShootSound();
+            
+            // Calculate and return travel time for the laser to reach target
+            // Distance / speed, then convert frames to milliseconds (assuming 60fps)
+            const travelTimeMs = (bullet.maxDistance / 49.5) * (1000 / 60);
+            return travelTimeMs;
+        }
+
+        // Update score based on word length
+        // Animated counter function
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                element.textContent = value;
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    // Ensure final value is set exactly
+                    element.textContent = end;
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function updateScore(word) {
+            const points = word.length;
+            const oldScore = game.score;
+            game.score += points;
+            
+            // Animate score increase
+            scoreValue.classList.remove('score-increase', 'score-decrease');
+            void scoreValue.offsetWidth; // Force reflow
+            scoreValue.classList.add('score-increase');
+            
+            // Animate the counter from old value to new value
+            animateValue(scoreValue, oldScore, game.score, 400);
+            
+            // Remove animation class after animation completes
+            setTimeout(() => {
+                scoreValue.classList.remove('score-increase');
+            }, 500);
+        }
+
+        // Rotate rocket to face target
+        function rotateRocketToTarget(targetInvader) {
+            if (!targetInvader || targetInvader.isDying) {
+                gunElement.style.transform = 'rotate(-45deg)'; // Default -45 degree angle (up-right)
+                gunElement.classList.remove('aiming');
+                return;
+            }
+
+            const center = targetInvader.getCenter();
+            const shipX = window.innerWidth / 2;
+            const shipY = window.innerHeight * 0.7 + 40; // Adjust to rocket tip
+
+            const deltaX = center.x - shipX;
+            
+            // Determine if target is on left or right side
+            // Rotate 30 degrees left (-75°) or right (-15°) from base -45°
+            let angleDeg;
+            if (deltaX < -100) {
+                // Far left - rotate 30° left from -45° = -75°
+                angleDeg = -75;
+            } else if (deltaX > 100) {
+                // Far right - rotate 30° right from -45° = -15°
+                angleDeg = -15;
+            } else {
+                // Center - interpolate between -75° and -15°
+                // Map deltaX from [-100, 100] to [-75, -15]
+                const t = (deltaX + 100) / 200; // normalize to [0, 1]
+                angleDeg = -75 + (t * 60); // -75 + (0 to 1) * 60 = -75 to -15
+            }
+
+            gunElement.classList.add('aiming');
+            gunElement.style.transform = `rotate(${angleDeg}deg)`;
+        }
+
+        // Simple shoot sound using Web Audio API
+        function playShootSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 200;
+            oscillator.type = 'square';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+
+        // Function to update word progress (green background fill as you type)
+        function updateWordProgress() {
+            game.invaders.forEach(invader => {
+                if (invader.isDying || !invader.wordElement) return;
+                
+                if (game.currentInput && invader.word.startsWith(game.currentInput)) {
+                    // Calculate progress percentage
+                    const progress = (game.currentInput.length / invader.word.length) * 100;
+                    invader.wordElement.style.setProperty('--progress', `${progress}%`);
+                } else {
+                    // No match, reset progress
+                    invader.wordElement.style.setProperty('--progress', '0%');
+                }
+            });
+        }
+
+        // Function to update input display
+        function updateInputDisplay() {
+            // Always update based on current input
+            if (game.currentInput && game.currentInput.length > 0) {
+                inputDisplay.classList.add('active');
+                
+                if (game.targetInvader && game.targetInvader.word) {
+                    // Show target word with progress
+                    const targetWord = game.targetInvader.word;
+                    const typed = game.currentInput;
+                    
+                    let html = '';
+                    for (let i = 0; i < targetWord.length; i++) {
+                        if (i < typed.length) {
+                            html += `<span class="typed">${targetWord[i]}</span>`;
+                        } else {
+                            html += `<span class="untyped">${targetWord[i]}</span>`;
+                        }
+                    }
+                    inputDisplay.innerHTML = html;
+                } else {
+                    // Just show what's being typed (no target yet)
+                    inputDisplay.innerHTML = `<span class="typed">${game.currentInput}</span>`;
+                }
+            } else {
+                // Clear display when no input
+                inputDisplay.innerHTML = '';
+                inputDisplay.classList.remove('active');
+            }
+        }
+
+        // Error sound effect (using Web Audio API)
+        // Error sound effect (low pitched beep)
+        function playErrorSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            // Lower frequency for error sound
+            oscillator.frequency.value = 150;
+            oscillator.type = 'square';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.15);
+            
+            // Show error state on input display
+            inputDisplay.classList.add('error');
+            setTimeout(() => {
+                inputDisplay.classList.remove('error');
+            }, 300);
+        }
+
+        // Success sound effect (cheerful ascending melody)
+        function playSuccessSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Create a more pleasant success sound with multiple notes
+            const notes = [
+                { freq: 523.25, time: 0, duration: 0.08 },      // C5
+                { freq: 659.25, time: 0.06, duration: 0.08 },   // E5
+                { freq: 783.99, time: 0.12, duration: 0.12 }    // G5
+            ];
+            
+            notes.forEach(note => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = note.freq;
+                oscillator.type = 'sine';
+                
+                const startTime = audioContext.currentTime + note.time;
+                gainNode.gain.setValueAtTime(0.15, startTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + note.duration);
+                
+                oscillator.start(startTime);
+                oscillator.stop(startTime + note.duration);
+            });
+        }
+
+        // Mobile input handler - converts input events to keyboard events
+        mobileInput.addEventListener('input', (e) => {
+            if (game.isGameOver || game.isPaused) return;
+            
+            const newValue = e.target.value;
+            const oldValue = game.currentInput;
+            
+            if (newValue.length > oldValue.length) {
+                // Character added
+                const newChar = newValue[newValue.length - 1].toLowerCase();
+                // Trigger the same logic as keyboard
+                const keyEvent = new KeyboardEvent('keydown', { key: newChar });
+                document.dispatchEvent(keyEvent);
+            } else if (newValue.length < oldValue.length) {
+                // Character deleted
+                const keyEvent = new KeyboardEvent('keydown', { key: 'Backspace' });
+                document.dispatchEvent(keyEvent);
+            }
+            
+            // Keep input field in sync but prevent it from getting too long
+            if (mobileInput.value.length > 20) {
+                mobileInput.value = mobileInput.value.slice(-10);
+            }
+        });
+
+        // Keep mobile input focused during game (mobile only)
+        mobileInput.addEventListener('blur', () => {
+            const isMobile = window.matchMedia("(max-width: 768px)").matches;
+            if (!game.isGameOver && !game.isPaused && isMobile) {
+                setTimeout(() => mobileInput.focus(), 10);
+            }
+        });
+
+        // Keyboard input
+        document.addEventListener('keydown', (e) => {
+            if (game.isGameOver) return;
+            
+            // Spacebar to pause/unpause
+            if (e.key === ' ' || e.key === 'Spacebar') {
+                e.preventDefault();
+                togglePause();
+                return;
+            }
+            
+            if (game.isPaused) return;
+
+            if (e.key === 'Backspace') {
+                game.currentInput = game.currentInput.slice(0, -1);
+                mobileInput.value = game.currentInput;
+                updateWordProgress();
+                updateInputDisplay();
+                updateKeyboardHighlight();
+            } else if (e.key === 'Enter') {
+                game.currentInput = '';
+                mobileInput.value = '';
+                game.targetInvader = null;
+                rotateRocketToTarget(null);
+                updateWordProgress();
+                updateInputDisplay();
+                updateKeyboardHighlight();
+            } else if (e.key.length === 1 && /[a-z]/i.test(e.key)) {
+                const newInput = game.currentInput + e.key.toLowerCase();
+                
+                // Check if any invader word starts with this input
+                const hasMatch = game.invaders.some(
+                    inv => !inv.isDying && inv.word.startsWith(newInput)
+                );
+                
+                if (!hasMatch) {
+                    // Play error sound and reset input completely
+                    playErrorSound();
+                    game.currentInput = '';
+                    mobileInput.value = '';
+                    game.targetInvader = null;
+                    rotateRocketToTarget(null);
+                    updateWordProgress();
+                    updateInputDisplay();
+                    
+                    updateKeyboardHighlight();
+                    // Clear all highlights
+                    game.invaders.forEach(z => {
+                        if (!z.isDying && z.wordElement) {
+                            z.wordElement.classList.remove('typing');
+                        }
+                    });
+                    return;
+                }
+                
+                game.currentInput = newInput;
+                mobileInput.value = newInput;
+                
+                // Check for complete match
+                const matchedInvader = game.invaders.find(
+                    z => !z.isDying && z.word === game.currentInput
+                );
+                
+                if (matchedInvader) {
+                    // Play success sound
+                    playSuccessSound();
+                    
+                    // Turn green only on completion
+                    matchedInvader.wordElement.classList.add('typing');
+                    
+                    // Shoot and get travel time
+                    const travelTime = shoot(matchedInvader);
+                    
+                    // Delay invader death until laser hits
+                    setTimeout(() => {
+                        matchedInvader.die();
+                    }, travelTime);
+                    
+                    updateScore(matchedInvader.word);
+                    game.currentInput = '';
+                    mobileInput.value = '';
+                    game.targetInvader = null;
+                    rotateRocketToTarget(null);
+                    updateWordProgress();
+                    updateInputDisplay();
+                    
+                    updateKeyboardHighlight();
+                    // Clear all highlights
+                    game.invaders.forEach(z => {
+                        if (!z.isDying && z.wordElement) {
+                            z.wordElement.classList.remove('typing');
+                        }
+                    });
+                    return;
+                }
+            }
+            
+            // Update target tracking (but DON'T turn background green until complete)
+            let foundMatch = false;
+            let targetInvader = null;
+            
+            game.invaders.forEach(invader => {
+                if (invader.isDying || !invader.wordElement) return;
+                
+                if (game.currentInput && invader.word.startsWith(game.currentInput)) {
+                    // DON'T add typing class - no green background until complete
+                    if (!foundMatch) {
+                        foundMatch = true;
+                        targetInvader = invader;
+                    }
+                }
+                
+                // Make sure no backgrounds are green while typing
+                invader.wordElement.classList.remove('typing');
+            });
+            
+            // Update word progress (character-level green)
+            updateWordProgress();
+            
+            // Store target and rotate rocket
+            game.targetInvader = targetInvader;
+            rotateRocketToTarget(targetInvader);
+            updateInputDisplay();
+            updateKeyboardHighlight();
+        });
+
+        // Game loop
+        let lastTime = 0;
+        function gameLoop(timestamp) {
+            if (game.isGameOver) return;
+
+            if (!game.isPaused) {
+                const deltaTime = timestamp - lastTime;
+
+                // Spawn invaders
+                if (timestamp - game.lastSpawn > game.spawnInterval) {
+                    spawnInvader();
+                    game.lastSpawn = timestamp;
+                }
+
+                // Update invaders
+                game.invaders = game.invaders.filter(invader => {
+                    invader.update();
+                    return invader.y < window.innerHeight + 100;
+                });
+
+                // Update bullets
+                game.bullets = game.bullets.filter(bullet => {
+                    const alive = bullet.update();
+                    
+                    if (!alive) {
+                        bullet.remove();
+                    }
+                    return alive;
+                });
+
+                // Continuously update rocket rotation to track target
+                if (game.targetInvader && !game.targetInvader.isDying) {
+                    rotateRocketToTarget(game.targetInvader);
+                }
+
+                // Progressive difficulty - gradually increase speed and spawn rate based on score
+                if (game.score > 0 && game.score % 50 === 0) {
+                    // Gradually increase speed (cap based on difficulty)
+                    const speedCap = {
+                        'easy': 0.8,
+                        'medium': 1.2,
+                        'hard': 1.8,
+                        'superhard': 2.5
+                    };
+                    game.invaderSpeed = Math.min(game.invaderSpeed + 0.05, speedCap[game.difficulty]);
+                    
+                    // Gradually decrease spawn interval (cap based on difficulty)
+                    const intervalCap = {
+                        'easy': 1500,
+                        'medium': 1000,
+                        'hard': 700,
+                        'superhard': 400
+                    };
+                    game.spawnInterval = Math.max(game.spawnInterval - 50, intervalCap[game.difficulty]);
+                }
+            }
+            
+            lastTime = timestamp;
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Game over
+        function gameOver() {
+            game.isGameOver = true;
+            finalScoreElement.textContent = `Final Score: ${game.score}`;
+            gameOverScreen.classList.add('show');
+        }
+
+        // Restart game
+        function restartGame() {
+            // Clear invaders and bullets
+            game.invaders.forEach(z => z.element.remove());
+            game.bullets.forEach(b => b.remove());
+            
+            // Hide game container and show time selection screen
+            gameContainer.classList.add('hidden');
+            timeSelection.classList.remove('hidden');
+            gameOverScreen.classList.remove('show');
+            topbar.classList.remove('show');
+        }
+
+        // Start game with selected difficulty
+        function startGame(difficulty) {
+            // Difficulty settings
+            const difficultySettings = {
+                'easy': {
+                    spawnInterval: 2500,
+                    invaderSpeed: 0.3,
+                    maxInvaders: 3
+                },
+                'medium': {
+                    spawnInterval: 1800,
+                    invaderSpeed: 0.5,
+                    maxInvaders: 5
+                },
+                'hard': {
+                    spawnInterval: 1200,
+                    invaderSpeed: 0.8,
+                    maxInvaders: 7
+                },
+                'superhard': {
+                    spawnInterval: 800,
+                    invaderSpeed: 1.2,
+                    maxInvaders: 10
+                }
+            };
+            
+            const settings = difficultySettings[difficulty];
+            
+            // Reset game state
+            game.score = 0;
+            game.currentInput = '';
+            game.invaders = [];
+            game.bullets = [];
+            game.targetInvader = null;
+            game.isGameOver = false;
+            game.isPaused = false;
+            game.lastSpawn = 0;
+            game.difficulty = difficulty;
+            game.spawnInterval = settings.spawnInterval;
+            game.invaderSpeed = settings.invaderSpeed;
+            game.maxInvaders = settings.maxInvaders;
+            
+            // Clear mobile input value
+            mobileInput.value = '';
+            
+            // Reset UI
+            scoreValue.textContent = '0';
+            scoreValue.classList.remove('score-increase', 'score-decrease');
+            const difficultyNames = {
+                'easy': 'Easy',
+                'medium': 'Medium', 
+                'hard': 'Hard',
+                'superhard': 'Superb'
+            };
+            difficultyDisplay.textContent = difficultyNames[difficulty];
+            
+            // Set pause button icon
+            const pauseIcon = pauseBtn.querySelector('.material-symbols-outlined');
+            if (pauseIcon) pauseIcon.textContent = 'pause';
+            
+            rotateRocketToTarget(null);
+            
+            // Hide time selection and show game container
+            timeSelection.classList.add('hidden');
+            gameContainer.classList.remove('hidden');
+            topbar.classList.add('show');
+            
+            // Focus mobile input only on mobile/tablet devices
+            // Desktop will use document keydown listener directly
+            const isMobile = window.matchMedia("(max-width: 768px)").matches;
+            if (isMobile) {
+                // Mobile - use the hidden input to capture keyboard
+                requestAnimationFrame(() => {
+                    mobileInput.focus();
+                });
+                setTimeout(() => mobileInput.focus(), 50);
+                setTimeout(() => mobileInput.focus(), 100);
+            } else {
+                // Desktop - ensure mobileInput is blurred so document keydown works
+                mobileInput.blur();
+                // Focus on game container or document body instead
+                gameContainer.focus();
+            }
+            
+            // Restart game loop
+            lastTime = performance.now();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Toggle pause
+        function togglePause() {
+            game.isPaused = !game.isPaused;
+            const icon = pauseBtn.querySelector('.material-symbols-outlined');
+            if (icon) {
+                icon.textContent = game.isPaused ? 'play_arrow' : 'pause';
+            }
+            
+            // Show/hide pause overlay
+            const pauseOverlay = document.getElementById('pauseOverlay');
+            if (game.isPaused) {
+                pauseOverlay.classList.add('show');
+            } else {
+                pauseOverlay.classList.remove('show');
+            }
+        }
+
+        // Apply difficulty settings (used when changing difficulty mid-game)
+        function applyDifficultySettings(difficulty) {
+            const difficultySettings = {
+                'easy': {
+                    spawnInterval: 2500,
+                    invaderSpeed: 0.3,
+                    maxInvaders: 3
+                },
+                'medium': {
+                    spawnInterval: 1800,
+                    invaderSpeed: 0.5,
+                    maxInvaders: 5
+                },
+                'hard': {
+                    spawnInterval: 1200,
+                    invaderSpeed: 0.8,
+                    maxInvaders: 7
+                },
+                'superhard': {
+                    spawnInterval: 800,
+                    invaderSpeed: 1.2,
+                    maxInvaders: 10
+                }
+            };
+            
+            const settings = difficultySettings[difficulty];
+            game.difficulty = difficulty;
+            game.spawnInterval = settings.spawnInterval;
+            game.invaderSpeed = settings.invaderSpeed;
+            game.maxInvaders = settings.maxInvaders;
+        }
+
+        // Event listeners
+        restartBtn.addEventListener('click', restartGame);
+        pauseBtn.addEventListener('click', togglePause);
+        
+        // Restart button during game - restarts immediately with same difficulty
+        restartGameBtn.addEventListener('click', () => {
+            const currentDifficulty = game.difficulty;
+            
+            // Clear invaders and bullets
+            game.invaders.forEach(z => z.element.remove());
+            game.bullets.forEach(b => b.remove());
+            
+            // Restart with same difficulty
+            startGame(currentDifficulty);
+        });
+        
+        // Difficulty display click to cycle through levels
+        difficultyDisplay.addEventListener('click', () => {
+            const difficultyOrder = ['easy', 'medium', 'hard', 'superhard'];
+            const currentIndex = difficultyOrder.indexOf(game.difficulty);
+            const nextIndex = (currentIndex + 1) % difficultyOrder.length;
+            const nextDifficulty = difficultyOrder[nextIndex];
+            
+            applyDifficultySettings(nextDifficulty);
+            
+            const difficultyNames = {
+                'easy': 'Easy',
+                'medium': 'Medium',
+                'hard': 'Hard',
+                'superhard': 'Superb'
+            };
+            difficultyDisplay.textContent = difficultyNames[nextDifficulty];
+        });
+        
+        // Category cycling
+        categoryDisplay.addEventListener('click', () => {
+            const categoryOrder = ['all', 'animals', 'plants'];
+            const currentIndex = categoryOrder.indexOf(currentCategory);
+            const nextIndex = (currentIndex + 1) % categoryOrder.length;
+            currentCategory = categoryOrder[nextIndex];
+            
+            // Update word list
+            words = wordCategories[currentCategory];
+            
+            const categoryNames = {
+                'all': 'All',
+                'animals': 'Animals',
+                'plants': 'Plants'
+            };
+            categoryDisplay.textContent = categoryNames[currentCategory];
+        });
+        
+        // Difficulty option selection on start screen - starts game immediately
+        const difficultyOptions = document.querySelectorAll('.difficulty-option');
+        difficultyOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                const difficulty = option.getAttribute('data-difficulty');
+                const isMobile = window.matchMedia("(max-width: 768px)").matches;
+                // Focus mobile input immediately on user interaction (mobile only)
+                if (isMobile) {
+                    mobileInput.focus();
+                }
+                // Small delay to ensure focus has taken effect
+                setTimeout(() => {
+                    startGame(difficulty);
+                }, 50);
+            });
+        });
+        
+        // Click anywhere on game to refocus mobile input (for mobile keyboard)
+        // Click on game area to pause/unpause
+        gameContainer.addEventListener('click', (e) => {
+            // Don't trigger pause if clicking on buttons, keyboard, or topbar
+            if (e.target.closest('#pauseBtn, #restartGameBtn, .key, #onScreenKeyboard, #topbar')) {
+                return;
+            }
+            
+            const isMobile = window.matchMedia("(max-width: 768px)").matches;
+            
+            if (!game.isGameOver) {
+                // Toggle pause on click/tap
+                togglePause();
+            }
+            
+            // Also refocus mobile input if not paused
+            if (!game.isGameOver && !game.isPaused && isMobile) {
+                mobileInput.focus();
+            }
+        });
+        
+        // Pause overlay click to unpause
+        const pauseOverlay = document.getElementById('pauseOverlay');
+        pauseOverlay.addEventListener('click', () => {
+            if (game.isPaused && !game.isGameOver) {
+                togglePause();
+            }
+        });
+        
+        // On-screen keyboard handler - MOBILE OPTIMIZED
+        const keyboardKeys = document.querySelectorAll('.key');
+        
+        keyboardKeys.forEach(key => {
+            // Visual feedback on touch
+            key.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                key.classList.add('pressed');
+            }, { passive: false });
+            
+            // Use touchend for better mobile responsiveness
+            key.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Remove visual feedback
+                setTimeout(() => key.classList.remove('pressed'), 100);
+                
+                if (game.isGameOver || game.isPaused) {
+                    return;
+                }
+                
+                const keyValue = key.getAttribute('data-key');
+                
+                // Directly handle the key press
+                handleKeyPress(keyValue);
+            }, { passive: false });
+            
+            // Also keep click for desktop testing
+            key.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Visual feedback
+                key.classList.add('pressed');
+                setTimeout(() => key.classList.remove('pressed'), 100);
+                
+                if (game.isGameOver || game.isPaused) return;
+                
+                const keyValue = key.getAttribute('data-key');
+                handleKeyPress(keyValue);
+            });
+        });
+        
+        // Function to update keyboard key highlighting
+        function updateKeyboardHighlight() {
+            const keyboardKeys = document.querySelectorAll('.key');
+            
+            // Clear all active highlights first
+            keyboardKeys.forEach(k => k.classList.remove('active'));
+            
+            // Highlight keys that were typed correctly
+            if (game.currentInput && game.targetInvader && !game.targetInvader.isDying) {
+                for (let i = 0; i < game.currentInput.length; i++) {
+                    const char = game.currentInput[i];
+                    keyboardKeys.forEach(k => {
+                        if (k.getAttribute('data-key') === char) {
+                            k.classList.add('active');
+                        }
+                    });
+                }
+            }
+        }
+
+        // Function to handle key presses (for both keyboard and on-screen keyboard)
+        function handleKeyPress(keyValue) {
+            if (game.isGameOver || game.isPaused) return;
+            
+            if (keyValue === 'Backspace') {
+                game.currentInput = game.currentInput.slice(0, -1);
+                mobileInput.value = game.currentInput;
+                
+                // Update target after backspace
+                if (game.currentInput.length > 0) {
+                    let foundMatch = false;
+                    let targetInvader = null;
+                    
+                    game.invaders.forEach(invader => {
+                        if (invader.isDying || !invader.wordElement) return;
+                        
+                        if (invader.word.startsWith(game.currentInput)) {
+                            if (!foundMatch) {
+                                foundMatch = true;
+                                targetInvader = invader;
+                            }
+                        }
+                    });
+                    
+                    game.targetInvader = targetInvader;
+                    rotateRocketToTarget(targetInvader);
+                } else {
+                    game.targetInvader = null;
+                    rotateRocketToTarget(null);
+                }
+                
+                updateWordProgress();
+                updateInputDisplay();
+                updateKeyboardHighlight();
+            } else if (keyValue.length === 1) {
+                const newInput = game.currentInput + keyValue.toLowerCase();
+                
+                // Check if any invader word starts with this input
+                const hasMatch = game.invaders.some(
+                    inv => !inv.isDying && inv.word.startsWith(newInput)
+                );
+                
+                if (!hasMatch) {
+                    // Play error sound and reset input completely
+                    playErrorSound();
+                    game.currentInput = '';
+                    mobileInput.value = '';
+                    game.targetInvader = null;
+                    rotateRocketToTarget(null);
+                    updateWordProgress();
+                    updateInputDisplay();
+                    updateKeyboardHighlight();
+                    
+                    // Clear all highlights
+                    game.invaders.forEach(z => {
+                        if (!z.isDying && z.wordElement) {
+                            z.wordElement.classList.remove('typing');
+                        }
+                    });
+                    return;
+                }
+                
+                game.currentInput = newInput;
+                mobileInput.value = newInput;
+                
+                // Check for complete match
+                const matchedInvader = game.invaders.find(
+                    z => !z.isDying && z.word === game.currentInput
+                );
+                
+                if (matchedInvader) {
+                    // Play success sound
+                    playSuccessSound();
+                    
+                    // Turn green only on completion
+                    matchedInvader.wordElement.classList.add('typing');
+                    
+                    // Shoot and get travel time
+                    const travelTime = shoot(matchedInvader);
+                    
+                    // Delay invader death until laser hits
+                    setTimeout(() => {
+                        matchedInvader.die();
+                    }, travelTime);
+                    
+                    updateScore(matchedInvader.word);
+                    game.currentInput = '';
+                    mobileInput.value = '';
+                    game.targetInvader = null;
+                    rotateRocketToTarget(null);
+                    updateWordProgress();
+                    updateInputDisplay();
+                    updateKeyboardHighlight();
+                    
+                    // Clear all highlights
+                    game.invaders.forEach(z => {
+                        if (!z.isDying && z.wordElement) {
+                            z.wordElement.classList.remove('typing');
+                        }
+                    });
+                    return;
+                }
+                
+                // Update target tracking
+                let foundMatch = false;
+                let targetInvader = null;
+                
+                game.invaders.forEach(invader => {
+                    if (invader.isDying || !invader.wordElement) return;
+                    
+                    if (game.currentInput && invader.word.startsWith(game.currentInput)) {
+                        if (!foundMatch) {
+                            foundMatch = true;
+                            targetInvader = invader;
+                        }
+                    }
+                    
+                    invader.wordElement.classList.remove('typing');
+                });
+                
+                // Update word progress (character-level green)
+                updateWordProgress();
+                
+                // Store target and rotate rocket
+                game.targetInvader = targetInvader;
+                rotateRocketToTarget(targetInvader);
+                updateInputDisplay();
+                updateKeyboardHighlight();
+            }
+        }
+
+        // Initialize game - show start screen
+        // Game starts when user clicks start button
+    </script>
+</body>
+</html>
