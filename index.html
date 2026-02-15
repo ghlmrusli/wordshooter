@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Word Shooter</title>
+     <title>Word Shooter</title>
     
     <!-- Open Graph -->
     <meta property="og:title" content="🚀 Word Shooter">
@@ -449,18 +449,37 @@
         }
 
         .invader-word.typing {
-            background: rgba(16, 185, 129, 0.8);
+            background: rgba(16, 185, 129, 0.8) !important;
             color: white;
         }
 
         .invader-word.typing::before {
-            width: 100%;
+            width: 110% !important;  /* Extend beyond 100% to ensure full coverage */
+            transition: none;  /* Remove transition delay on completion */
         }
 
         .invader.dying {
             animation: die 0.5s forwards;
         }
-
+        
+        /* Keep green color when matched invader is dying - HIGH SPECIFICITY */
+        .invader.dying .invader-word.typing {
+            background: rgba(16, 185, 129, 0.8) !important;
+            color: white !important;
+        }
+        
+        /* Also ensure emoji container doesn't interfere */
+        .invader.dying .invader-emoji {
+            opacity: 1;
+        }
+        
+        /* Hide the progress ::before element when completed to show solid green background */
+        .invader.dying .invader-word.typing::before,
+        .invader-word.typing::before {
+            display: none !important;
+        }
+        
+        /* Ensure the green stays during the entire fade animation */
         @keyframes die {
             0% {
                 opacity: 1;
@@ -468,6 +487,11 @@
             100% {
                 opacity: 0;
             }
+        }
+        
+        /* Force green to persist on dying invaders with typing class */
+        .invader.dying > .invader-word.typing {
+            background-color: rgba(16, 185, 129, 0.8) !important;
         }
 
         /* Bullet styling */
@@ -785,6 +809,32 @@
             display: flex;
         }
 
+        #pauseContent {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #pauseMicrocopy {
+            font-size: 14px;
+            font-family: 'Press Start 2P', cursive;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         #pauseIcon {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -799,6 +849,7 @@
             justify-content: center;
             gap: 10px;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         #pauseIcon:hover {
@@ -1318,9 +1369,12 @@
 
     <!-- Pause Overlay -->
     <div id="pauseOverlay">
-        <div id="pauseIcon">
-            <span class="material-symbols-outlined">play_arrow</span>
-            <span class="pause-text">Continue</span>
+        <div id="pauseContent">
+            <div id="pauseMicrocopy"></div>
+            <div id="pauseIcon">
+                <span class="material-symbols-outlined">play_arrow</span>
+                <span class="pause-text">Continue</span>
+            </div>
         </div>
     </div>
 
@@ -1398,7 +1452,8 @@
                 'lavender', 'rosemary', 'chamomile', 'hibiscus', 'lotus', 'azalea', 'camellia', 'magnolia',
                 'apple', 'orange', 'banana', 'grape', 'cherry', 'peach', 'pear', 'plum',
                 'mango', 'papaya', 'coconut', 'pineapple', 'melon', 'berry', 'lemon', 'lime'
-            ]
+            ],
+            
             science: [
                 // Physics & Chemistry
                 'atom', 'molecule', 'electron', 'proton', 'neutron', 'photon', 'quark', 'ion',
@@ -1725,7 +1780,7 @@
             const points = word.length;
             const oldScore = game.score;
             game.score += points;
-
+            
             // Update highest score if current score exceeds it
             if (game.score > game.highestScore) {
                 game.highestScore = game.score;
@@ -2004,13 +2059,20 @@
                     
                     // Turn green only on completion
                     matchedInvader.wordElement.classList.add('typing');
+                    matchedInvader.wordElement.style.setProperty('--progress', '110%');
+                    
+                    // Mark as dying immediately to protect the typing class
+                    matchedInvader.isDying = true;
                     
                     // Shoot and get travel time
                     const travelTime = shoot(matchedInvader);
                     
-                    // Delay invader death until laser hits
+                    // Delay invader death animation until laser hits
                     setTimeout(() => {
-                        matchedInvader.die();
+                        matchedInvader.element.classList.add('dying');
+                        setTimeout(() => {
+                            matchedInvader.element.remove();
+                        }, 500);
                     }, travelTime);
                     
                     updateScore(matchedInvader.word);
@@ -2048,7 +2110,10 @@
                 }
                 
                 // Make sure no backgrounds are green while typing
-                invader.wordElement.classList.remove('typing');
+                // But NEVER remove from dying invaders (they should stay green)
+                if (!invader.isDying) {
+                    invader.wordElement.classList.remove('typing');
+                }
             });
             
             // Update word progress (character-level green)
@@ -2231,6 +2296,15 @@
             requestAnimationFrame(gameLoop);
         }
 
+        // Pause microcopy messages
+        const pauseMicrocopyMessages = [
+            'Take a deep breath',
+            'Stretch your fingers',
+            'Are you ready?',
+            'You can do this!',
+            'This is easy, right?'
+        ];
+
         // Toggle pause
         function togglePause() {
             game.isPaused = !game.isPaused;
@@ -2241,7 +2315,12 @@
             
             // Show/hide pause overlay
             const pauseOverlay = document.getElementById('pauseOverlay');
+            const pauseMicrocopy = document.getElementById('pauseMicrocopy');
+            
             if (game.isPaused) {
+                // Select random microcopy message
+                const randomIndex = Math.floor(Math.random() * pauseMicrocopyMessages.length);
+                pauseMicrocopy.textContent = pauseMicrocopyMessages[randomIndex];
                 pauseOverlay.classList.add('show');
             } else {
                 pauseOverlay.classList.remove('show');
@@ -2327,7 +2406,7 @@
             const categoryNames = {
                 'all': 'All',
                 'animals': 'Animals',
-                'plants': 'Plants'
+                'plants': 'Plants',
                 'science': 'Science'
             };
             categoryDisplay.textContent = categoryNames[currentCategory];
@@ -2519,13 +2598,20 @@
                     
                     // Turn green only on completion
                     matchedInvader.wordElement.classList.add('typing');
+                    matchedInvader.wordElement.style.setProperty('--progress', '110%');
+                    
+                    // Mark as dying immediately to protect the typing class
+                    matchedInvader.isDying = true;
                     
                     // Shoot and get travel time
                     const travelTime = shoot(matchedInvader);
                     
-                    // Delay invader death until laser hits
+                    // Delay invader death animation until laser hits
                     setTimeout(() => {
-                        matchedInvader.die();
+                        matchedInvader.element.classList.add('dying');
+                        setTimeout(() => {
+                            matchedInvader.element.remove();
+                        }, 500);
                     }, travelTime);
                     
                     updateScore(matchedInvader.word);
