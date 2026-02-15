@@ -1328,6 +1328,7 @@
         // Game state
         const game = {
             score: 0,
+            highestScore: 0,
             currentInput: '',
             invaders: [],
             bullets: [],
@@ -1397,6 +1398,30 @@
                 'lavender', 'rosemary', 'chamomile', 'hibiscus', 'lotus', 'azalea', 'camellia', 'magnolia',
                 'apple', 'orange', 'banana', 'grape', 'cherry', 'peach', 'pear', 'plum',
                 'mango', 'papaya', 'coconut', 'pineapple', 'melon', 'berry', 'lemon', 'lime'
+            ]
+            science: [
+                // Physics & Chemistry
+                'atom', 'molecule', 'electron', 'proton', 'neutron', 'photon', 'quark', 'ion',
+                'plasma', 'nucleus', 'isotope', 'catalyst', 'enzyme', 'polymer', 'crystal', 'alloy',
+                'quantum', 'particle', 'matter', 'energy', 'entropy', 'velocity', 'momentum', 'friction',
+                'gravity', 'radiation', 'magnetic', 'electric', 'thermal', 'kinetic', 'potential', 'force',
+                
+                // Biology & Medicine
+                'cell', 'tissue', 'organ', 'genome', 'gene', 'protein', 'amino', 'lipid',
+                'membrane', 'mitosis', 'meiosis', 'nucleus', 'ribosome', 'organelle', 'cytoplasm', 'chloroplast',
+                'bacteria', 'virus', 'pathogen', 'antibody', 'antigen', 'immune', 'vaccine', 'syndrome',
+                'neuron', 'synapse', 'hormone', 'insulin', 'cortisol', 'dopamine', 'serotonin', 'adrenaline',
+                
+                // Earth & Space Sciences
+                'asteroid', 'comet', 'nebula', 'galaxy', 'planet', 'orbit', 'eclipse', 'cosmos',
+                'meteor', 'crater', 'lunar', 'solar', 'stellar', 'cosmic', 'quasar', 'pulsar',
+                'geology', 'mineral', 'crystal', 'fossil', 'sediment', 'magma', 'lava', 'tectonic',
+                'seismic', 'volcano', 'erosion', 'glacier', 'ocean', 'climate', 'ozone', 'carbon',
+                
+                // Advanced Scientific Terms
+                'algorithm', 'quantum', 'spectrum', 'frequency', 'wavelength', 'amplitude', 'resonance', 'diffraction',
+                'osmosis', 'diffusion', 'synthesis', 'analysis', 'hypothesis', 'theory', 'axiom', 'theorem',
+                'vector', 'matrix', 'exponential', 'logarithm', 'calculus', 'topology', 'entropy', 'equilibrium'
             ]
         };
         
@@ -1700,6 +1725,11 @@
             const points = word.length;
             const oldScore = game.score;
             game.score += points;
+
+            // Update highest score if current score exceeds it
+            if (game.score > game.highestScore) {
+                game.highestScore = game.score;
+            }
             
             // Animate score increase
             scoreValue.classList.remove('score-increase', 'score-decrease');
@@ -2095,7 +2125,7 @@
         // Game over
         function gameOver() {
             game.isGameOver = true;
-            finalScoreElement.textContent = `Final Score: ${game.score}`;
+            finalScoreElement.textContent = `Highest Score: ${game.highestScore}`;
             gameOverScreen.classList.add('show');
         }
 
@@ -2286,7 +2316,7 @@
         
         // Category cycling
         categoryDisplay.addEventListener('click', () => {
-            const categoryOrder = ['all', 'animals', 'plants'];
+            const categoryOrder = ['all', 'animals', 'plants', 'science'];
             const currentIndex = categoryOrder.indexOf(currentCategory);
             const nextIndex = (currentIndex + 1) % categoryOrder.length;
             currentCategory = categoryOrder[nextIndex];
@@ -2298,6 +2328,7 @@
                 'all': 'All',
                 'animals': 'Animals',
                 'plants': 'Plants'
+                'science': 'Science'
             };
             categoryDisplay.textContent = categoryNames[currentCategory];
         });
