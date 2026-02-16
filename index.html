@@ -1562,9 +1562,6 @@
             <div id="categoryDisplay">All</div>
         </div>
         <div id="rightControls">
-            <button id="autoTestToggle" style="background: #3b82f6; margin-right: 10px;" title="Toggle Auto-Test Mode">
-                <span style="font-size: 14px;">🤖 TEST</span>
-            </button>
             <button id="pauseBtn"><span class="material-symbols-outlined">pause</span></button>
             <button id="restartGameBtn"><span class="material-symbols-outlined">refresh</span></button>
         </div>
@@ -3542,22 +3539,6 @@
         let autoTestInterval = null;
         let speedRoundChecker = null;
         let lastScore = 0;
-        
-        const autoTestToggle = document.getElementById('autoTestToggle');
-        
-        autoTestToggle.addEventListener('click', () => {
-            autoTestEnabled = !autoTestEnabled;
-            
-            if (autoTestEnabled) {
-                autoTestToggle.style.background = '#10b981';
-                autoTestToggle.innerHTML = '<span style="font-size: 14px;">🤖 ON</span>';
-                startAutoTest();
-            } else {
-                autoTestToggle.style.background = '#3b82f6';
-                autoTestToggle.innerHTML = '<span style="font-size: 14px;">🤖 TEST</span>';
-                stopAutoTest();
-            }
-        });
         
         function startAutoTest() {
             console.log('🤖 Auto-Test Mode ENABLED');
