@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-     <title>Word Shooter</title>
+    <title>Word Shooter</title>
     
     <!-- Open Graph -->
     <meta property="og:title" content="🚀 Word Shooter">
@@ -795,6 +795,36 @@
             transform: scale(1.05);
         }
 
+        #homeBtn {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #homeBtn .material-symbols-outlined {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        #homeBtn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
         /* Game Over Screen */
         #gameOver {
             position: fixed;
@@ -847,6 +877,320 @@
         #restartBtn:hover {
             background: rgba(255, 255, 255, 0.2);
             transform: scale(1.05);
+        }
+
+        /* Celebration Screen */
+        #celebrationScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            overflow-y: auto;
+            padding: 20px;
+            pointer-events: auto;
+        }
+
+        #celebrationTopBar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            z-index: 3001;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            pointer-events: auto;
+            gap: 7.5px;
+        }
+        
+        #celebrationTopBar .celebration-title {
+            font-size: 16px;
+            font-weight: bold;
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(135deg, #ff8c00 0%, #ff0000 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        #celebrationTopBar .celebration-buttons {
+            display: flex;
+            gap: 7.5px;
+        }
+
+        .celebration-top-btn {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .celebration-top-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .celebration-top-btn .material-symbols-outlined {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        #celebrationCard {
+            background: rgba(30, 45, 70, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 19px;
+            width: 300px;
+            height: 424px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 3D Hover Effect */
+        .hover-3d-wrapper {
+            perspective: 1000px;
+            display: inline-block;
+        }
+        
+        .hover-3d {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease-out;
+            will-change: transform;
+        }
+        
+        /* Hide the 8 effect divs - they create color overlays */
+        .hover-3d > div:not(#celebrationCard) {
+            display: none;
+        }
+
+        #celebrationHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .header-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            font-family: 'Press Start 2P', cursive;
+            line-height: 1.2;
+        }
+
+        .header-rank {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            font-family: 'Press Start 2P', cursive;
+            line-height: 1.2;
+        }
+
+        .header-value {
+            font-size: 36px;
+            color: #ffd700;
+            font-family: 'Press Start 2P', cursive;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            line-height: 1;
+        }
+
+        #celebrationBody {
+            padding: 16px 20px 20px 20px;
+            position: relative;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .left-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.5);
+            font-family: 'Press Start 2P', cursive;
+            line-height: 1.2;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            color: #ffd700;
+            font-family: 'Press Start 2P', cursive;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+            line-height: 1;
+        }
+
+        #celebrationBody #rocketIcon {
+            position: absolute;
+            right: 20px;
+            top: 32px;
+            font-size: 56px;
+            opacity: 0.95;
+            animation: rocketFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes rocketFloat {
+            0%, 100% { transform: translateY(0) rotate(-25deg); }
+            50% { transform: translateY(-12px) rotate(-25deg); }
+        }
+
+        .bottom-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            align-items: flex-start;
+            padding: 0 0px;
+        }
+
+        .bottom-stats-left,
+        .bottom-stats-right {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .bottom-stats-right {
+            text-align: right;
+        }
+
+        .bottom-stat-label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            font-family: 'Press Start 2P', cursive;
+            line-height: 1.2;
+        }
+
+        .bottom-stat-value {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.9);
+            font-family: 'Press Start 2P', cursive;
+            line-height: 1.2;
+        }
+
+        .graph-container {
+            margin-top: 8px;
+        }
+
+        #performanceGraph {
+            width: 100%;
+            height: 150px;
+            display: block;
+        }
+
+        .graph-labels {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0px 0 0px;
+        }
+
+        .graph-time-label {
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.5);
+            font-family: 'Press Start 2P', cursive;
+            line-height: 1.2;
+        }
+
+        .graph-time-label.center {
+            flex: 1;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            #celebrationCard {
+                width: 280px;
+                height: 404px;
+            }
+
+            .header-label,
+            .header-rank {
+                font-size: 11px;
+            }
+
+            .header-value {
+                font-size: 32px;
+            }
+
+            .stat-label {
+                font-size: 9px;
+            }
+
+            .stat-value {
+                font-size: 28px;
+            }
+
+            #celebrationBody #rocketIcon {
+                font-size: 48px;
+                right: 18px;
+                top: 28px;
+            }
+
+            #performanceGraph {
+                height: 130px;
+            }
+
+            .bottom-stat-label,
+            .bottom-stat-value {
+                font-size: 9px;
+            }
+            
+            .celebration-top-btn {
+                width: 28px;
+                height: 28px;
+            }
+            
+            .celebration-top-btn .material-symbols-outlined {
+                font-size: 16px;
+            }
         }
 
         /* Pause Overlay */
@@ -1218,7 +1562,7 @@
             z-index: 10;
         }
 
-        #rocketIcon {
+        #startScreenContent #rocketIcon {
             font-size: 36px;  /* Match tablet size */
             text-align: center;
             margin-bottom: 20px;
@@ -1345,7 +1689,7 @@
                 height: 32px;
             }
             
-            #pauseBtn, #restartGameBtn {
+            #pauseBtn, #restartGameBtn, #homeBtn {
                 width: 32px;
                 height: 32px;
                 font-size: 12px;
@@ -1356,7 +1700,8 @@
             }
             
             #pauseBtn .material-symbols-outlined,
-            #restartGameBtn .material-symbols-outlined {
+            #restartGameBtn .material-symbols-outlined,
+            #homeBtn .material-symbols-outlined {
                 font-size: 18px;  /* Increased to 18px (was 16px) */
             }
             
@@ -1455,14 +1800,15 @@
                 height: 28px;
             }
             
-            #pauseBtn, #restartGameBtn {
+            #pauseBtn, #restartGameBtn, #homeBtn {
                 width: 28px;
                 height: 28px;
                 font-size: 10px;
             }
             
             #pauseBtn .material-symbols-outlined,
-            #restartGameBtn .material-symbols-outlined {
+            #restartGameBtn .material-symbols-outlined,
+            #homeBtn .material-symbols-outlined {
                 font-size: 14px;
             }
             
@@ -1500,7 +1846,7 @@
                 max-width: 95%;
             }
             
-            #rocketIcon {
+            #startScreenContent #rocketIcon {
                 font-size: 32px;  /* Reduced by 20% (was 40px) */
             }
             
@@ -1562,8 +1908,15 @@
             <div id="categoryDisplay">All</div>
         </div>
         <div id="rightControls">
+            <button id="autoTestToggle" style="background: #3b82f6; margin-right: 10px; display: none;" title="Toggle Auto-Test Mode">
+                <span style="font-size: 14px;">🤖 TEST</span>
+            </button>
+            <button id="celebrationPreviewBtn" style="background: #10b981; margin-right: 10px; display: none;" title="Preview Celebration">
+                <span style="font-size: 14px;">🎉</span>
+            </button>
             <button id="pauseBtn"><span class="material-symbols-outlined">pause</span></button>
             <button id="restartGameBtn"><span class="material-symbols-outlined">refresh</span></button>
+            <button id="homeBtn"><span class="material-symbols-outlined">home</span></button>
         </div>
     </div>
 
@@ -1638,7 +1991,7 @@
         <div id="startScreenContent">
             <div id="rocketIcon">🚀</div>
             <h1 id="gameTitle">Word Shooter!</h1>
-            <p id="gameSubtitle">Show your typing skills.</p>
+            <p id="gameSubtitle">Show your typing skills</p>
             
             <div id="difficultyOptions">
                 <div class="difficulty-option" data-difficulty="easy">
@@ -1669,6 +2022,79 @@
         <h1>GAME OVER</h1>
         <div id="finalScore"></div>
         <button id="restartBtn">Restart Game</button>
+    </div>
+
+    <!-- Celebration Screen (Score 1000) -->
+    <div id="celebrationScreen" style="display: none;">
+        <div id="celebrationTopBar">
+            <div class="celebration-title">Word Shooter!</div>
+            <div class="celebration-buttons">
+                <button id="celebrationTopHomeBtn" class="celebration-top-btn" title="Home">
+                    <span class="material-symbols-outlined">home</span>
+                </button>
+                <button id="celebrationTopShareBtn" class="celebration-top-btn" title="Share">
+                    <span class="material-symbols-outlined">share</span>
+                </button>
+            </div>
+        </div>
+        <div class="hover-3d-wrapper">
+            <div class="hover-3d" id="celebrationCardWrapper">
+                <div id="celebrationCard">
+                    <div id="celebrationHeader">
+                        <div class="header-left">
+                            <div class="header-label">Score</div>
+                            <div class="header-rank" id="playerRank">PRO</div>
+                        </div>
+                        <div class="header-value" id="celebrationScoreValue">0</div>
+                    </div>
+                    
+                    <div id="celebrationBody">
+                        <div class="left-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">WPM</div>
+                                <div class="stat-value" id="celebrationWpm">0</div>
+                            </div>
+                            
+                            <div class="stat-item">
+                                <div class="stat-label">ACCURACY</div>
+                                <div class="stat-value" id="celebrationAccuracy">0%</div>
+                            </div>
+                        </div>
+                        
+                        <div id="rocketIcon">🚀</div>
+                        
+                        <div class="bottom-stats">
+                            <div class="bottom-stats-left">
+                                <div class="bottom-stat-label">Incorrect attempts</div>
+                                <div class="bottom-stat-label">Missed attempts</div>
+                            </div>
+                            <div class="bottom-stats-right">
+                                <div class="bottom-stat-value" id="celebrationIncorrect">0</div>
+                                <div class="bottom-stat-value" id="celebrationMissed">0</div>
+                            </div>
+                        </div>
+                        
+                        <div class="graph-container">
+                            <canvas id="performanceGraph" width="520" height="300"></canvas>
+                            <div class="graph-labels">
+                                <div class="graph-time-label start" id="graphStartTime">0:00</div>
+                                <div class="graph-time-label center" id="graphCenterTime">(15 min)</div>
+                                <div class="graph-time-label end" id="graphEndTime">0:15</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 8 empty divs needed for the 3D effect -->
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
     </div>
 
     <!-- Pause Overlay -->
@@ -1754,7 +2180,20 @@
             completedChallenges: [],
             isMathMode: false,
             currentMathQuestion: null,
-            isLetterMode: false
+            isLetterMode: false,
+            celebrationShown: false,
+            // Stats tracking for celebration
+            startTime: null,
+            totalCharactersTyped: 0,
+            correctCharacters: 0,
+            incorrectAttempts: 0,
+            missedWords: 0,
+            fastestWordTime: null,
+            wordStartTime: null,
+            // Performance history for graph (track WPM and accuracy over time)
+            wpmHistory: [],
+            accuracyHistory: [],
+            lastPerformanceCheck: null
         };
 
         // Challenge sentences for milestone scores
@@ -1951,7 +2390,9 @@
                     this.isLetter = true;
                     this.isUfo = false;
                     
-                    this.x = Math.random() * (window.innerWidth - 100);
+                    // Estimate width for single letter (approx 100px)
+                    const estimatedWidth = 100;
+                    this.x = Math.random() * (window.innerWidth - estimatedWidth);
                     this.y = 0;
                     // Slow speed like easy mode
                     this.speedY = 0.3 * (0.8 + Math.random() * 0.4);
@@ -1989,7 +2430,9 @@
                     this.emoji = '👾';
                 }
                 
-                this.x = Math.random() * (window.innerWidth - 100);
+                // Estimate word label width (rough: 15px per character + 40px padding)
+                const estimatedWidth = (this.word.length * 15) + 40;
+                this.x = Math.random() * Math.max(100, window.innerWidth - estimatedWidth);
                 this.y = 0;
                 this.speedY = game.invaderSpeed * (0.8 + Math.random() * 0.4);
                 this.speedX = (Math.random() - 0.5) * 0.3;
@@ -2043,8 +2486,15 @@
                 this.y += this.speedY;
                 this.x += this.speedX;
 
-                // Bounce off left and right edges
-                if (this.x < 0 || this.x > window.innerWidth - 100) {
+                // Get actual element width (word label can be wider than emoji)
+                const elementWidth = this.element.offsetWidth || 100;
+                
+                // Bounce off left and right edges with proper boundary checking
+                if (this.x < 0) {
+                    this.x = 0;
+                    this.speedX *= -1;
+                } else if (this.x + elementWidth > window.innerWidth) {
+                    this.x = window.innerWidth - elementWidth;
                     this.speedX *= -1;
                 }
 
@@ -2280,8 +2730,9 @@
             invader.displayWord = mathQuestion.question; // But we display the question
             invader.isMathQuestion = true;
             
-            // Position in center horizontally
-            invader.x = (window.innerWidth / 2) - 25;
+            // Position in center horizontally (estimate label width for centering)
+            const estimatedWidth = (mathQuestion.question.length * 15) + 40;
+            invader.x = Math.max(0, (window.innerWidth / 2) - (estimatedWidth / 2));
             
             // Update the invader element to show the question
             const existingElement = document.querySelector('.invader');
@@ -2369,9 +2820,18 @@
         function checkChallengeMilestone() {
             const isMobile = window.matchMedia("(max-width: 768px)").matches;
             
-            // Check for letter mode at 900
-            if (game.score >= 900 && !game.isLetterMode && !game.isMathMode) {
+            // Check for celebration at 1000
+            if (game.score >= 1000 && !game.celebrationShown) {
+                console.log('🎉 Score 1000 reached! Showing celebration...');
+                game.celebrationShown = true;
+                showCelebration();
+                return;
+            }
+            
+            // Check for letter mode at 900 (disable math mode first)
+            if (game.score >= 900 && !game.isLetterMode) {
                 game.isLetterMode = true;
+                game.isMathMode = false;  // Disable math mode
                 
                 // Switch back to letter keyboard on mobile if it was number keyboard
                 if (isMobile) {
@@ -2389,8 +2849,8 @@
                 return;
             }
             
-            // Check for math mode at 800
-            if (game.score >= 800 && !game.isMathMode) {
+            // Check for math mode at 800 (only if not yet in letter mode)
+            if (game.score >= 800 && game.score < 900 && !game.isMathMode) {
                 game.isMathMode = true;
                 
                 // Switch keyboards on mobile
@@ -2495,8 +2955,8 @@
             if (game.currentInput && game.currentInput.length > 0) {
                 inputDisplay.classList.add('active');
                 
-                if (game.targetInvader && game.targetInvader.word) {
-                    // Show target word with progress
+                if (game.targetInvader && game.targetInvader.word && !game.isMathMode) {
+                    // Show target word with progress (NOT in math mode to avoid revealing answer)
                     const targetWord = game.targetInvader.word;
                     const typed = game.currentInput;
                     
@@ -2510,7 +2970,7 @@
                     }
                     inputDisplay.innerHTML = html;
                 } else {
-                    // Just show what's being typed (no target yet)
+                    // Just show what's being typed (no target yet, or in math mode)
                     inputDisplay.innerHTML = `<span class="typed">${game.currentInput}</span>`;
                 }
             } else {
@@ -2646,12 +3106,18 @@
             } else if (e.key.length === 1 && /[a-z0-9]/i.test(e.key)) {
                 const newInput = game.currentInput + e.key.toLowerCase();
                 
+                // Track character typed
+                game.totalCharactersTyped++;
+                
                 // Check if any invader word starts with this input
                 const hasMatch = game.invaders.some(
                     inv => !inv.isDying && inv.word.startsWith(newInput)
                 );
                 
                 if (!hasMatch) {
+                    // Track incorrect attempt
+                    game.incorrectAttempts++;
+                    
                     // Play error sound and reset input completely
                     playErrorSound();
                     game.currentInput = '';
@@ -2671,6 +3137,14 @@
                     return;
                 }
                 
+                // Track correct character
+                game.correctCharacters++;
+                
+                // Start word timer if this is first character of new word
+                if (game.currentInput === '' || !game.wordStartTime) {
+                    game.wordStartTime = Date.now();
+                }
+                
                 game.currentInput = newInput;
                 mobileInput.value = newInput;
                 
@@ -2680,6 +3154,15 @@
                 );
                 
                 if (matchedInvader) {
+                    // Track fastest word time
+                    if (game.wordStartTime) {
+                        const wordTime = Date.now() - game.wordStartTime;
+                        if (!game.fastestWordTime || wordTime < game.fastestWordTime) {
+                            game.fastestWordTime = wordTime;
+                        }
+                        game.wordStartTime = null;
+                    }
+                    
                     // Play success sound
                     playSuccessSound();
                     
@@ -2778,7 +3261,14 @@
                 // Update invaders
                 game.invaders = game.invaders.filter(invader => {
                     invader.update();
-                    return invader.y < window.innerHeight + 100;
+                    if (invader.y >= window.innerHeight + 100) {
+                        // Track missed word
+                        if (!invader.isDying) {
+                            game.missedWords++;
+                        }
+                        return false;
+                    }
+                    return true;
                 });
 
                 // Update bullets
@@ -3114,6 +3604,22 @@
             game.invaderSpeed = settings.invaderSpeed;
             game.maxInvaders = settings.maxInvaders;
             
+            // Reset celebration and stats tracking
+            game.celebrationShown = false;
+            game.isMathMode = false;
+            game.isLetterMode = false;
+            game.completedChallenges = [];
+            game.startTime = Date.now();
+            game.totalCharactersTyped = 0;
+            game.correctCharacters = 0;
+            game.incorrectAttempts = 0;
+            game.missedWords = 0;
+            game.fastestWordTime = null;
+            game.wordStartTime = null;
+            game.wpmHistory = [];
+            game.accuracyHistory = [];
+            game.lastPerformanceCheck = Date.now();
+            
             // Clear mobile input value
             mobileInput.value = '';
             
@@ -3171,6 +3677,296 @@
         ];
 
         // Toggle pause
+        // Show celebration screen at score 1000
+        function showCelebration() {
+            game.isPaused = true;
+            game.isGameOver = true; // Stop the game loop
+            
+            // Hide the game container
+            document.getElementById('gameContainer').classList.add('hidden');
+            
+            // Clear all invaders and bullets
+            game.invaders.forEach(inv => {
+                if (inv.element) inv.element.remove();
+            });
+            game.bullets.forEach(bullet => {
+                if (bullet.element) bullet.element.remove();
+            });
+            game.invaders = [];
+            game.bullets = [];
+            
+            // Calculate stats
+            const totalTimeSeconds = (Date.now() - game.startTime) / 1000;
+            const totalTimeMinutes = totalTimeSeconds / 60;
+            
+            // WPM calculation (assuming average 5 characters per word)
+            const wordsTyped = game.correctCharacters / 5;
+            const wpm = Math.round(wordsTyped / totalTimeMinutes);
+            
+            // Accuracy calculation
+            const totalAttempts = game.correctCharacters + game.incorrectAttempts;
+            const accuracy = totalAttempts > 0 ? Math.round((game.correctCharacters / totalAttempts) * 100) : 100;
+            
+            // Determine player rank based on WPM and Accuracy
+            let rank = 'NOOB';
+            if (wpm >= 40 && accuracy >= 85) {
+                rank = 'PRO';
+            } else if (wpm >= 25 && accuracy >= 70) {
+                rank = 'BASIC';
+            }
+            
+            // Reusable countdown animation function
+            const animateValue = (elementId, finalValue, duration = 2000, suffix = '') => {
+                const element = document.getElementById(elementId);
+                let currentValue = 0;
+                const steps = 60;
+                const increment = finalValue / steps;
+                const stepDuration = duration / steps;
+                
+                const countInterval = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= finalValue) {
+                        currentValue = finalValue;
+                        clearInterval(countInterval);
+                    }
+                    element.textContent = Math.floor(currentValue) + suffix;
+                }, stepDuration);
+            };
+            
+            // Update celebration screen with countdown animations
+            document.getElementById('playerRank').textContent = rank;
+            
+            // Animate all numeric values
+            animateValue('celebrationScoreValue', game.score, 2000, '');
+            animateValue('celebrationWpm', wpm, 2000, '');
+            animateValue('celebrationAccuracy', accuracy, 2000, '%');
+            animateValue('celebrationIncorrect', game.incorrectAttempts, 2000, '');
+            animateValue('celebrationMissed', game.missedWords, 2000, '');
+            
+            // Update graph time labels with actual clock times
+            const startDate = new Date(game.startTime);
+            const endDate = new Date();
+            
+            // Format times as HH:MM or H:MM
+            const formatTime = (date) => {
+                const hours = date.getHours();
+                const minutes = date.getMinutes();
+                return `${hours}:${minutes.toString().padStart(2, '0')}`;
+            };
+            
+            const endMinutes = Math.floor(totalTimeMinutes);
+            document.getElementById('graphStartTime').textContent = formatTime(startDate);
+            document.getElementById('graphCenterTime').textContent = `(${endMinutes} min)`;
+            document.getElementById('graphEndTime').textContent = formatTime(endDate);
+            
+            // Hide keyboard on mobile/tablet
+            const isMobile = window.matchMedia("(max-width: 768px)").matches;
+            if (isMobile) {
+                document.getElementById('onScreenKeyboard').style.display = 'none';
+                document.getElementById('numberKeyboard').classList.remove('show');
+            }
+            
+            // Hide default top bar
+            document.getElementById('topbar').classList.remove('show');
+            
+            // Draw performance graph
+            // Draw performance graph first
+            drawPerformanceGraph();
+            
+            // Show celebration screen
+            document.getElementById('celebrationScreen').style.display = 'flex';
+            
+            // Initialize 3D Hover Effect for Celebration Card (after showing and drawing)
+            setTimeout(() => {
+                const celebrationCardWrapper = document.getElementById('celebrationCardWrapper');
+                if (celebrationCardWrapper) {
+                    celebrationCardWrapper.addEventListener('mousemove', (e) => {
+                        const rect = celebrationCardWrapper.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        const centerX = rect.width / 2;
+                        const centerY = rect.height / 2;
+                        
+                        // Calculate rotation (inverted for natural feel)
+                        const rotateX = ((y - centerY) / centerY) * -15; // Max 15 degrees
+                        const rotateY = ((x - centerX) / centerX) * 15; // Max 15 degrees
+                        
+                        celebrationCardWrapper.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                    });
+                    
+                    celebrationCardWrapper.addEventListener('mouseleave', () => {
+                        celebrationCardWrapper.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                    });
+                }
+            }, 100);
+        }
+        
+        function drawPerformanceGraph() {
+            const canvas = document.getElementById('performanceGraph');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Clear canvas (transparent background)
+            ctx.clearRect(0, 0, width, height);
+            
+            // Use actual history or generate sample data
+            let wpmData = game.wpmHistory.length > 0 ? game.wpmHistory : [];
+            let accuracyData = game.accuracyHistory.length > 0 ? game.accuracyHistory : [];
+            
+            if (wpmData.length < 2) {
+                // Generate sample data for preview
+                const result = generateSampleDualData();
+                wpmData = result.wpm;
+                accuracyData = result.accuracy;
+            }
+            
+            const points = wpmData.length;
+            const padding = 0;
+            const graphWidth = width - padding * 2;
+            const graphHeight = height - 40; // Bottom padding for labels
+            
+            // Create paths for both lines
+            const accuracyPath = [];
+            const wpmPath = [];
+            
+            for (let i = 0; i < points; i++) {
+                const x = padding + (i / (points - 1)) * graphWidth;
+                
+                const accValue = accuracyData[i] / 100;
+                const accY = height - (accValue * graphHeight);
+                accuracyPath.push({ x, y: accY });
+                
+                const wpmValue = wpmData[i] / 100;
+                const wpmY = height - (wpmValue * graphHeight);
+                wpmPath.push({ x, y: wpmY });
+            }
+            
+            // Animation setup - no delay
+            const animationDuration = 2000; // 2 seconds
+            
+            const startTime = Date.now();
+            
+            function animate() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / animationDuration, 1);
+                
+                // Clear canvas
+                ctx.clearRect(0, 0, width, height);
+                
+                // Draw Accuracy (green) - back layer
+                drawAnimatedPath(ctx, accuracyPath, progress, '#10b981', 'rgba(16, 185, 129, 0.7)', 'rgba(16, 185, 129, 0.2)', height);
+                
+                // Draw WPM (yellow) - front layer
+                drawAnimatedPath(ctx, wpmPath, progress, '#FFD400', 'rgba(255, 212, 0, 0.7)', 'rgba(255, 212, 0, 0.2)', height);
+                
+                // Continue animation if not complete
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            }
+            
+            // Start animation immediately
+            animate();
+        }
+        
+        function drawAnimatedPath(ctx, path, progress, strokeColor, fillTop, fillBottom, height) {
+            if (path.length < 2) return;
+            
+            // Calculate total path length
+            let totalLength = 0;
+            for (let i = 1; i < path.length; i++) {
+                const dx = path[i].x - path[i - 1].x;
+                const dy = path[i].y - path[i - 1].y;
+                totalLength += Math.sqrt(dx * dx + dy * dy);
+            }
+            
+            const targetLength = totalLength * progress;
+            
+            // Find points along the path up to targetLength
+            let currentLength = 0;
+            const visiblePath = [path[0]];
+            
+            for (let i = 1; i < path.length; i++) {
+                const dx = path[i].x - path[i - 1].x;
+                const dy = path[i].y - path[i - 1].y;
+                const segmentLength = Math.sqrt(dx * dx + dy * dy);
+                
+                if (currentLength + segmentLength <= targetLength) {
+                    visiblePath.push(path[i]);
+                    currentLength += segmentLength;
+                } else {
+                    // Partial segment
+                    const remaining = targetLength - currentLength;
+                    const ratio = remaining / segmentLength;
+                    const x = path[i - 1].x + dx * ratio;
+                    const y = path[i - 1].y + dy * ratio;
+                    visiblePath.push({ x, y });
+                    break;
+                }
+            }
+            
+            if (visiblePath.length < 2) return;
+            
+            // Draw filled area
+            ctx.beginPath();
+            ctx.moveTo(visiblePath[0].x, height);
+            visiblePath.forEach(point => {
+                ctx.lineTo(point.x, point.y);
+            });
+            ctx.lineTo(visiblePath[visiblePath.length - 1].x, height);
+            ctx.closePath();
+            
+            // Fill with gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, height);
+            gradient.addColorStop(0, fillTop);
+            gradient.addColorStop(1, fillBottom);
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            
+            // Draw stroke line
+            ctx.beginPath();
+            ctx.moveTo(visiblePath[0].x, visiblePath[0].y);
+            for (let i = 1; i < visiblePath.length; i++) {
+                ctx.lineTo(visiblePath[i].x, visiblePath[i].y);
+            }
+            ctx.strokeStyle = strokeColor;
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.stroke();
+        }
+        
+        function generateSampleDualData() {
+            const points = 20;
+            const wpm = [];
+            const accuracy = [];
+            
+            // Calculate actual final WPM and accuracy
+            const totalTimeMinutes = (Date.now() - game.startTime) / 60000;
+            const finalWpm = Math.round((game.correctCharacters / 5) / totalTimeMinutes);
+            const totalAttempts = game.correctCharacters + game.incorrectAttempts;
+            const finalAccuracy = totalAttempts > 0 ? Math.round((game.correctCharacters / totalAttempts) * 100) : 100;
+            
+            for (let i = 0; i < points; i++) {
+                const progress = i / (points - 1);
+                
+                // WPM starts lower and increases with variance
+                const wpmVariance = (Math.random() - 0.5) * 8;
+                const wpmValue = Math.max(10, finalWpm * (0.5 + progress * 0.5) + wpmVariance);
+                wpm.push(Math.round(wpmValue));
+                
+                // Accuracy starts higher and stabilizes
+                const accuracyVariance = (Math.random() - 0.5) * 5;
+                const accuracyValue = Math.max(60, Math.min(100, finalAccuracy * (0.85 + progress * 0.15) + accuracyVariance));
+                accuracy.push(Math.round(accuracyValue));
+            }
+            
+            return { wpm, accuracy };
+        }
+
         function togglePause() {
             game.isPaused = !game.isPaused;
             const icon = pauseBtn.querySelector('.material-symbols-outlined');
@@ -3228,6 +4024,75 @@
         restartBtn.addEventListener('click', restartGame);
         pauseBtn.addEventListener('click', togglePause);
         
+        // Celebration top bar buttons
+        document.getElementById('celebrationTopShareBtn').addEventListener('click', async () => {
+            const statsText = `🎮 Type to Shoot Game Results 🎮
+
+Score: ${game.score}
+WPM: ${document.getElementById('celebrationWpm').textContent}
+Accuracy: ${document.getElementById('celebrationAccuracy').textContent}
+Rank: ${document.getElementById('playerRank').textContent}
+
+Play now at: ${window.location.href}`;
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'Type to Shoot - My Results',
+                        text: statsText
+                    });
+                } catch (err) {
+                    if (err.name !== 'AbortError') {
+                        console.log('Share failed:', err);
+                        copyToClipboard(statsText);
+                    }
+                }
+            } else {
+                copyToClipboard(statsText);
+            }
+        });
+        
+        document.getElementById('celebrationTopHomeBtn').addEventListener('click', () => {
+            document.getElementById('celebrationScreen').style.display = 'none';
+            gameContainer.classList.add('hidden');
+            topbar.classList.remove('show');
+            timeSelection.classList.remove('hidden');
+            
+            // Clear invaders and bullets
+            game.invaders.forEach(z => z.element.remove());
+            game.bullets.forEach(b => b.remove());
+            game.invaders = [];
+            game.bullets = [];
+        });
+        
+        function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Results copied to clipboard!');
+                }).catch(() => {
+                    fallbackCopy(text);
+                });
+            } else {
+                fallbackCopy(text);
+            }
+        }
+        
+        function fallbackCopy(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                alert('Results copied to clipboard!');
+            } catch (err) {
+                alert('Failed to copy results');
+            }
+            document.body.removeChild(textArea);
+        }
+        
         // Restart button during game - restarts immediately with same difficulty
         restartGameBtn.addEventListener('click', () => {
             const currentDifficulty = game.difficulty;
@@ -3238,6 +4103,25 @@
             
             // Restart with same difficulty
             startGame(currentDifficulty);
+        });
+        
+        // Home button - return to main menu
+        const homeBtn = document.getElementById('homeBtn');
+        homeBtn.addEventListener('click', () => {
+            // Clear invaders and bullets
+            game.invaders.forEach(z => z.element.remove());
+            game.bullets.forEach(b => b.remove());
+            game.invaders = [];
+            game.bullets = [];
+            
+            // Hide game container and show time selection
+            gameContainer.classList.add('hidden');
+            topbar.classList.remove('show');
+            timeSelection.classList.remove('hidden');
+            
+            // Reset game state
+            game.isGameOver = false;
+            game.isPaused = false;
         });
         
         // Difficulty display click to cycle through levels
@@ -3299,7 +4183,7 @@
         // Click on game area to pause/unpause
         gameContainer.addEventListener('click', (e) => {
             // Don't trigger pause if clicking on buttons, keyboard, or topbar
-            if (e.target.closest('#pauseBtn, #restartGameBtn, .key, #onScreenKeyboard, #topbar')) {
+            if (e.target.closest('#pauseBtn, #restartGameBtn, #homeBtn, #celebrationPreviewBtn, .key, #onScreenKeyboard, #topbar')) {
                 return;
             }
             
@@ -3540,6 +4424,48 @@
         let speedRoundChecker = null;
         let lastScore = 0;
         
+        const autoTestToggle = document.getElementById('autoTestToggle');
+        
+        autoTestToggle.addEventListener('click', () => {
+            autoTestEnabled = !autoTestEnabled;
+            
+            if (autoTestEnabled) {
+                autoTestToggle.style.background = '#10b981';
+                autoTestToggle.innerHTML = '<span style="font-size: 14px;">🤖 ON</span>';
+                startAutoTest();
+            } else {
+                autoTestToggle.style.background = '#3b82f6';
+                autoTestToggle.innerHTML = '<span style="font-size: 14px;">🤖 TEST</span>';
+                stopAutoTest();
+            }
+        });
+        
+        // Celebration preview button for testing
+        const celebrationPreviewBtn = document.getElementById('celebrationPreviewBtn');
+        celebrationPreviewBtn.addEventListener('click', () => {
+            // Toggle celebration screen
+            const celebrationScreen = document.getElementById('celebrationScreen');
+            if (celebrationScreen.style.display === 'flex') {
+                celebrationScreen.style.display = 'none';
+                // Show default top bar again
+                document.getElementById('topbar').classList.add('show');
+                // Show keyboard again on mobile if it was hidden
+                const isMobile = window.matchMedia("(max-width: 768px)").matches;
+                if (isMobile && !game.isMathMode) {
+                    document.getElementById('onScreenKeyboard').style.display = 'flex';
+                }
+            } else {
+                // Set some sample data for preview
+                game.score = Math.floor(Math.random() * 1000);
+                game.startTime = Date.now() - (5 * 60 * 1000); // 5 minutes ago
+                game.correctCharacters = 250 + Math.floor(Math.random() * 200);
+                game.incorrectAttempts = Math.floor(Math.random() * 50);
+                game.missedWords = Math.floor(Math.random() * 30);
+                
+                showCelebration();
+            }
+        });
+        
         function startAutoTest() {
             console.log('🤖 Auto-Test Mode ENABLED');
             console.log('📋 Test Plan:');
@@ -3672,14 +4598,15 @@
                 wordEl.className = 'floating-word';
                 wordEl.textContent = word;
                 
-                // Random horizontal position (like invaders)
-                const startX = Math.random() * (window.innerWidth - 200);
+                // Estimate width for positioning (will get actual width after append)
+                const estimatedWidth = (word.length * 15) + 40;
+                const startX = Math.random() * Math.max(100, window.innerWidth - estimatedWidth);
                 wordEl.style.left = startX + 'px';
                 wordEl.style.top = '-60px';
                 
                 // Movement speeds matching game invaders (0.8-1.2 speed range for medium difficulty)
                 const speedY = 0.8 * (0.8 + Math.random() * 0.4); // pixels per frame
-                const speedX = (Math.random() - 0.5) * 0.3; // slight horizontal drift
+                let speedX = (Math.random() - 0.5) * 0.3; // slight horizontal drift
                 
                 let posY = -60;
                 let posX = startX;
@@ -3697,9 +4624,16 @@
                     posY += speedY;
                     posX += speedX;
                     
-                    // Bounce off edges like invaders
-                    if (posX < 0 || posX > window.innerWidth - 200) {
-                        posX = Math.max(0, Math.min(posX, window.innerWidth - 200));
+                    // Get actual element width for proper boundary checking
+                    const elementWidth = wordEl.offsetWidth || estimatedWidth;
+                    
+                    // Bounce off edges with proper boundary checking
+                    if (posX < 0) {
+                        posX = 0;
+                        speedX *= -1;
+                    } else if (posX + elementWidth > window.innerWidth) {
+                        posX = window.innerWidth - elementWidth;
+                        speedX *= -1;
                     }
                     
                     wordEl.style.top = posY + 'px';
@@ -3721,6 +4655,25 @@
         
         // Start floating words when page loads
         createFloatingWords();
+
+        // Handle window resize to keep invaders in bounds
+        window.addEventListener('resize', () => {
+            game.invaders.forEach(invader => {
+                if (!invader.isDying && invader.element) {
+                    const elementWidth = invader.element.offsetWidth || 100;
+                    
+                    // Adjust position if out of bounds
+                    if (invader.x < 0) {
+                        invader.x = 0;
+                    } else if (invader.x + elementWidth > window.innerWidth) {
+                        invader.x = window.innerWidth - elementWidth;
+                    }
+                    
+                    // Update element position
+                    invader.element.style.left = invader.x + 'px';
+                }
+            });
+        });
 
         // Initialize game - show start screen
         // Game starts when user clicks start button
