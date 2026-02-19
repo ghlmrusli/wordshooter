@@ -802,6 +802,35 @@
             transform: scale(1.05);
         }
 
+        #celebrationPreviewBtn {
+            background: rgba(255, 215, 0, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #celebrationPreviewBtn .material-symbols-outlined {
+            font-size: 18px;
+            line-height: 1;
+            color: #FFD700;
+        }
+
+        #celebrationPreviewBtn:hover {
+            background: rgba(255, 215, 0, 0.25);
+            transform: scale(1.05);
+        }
+
         #pauseBtn {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -1124,14 +1153,9 @@
         }
 
         .header-value {
-            font-size: 36px;
+            font-size: 30px;
             font-family: 'Press Start 2P', cursive;
-            /* Orange-to-red gradient similar to game title */
-            background: linear-gradient(135deg, #ff8c00 0%, #ff0000 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 8px rgba(255, 140, 0, 0.2);
+            color: #ffffff;
             line-height: 1;
         }
 
@@ -1226,6 +1250,53 @@
 
         .graph-container {
             margin-top: 8px;
+        }
+
+        #scoreboardLink {
+            text-align: center;
+            padding: 12px 0 4px;
+        }
+
+        #scoreboardLink span {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.2;
+        }
+
+        #graphViewToggle {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        #btnViewToggle {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            color: rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 6px 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        #btnViewToggle:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.3);
+            color: #ffffff;
+            transform: scale(1.05);
+        }
+
+        #speedometerCanvas {
+            width: 100%;
+            display: block;
+        }
+
+        #graphView, #speedoView {
         }
 
         #performanceGraph {
@@ -1713,31 +1784,63 @@
             max-width: calc(100vw - 88px); /* 40px outer padding + 24px inner padding x2 */
         }
 
+        .difficulty-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
         .difficulty-option {
             background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
-            padding: 12px 14px;  /* Match tablet size */
+            padding: 12px 14px;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .difficulty-name {
+            font-size: 13px;
+            font-weight: bold;
+            color: white;
+            margin: 0;
+            padding: 0;
+            line-height: 1.2;
+        }
+
+        .difficulty-desc {
+            font-size: 8px;
+            color: rgba(255, 255, 255, 0.4);
+            margin: 0;
+            padding: 0;
+            line-height: 1.2;
+        }
+
+        .mode-emoji {
+            font-size: 22px;
+            opacity: 0;
+            transform: scale(0.6);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            flex-shrink: 0;
+            line-height: 1;
+            margin-left: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .difficulty-option:hover .mode-emoji {
+            opacity: 1;
+            transform: scale(1);
         }
 
         .difficulty-option:hover {
             background: rgba(78, 205, 196, 0.2);
             border-color: rgba(78, 205, 196, 0.6);
             transform: scale(1.05);
-        }
-
-        .difficulty-name {
-            font-size: 13px;  /* Match tablet size */
-            font-weight: bold;
-            color: white;
-            margin-bottom: 5px;
-        }
-
-        .difficulty-desc {
-            font-size: 9px;  /* Match tablet size */
-            color: rgba(255, 255, 255, 0.6);
         }
 
         /* Sentences Mode Fixed Overlay */
@@ -2128,8 +2231,8 @@
             <button id="autoTestToggle" style="background: #3b82f6; display: none;" title="Toggle Auto-Test Mode">
                 <span style="font-size: 14px;">🤖 TEST</span>
             </button>
-            <button id="celebrationPreviewBtn" style="background: #10b981; display: none;" title="Preview Celebration">
-                <span style="font-size: 14px;">🎉</span>
+            <button id="celebrationPreviewBtn" title="Preview Celebration" style="display:none;">
+                <span class="material-symbols-outlined">emoji_events</span>
             </button>
             <button id="pauseBtn"><span class="material-symbols-outlined">pause</span></button>
             <button id="restartGameBtn"><span class="material-symbols-outlined">refresh</span></button>
@@ -2215,23 +2318,35 @@
             
             <div id="difficultyOptions">
                 <div class="difficulty-option" data-mode="words">
-                    <div class="difficulty-name">Words</div>
-                    <div class="difficulty-desc">Quick reflexes</div>
+                    <div class="difficulty-text">
+                        <div class="difficulty-name">Words</div>
+                        <div class="difficulty-desc">Quick reflexes</div>
+                    </div>
+                    <span class="mode-emoji">👾</span>
                 </div>
                 
                 <div class="difficulty-option" data-mode="sentences">
-                    <div class="difficulty-name">Sentences</div>
-                    <div class="difficulty-desc">Rhythm flow</div>
+                    <div class="difficulty-text">
+                        <div class="difficulty-name">Sentences</div>
+                        <div class="difficulty-desc">Rhythm flow</div>
+                    </div>
+                    <span class="mode-emoji">🛸</span>
                 </div>
                 
                 <div class="difficulty-option" data-mode="math">
-                    <div class="difficulty-name">Math</div>
-                    <div class="difficulty-desc">Mental agility</div>
+                    <div class="difficulty-text">
+                        <div class="difficulty-name">Math</div>
+                        <div class="difficulty-desc">Mental agility</div>
+                    </div>
+                    <span class="mode-emoji">👽</span>
                 </div>
                 
                 <div class="difficulty-option" data-mode="journey">
-                    <div class="difficulty-name">Journey</div>
-                    <div class="difficulty-desc">Full mastery</div>
+                    <div class="difficulty-text">
+                        <div class="difficulty-name">Journey</div>
+                        <div class="difficulty-desc">Full mastery</div>
+                    </div>
+                    <span class="mode-emoji">🪐</span>
                 </div>
             </div>
         </div>
@@ -2263,6 +2378,9 @@
         <div id="celebrationTopBar">
             <div class="celebration-title">Word Shooter!</div>
             <div class="celebration-buttons">
+                <button id="celebrationShuffleBtn" class="celebration-top-btn" title="Shuffle test data" style="display:none;">
+                    <span class="material-symbols-outlined">shuffle</span>
+                </button>
                 <button id="celebrationTopHomeBtn" class="celebration-top-btn" title="Home">
                     <span class="material-symbols-outlined">home</span>
                 </button>
@@ -2309,15 +2427,26 @@
                         </div>
                         
                         <div class="graph-container">
-                            <canvas id="performanceGraph" width="520" height="300"></canvas>
-                            <div class="graph-labels">
-                                <div class="graph-time-label start" id="graphStartTime">0:00</div>
-                                <div class="graph-time-label center" id="graphCenterTime">(15 min)</div>
-                                <div class="graph-time-label end" id="graphEndTime">0:15</div>
+                            <div id="graphViewToggle">
+                                <button id="btnViewToggle" onclick="toggleGraphView()">Click me</button>
                             </div>
-                            <div id="graphLegend" style="font-size:8px; font-family:'Press Start 2P',cursive; text-align:center; margin-top:6px; color:rgba(255,255,255,0.5);">
-                                <span style="color:#FFD400">■ WPM</span> &nbsp; <span style="color:#10b981">■ Accuracy</span>
+                            <div id="graphView" style="margin-top:6px;">
+                                <canvas id="performanceGraph" width="520" height="300"></canvas>
+                                <div class="graph-labels">
+                                    <div class="graph-time-label start" id="graphStartTime">0:00</div>
+                                    <div class="graph-time-label center" id="graphCenterTime">(15 min)</div>
+                                    <div class="graph-time-label end" id="graphEndTime">0:15</div>
+                                </div>
+                                <div id="graphLegend" style="font-size:8px; font-family:'Press Start 2P',cursive; text-align:center; margin-top:6px; color:rgba(255,255,255,0.5);">
+                                    <span style="color:#FFD400">■ WPM</span> &nbsp; <span style="color:#10b981">■ Accuracy</span>
+                                </div>
                             </div>
+                            <div id="speedoView" style="display:none; margin-top:6px;">
+                                <canvas id="speedometerCanvas" width="520" height="300"></canvas>
+                            </div>
+                        </div>
+                        <div id="scoreboardLink">
+                            <span>Add to scoreboard (soon)</span>
                         </div>
                     </div>
                 </div>
@@ -2521,8 +2650,6 @@
                 const newMode = getJourneyPhaseMode();
 
                 // Set speed multiplier for this phase
-                // Phase speeds: 1=words 2x | 2=sentences 18s | 3=letters 2x | 4=math 2x
-                // 5=words 3x | 6=sentences 12s | 7=letters 3x | 8=math 3x
                 const phaseSpeed = { 1:2, 2:1, 3:2, 4:2, 5:3, 6:1, 7:3, 8:3 };
                 speedMultiplier = phaseSpeed[newPhase] || 1;
                 speedDisplay.textContent = speedMultiplier + 'x';
@@ -2534,6 +2661,7 @@
                 game.isMathMode = (newMode === 'math');
 
                 const phaseNames = {
+                    1: 'WORDS (2x)',
                     2: 'SENTENCES (18s)',
                     3: 'LETTERS (2x)',
                     4: 'MATH (2x)',
@@ -2551,6 +2679,22 @@
                     7: '#00D4FF',
                     8: '#E67E22'
                 };
+
+                // Score regression (dropped to lower phase) — switch mode silently, no overlay
+                if (newPhase < oldPhase) {
+                    game.isSentenceActive = false;
+                    game.invaders.forEach(inv => { if (inv.element) inv.element.remove(); });
+                    game.invaders = [];
+                    game.isMathMode = (newMode === 'math');
+                    game.isLetterMode = (newPhase === 3 || newPhase === 7);
+                    // Update spacebar visibility on mobile
+                    const isMobileSilent = (window.matchMedia("(max-width: 1024px)").matches || window.matchMedia("(pointer: coarse)").matches);
+                    if (isMobileSilent) {
+                        const spacebarRow = document.getElementById('spacebarRow');
+                        if (spacebarRow) spacebarRow.style.display = newMode === 'sentences' ? 'flex' : 'none';
+                    }
+                    return;
+                }
 
                 triggerPhaseTransition(newMode, newPhase, phaseNames[newPhase] || '', phaseColors[newPhase] || '#fff');
             }
@@ -3470,17 +3614,18 @@
         // Update score based on word length
         // Animated counter function
         function animateValue(element, start, end, duration) {
+            const el = typeof element === 'string' ? document.getElementById(element) : element;
+            if (!el) return;
             let startTimestamp = null;
             const step = (timestamp) => {
                 if (!startTimestamp) startTimestamp = timestamp;
                 const progress = Math.min((timestamp - startTimestamp) / duration, 1);
                 const value = Math.floor(progress * (end - start) + start);
-                element.textContent = value;
+                el.textContent = value;
                 if (progress < 1) {
                     window.requestAnimationFrame(step);
                 } else {
-                    // Ensure final value is set exactly
-                    element.textContent = end;
+                    el.textContent = end;
                 }
             };
             window.requestAnimationFrame(step);
@@ -4645,10 +4790,11 @@
                     numberKeyboard.classList.remove('show');
                 }
 
-                // Show spacebar row for sentences mode (standalone or journey)
+                // Show spacebar row only for sentences mode (standalone) or journey sentences phases (2 and 6)
                 const spacebarRow = document.getElementById('spacebarRow');
                 if (spacebarRow) {
-                    spacebarRow.style.display = (mode === 'sentences' || mode === 'journey') ? 'flex' : 'none';
+                    const journeySentencesPhase = mode === 'journey' && (getJourneyPhaseNumber() === 2 || getJourneyPhaseNumber() === 6);
+                    spacebarRow.style.display = (mode === 'sentences' || journeySentencesPhase) ? 'flex' : 'none';
                 }
 
                 // Mobile - use the hidden input to capture keyboard
@@ -4692,23 +4838,6 @@
             const totalTimeSeconds = (Date.now() - game.startTime) / 1000;
             const totalTimeMinutes = totalTimeSeconds / 60;
             
-            // Reusable countdown animation function
-            const animateValue = (elementId, finalValue, duration = 2000, suffix = '') => {
-                const element = document.getElementById(elementId);
-                let currentValue = 0;
-                const steps = 60;
-                const increment = finalValue / steps;
-                const stepDuration = duration / steps;
-                const countInterval = setInterval(() => {
-                    currentValue += increment;
-                    if (currentValue >= finalValue) {
-                        currentValue = finalValue;
-                        clearInterval(countInterval);
-                    }
-                    element.textContent = Math.floor(currentValue) + suffix;
-                }, stepDuration);
-            };
-            
             const isMathModeGame = game.mode === 'math';
             
             if (isMathModeGame) {
@@ -4747,7 +4876,7 @@
                 document.getElementById('celebrationAccuracyLabel').textContent = 'AVG SOLVE';
                 document.getElementById('celebrationIncorrectLabel').textContent = 'Wrong answers';
                 
-                animateValue('celebrationScoreValue', game.score, 2000, '');
+                animateValue('celebrationScoreValue', 0, game.score, 1200);
                 // SPS shown with 2 decimal places - animate numerically then format
                 const spsEl = document.getElementById('celebrationWpm');
                 let spsAnim = 0;
@@ -4762,8 +4891,8 @@
                 document.getElementById('celebrationAccuracy').textContent = avgSolveTime + 's';
                 document.getElementById('celebrationAccuracy').style.color = '#10b981';
                 document.getElementById('celebrationAccuracy').style.textShadow = '0 0 6px rgba(16, 185, 129, 0.2)';
-                animateValue('celebrationIncorrect', wrongAnswers, 2000, '');
-                animateValue('celebrationMissed', game.missedWords, 2000, '');
+                animateValue('celebrationIncorrect', 0, wrongAnswers, 1200);
+                animateValue('celebrationMissed', 0, game.missedWords, 1200);
                 
                 // Graph: SPS over time vs avgSolveTime
                 game._mathGraphMode = true;
@@ -4803,11 +4932,11 @@
                 game._mathGraphMode = false;
                 
                 // Animate all numeric values
-                animateValue('celebrationScoreValue', game.score, 2000, '');
-                animateValue('celebrationWpm', wpm, 2000, '');
-                animateValue('celebrationAccuracy', accuracy, 2000, '%');
-                animateValue('celebrationIncorrect', game.incorrectAttempts, 2000, '');
-                animateValue('celebrationMissed', game.missedWords, 2000, '');
+                animateValue('celebrationScoreValue', 0, game.score, 1200);
+                animateValue('celebrationWpm', 0, wpm, 1200);
+                animateValue('celebrationAccuracy', 0, accuracy, 1200);
+                animateValue('celebrationIncorrect', 0, game.incorrectAttempts, 1200);
+                animateValue('celebrationMissed', 0, game.missedWords, 1200);
             }
             
             // Update graph time labels with actual clock times
@@ -4851,8 +4980,9 @@
             document.getElementById('topbar').classList.remove('show');
             
             // Draw performance graph
-            // Draw performance graph first
             drawPerformanceGraph();
+            // Reset toggle to graph view
+            setGraphView('graph');
             
             // Show celebration screen
             document.getElementById('celebrationScreen').style.display = 'flex';
@@ -4882,6 +5012,185 @@
             }, 100);
         }
         
+        // Toggle between graph and speedometer views
+        let _graphViewCurrent = 'graph';
+
+        function toggleGraphView() {
+            const graphView = document.getElementById('graphView');
+            const speedoView = document.getElementById('speedoView');
+            if (!graphView || !speedoView) return;
+
+            if (_graphViewCurrent === 'graph') {
+                graphView.style.display  = 'none';
+                speedoView.style.display = '';
+                _graphViewCurrent = 'speedo';
+                drawSpeedometer();
+            } else {
+                graphView.style.display  = '';
+                speedoView.style.display = 'none';
+                _graphViewCurrent = 'graph';
+                drawPerformanceGraph();
+            }
+        }
+
+        function setGraphView(view) {
+            const graphView  = document.getElementById('graphView');
+            const speedoView = document.getElementById('speedoView');
+            if (!graphView || !speedoView) return;
+            _graphViewCurrent = view;
+            if (view === 'graph') {
+                graphView.style.display  = '';
+                speedoView.style.display = 'none';
+            } else {
+                graphView.style.display  = 'none';
+                speedoView.style.display = '';
+                drawSpeedometer();
+            }
+        }
+
+        let _speedoRaf = null;
+
+        function drawSpeedometer() {
+            // Cancel any in-progress animation before starting a new one
+            if (_speedoRaf) { cancelAnimationFrame(_speedoRaf); _speedoRaf = null; }
+            const canvas = document.getElementById('speedometerCanvas');
+            if (!canvas) return;
+
+            const dpr       = window.devicePixelRatio || 1;
+            const cssWidth  = canvas.offsetWidth || 520;
+            const GLOW_PAD  = 24;   // extra canvas margin so shadowBlur never clips
+
+            // Geometry based on drawable area (cssWidth - 2*GLOW_PAD)
+            const trackW_pre = 30;
+            const drawW      = cssWidth - GLOW_PAD * 2;
+            const R_pre      = (drawW / 2) - (trackW_pre / 2) - 4;
+            const cy_pre     = R_pre + (trackW_pre / 2) + 4;
+            const cssHeight  = Math.ceil(cy_pre + (trackW_pre / 2) + 4 + GLOW_PAD);
+
+            canvas.width        = cssWidth  * dpr;
+            canvas.height       = cssHeight * dpr;
+            canvas.style.width  = cssWidth  + 'px';
+            canvas.style.height = cssHeight + 'px';
+
+            const ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+            // Shift origin right+down by GLOW_PAD so arc has shadow room on all sides
+            ctx.translate(GLOW_PAD, GLOW_PAD);
+
+            // W/H = drawable area (inside the glow padding)
+            const W = cssWidth - GLOW_PAD * 2;
+            const H = cssHeight - GLOW_PAD;
+
+            // ── Data ─────────────────────────────────────────────────────────
+            const RANKS     = ['NOOB','MEH','BLUR','POWER','WIRA','GEMPAK','ELITE','JAGUH','LEGEND','OTAI'];
+            const SCORE_MAX = 1000;
+            const score     = Math.min(game.score || 0, SCORE_MAX);
+            const rankIndex = score >= 900 ? 9 : score >= 800 ? 8 : score >= 700 ? 7
+                            : score >= 600 ? 6 : score >= 500 ? 5 : score >= 400 ? 4
+                            : score >= 300 ? 3 : score >= 200 ? 2 : score >= 100 ? 1 : 0;
+            const rankLabel   = RANKS[rankIndex];
+            const needleRatio = score / SCORE_MAX;
+
+            // ── Geometry ─────────────────────────────────────────────────────
+            const trackW = 30;
+            const half   = trackW / 2;
+
+            const cx  = W / 2;
+            // R driven by available width. cy then placed so arc top = half + 4px from top.
+            const R   = (W / 2) - half - 4;
+            const cy  = R + half + 4;     // arc top sits at exactly half+4 from canvas top
+
+            const START = Math.PI;
+            const END   = 0;
+
+            // Text anchored at cy — the arc bottom / pivot row
+            const textCy = cy;
+
+            function drawFrame(ratio, glowAlpha) {
+                // Clear full canvas including glow padding (translate is active so offset negatively)
+                ctx.clearRect(-GLOW_PAD, -GLOW_PAD, cssWidth, cssHeight);
+
+                // ── Background arc ────────────────────────────────────────────
+                ctx.beginPath();
+                ctx.arc(cx, cy, R, START, END, false);
+                ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+                ctx.lineWidth   = trackW;
+                ctx.lineCap     = 'round';
+                ctx.stroke();
+
+                // ── Gradient fill arc ─────────────────────────────────────────
+                // Draw ONLY from START to fillEnd — lineCap:round adds the
+                // rounded cap at both ends automatically, no clip needed.
+                if (ratio > 0.001) {
+                    const fillEnd = START + ratio * Math.PI;
+
+                    // Base arc
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, R, START, fillEnd, false);
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth   = trackW;
+                    ctx.lineCap     = 'round';
+                    ctx.stroke();
+
+                    // Glow overlay — fades in after sweep (glowAlpha 0→1)
+                    if (glowAlpha > 0) {
+                        ctx.save();
+                        ctx.globalAlpha = glowAlpha * 0.6;
+                        ctx.shadowColor = 'rgba(255,255,255,1)';
+                        ctx.shadowBlur  = 20;
+                        ctx.beginPath();
+                        ctx.arc(cx, cy, R, START, fillEnd, false);
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth   = trackW;
+                        ctx.lineCap     = 'round';
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                }
+
+                // ── Centre text ───────────────────────────────────────────────
+                ctx.textAlign    = 'center';
+                ctx.textBaseline = 'alphabetic';
+
+                ctx.font         = `bold 11px 'Press Start 2P', monospace`;
+                ctx.fillStyle    = '#ffffff';
+                ctx.shadowColor  = 'rgba(255,255,255,0.25)';
+                ctx.shadowBlur   = 6;
+                ctx.fillText(rankLabel, cx, textCy);
+                ctx.shadowBlur   = 0;
+
+                ctx.font      = `8px 'Press Start 2P', monospace`;
+                ctx.fillStyle = 'rgba(255,255,255,0.45)';
+                ctx.fillText(`${score}/${SCORE_MAX}`, cx, textCy + 18);
+            }
+
+            // ── Two-phase animation: sweep (900ms) then glow fade-in (400ms) ──
+            const sweepDuration = 900;
+            const glowDuration  = 400;
+            const startTime     = performance.now();
+
+            function animate(now) {
+                const elapsed = now - startTime;
+
+                if (elapsed < sweepDuration) {
+                    // Phase 1: sweep
+                    const t     = elapsed / sweepDuration;
+                    const eased = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+                    drawFrame(eased * needleRatio, 0);
+                    _speedoRaf = requestAnimationFrame(animate);
+                } else {
+                    // Phase 2: glow fade-in
+                    const gt      = Math.min((elapsed - sweepDuration) / glowDuration, 1);
+                    const gEased  = gt < 0.5 ? 2*gt*gt : -1+(4-2*gt)*gt;
+                    drawFrame(needleRatio, gEased);
+                    if (gt < 1) { _speedoRaf = requestAnimationFrame(animate); }
+                    else        { _speedoRaf = null; }
+                }
+            }
+
+            _speedoRaf = requestAnimationFrame(animate);
+        }
+
         function drawPerformanceGraph() {
             const canvas = document.getElementById('performanceGraph');
             if (!canvas) return;
@@ -5165,6 +5474,38 @@ Play now at: ${window.location.href}`;
             game.bullets.forEach(b => b.remove());
             game.invaders = [];
             game.bullets = [];
+        });
+
+        document.getElementById('celebrationShuffleBtn').addEventListener('click', () => {
+            const modes = ['words', 'sentences', 'math', 'journey'];
+            game.mode = modes[Math.floor(Math.random() * modes.length)];
+            game._mathGraphMode = game.mode === 'math';
+
+            // Randomise game stats
+            game.score        = 1000 + Math.floor(Math.random() * 4000);
+            game.startTime    = Date.now() - (Math.random() * 20 + 2) * 60 * 1000;
+
+            const totalMins   = (Date.now() - game.startTime) / 60000;
+            game.correctCharacters  = Math.floor(Math.random() * 80 * totalMins * 5 + 100);
+            game.incorrectAttempts  = Math.floor(Math.random() * game.correctCharacters * 0.15);
+            game.missedWords        = Math.floor(Math.random() * 30);
+
+            // Rebuild history arrays with varied random data
+            const samples = 20 + Math.floor(Math.random() * 20);
+            game.wpmHistory      = Array.from({ length: samples }, (_, i) => {
+                const base = 30 + Math.random() * 120;
+                return Math.max(5, base + Math.sin(i / 3) * 20);
+            });
+            game.accuracyHistory = Array.from({ length: samples }, (_, i) => {
+                return Math.min(100, Math.max(50, 70 + Math.random() * 30 - Math.cos(i / 4) * 10));
+            });
+            game.spmHistory      = Array.from({ length: samples }, () => +(Math.random() * 3).toFixed(2));
+            game.solveTimeHistory= Array.from({ length: samples }, () => +(1 + Math.random() * 9).toFixed(1));
+            game.mathQuestionsAnswered = Math.floor(Math.random() * 80 + 10);
+            game.totalMathSolveTime    = game.mathQuestionsAnswered * (1 + Math.random() * 5) * 1000;
+
+            // Re-render the celebration screen with new data
+            showCelebration();
         });
         
         function copyToClipboard(text) {
