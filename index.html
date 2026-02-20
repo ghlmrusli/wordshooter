@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Word Shooter</title>
     
     <!-- Open Graph -->
@@ -19,13 +17,11 @@
     <meta name="twitter:image" content="https://wordshooter.vercel.app/og-image.png">
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
-    
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
     <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -135,11 +131,6 @@
             background: radial-gradient(ellipse at center, #1a2942 0%, #0a1628 50%, #000814 100%);
             overflow: hidden;
             touch-action: none;
-            /* Safe area insets for notched devices */
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
-            padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);
         }
 
         #gameContainer::before {
@@ -307,10 +298,11 @@
         #onScreenKeyboard {
             display: none;
             flex-direction: column;
-            gap: 0;  /* Remove gap between rows */
-            padding: 0;  /* Remove all padding */
-            background: transparent;  /* Remove dark background */
-            border-radius: 0;  /* Remove border radius */
+            gap: 0;
+            padding: 0;
+            padding-bottom: env(safe-area-inset-bottom);
+            background: transparent;
+            border-radius: 0;
             position: absolute;
             bottom: 0;
             left: 0;
@@ -682,7 +674,8 @@
             display: none;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 12px;  /* Reduced from 20px to match tablet */
+            padding: 8px 12px;
+            padding-top: calc(8px + env(safe-area-inset-top));
             z-index: 1000;
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
@@ -1264,11 +1257,25 @@
             padding: 12px 0 4px;
         }
 
-        #scoreboardLink span {
+        #playAgainLink {
             font-family: 'Press Start 2P', cursive;
             font-size: 10px;
-            color: rgba(255, 255, 255, 0.5);
+            color: #ffffff;
             line-height: 1.2;
+            text-decoration: underline;
+            cursor: pointer;
+            display: inline-block;
+            animation: playAgainPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes playAgainPulse {
+            0%, 100% { opacity: 0.4; }
+            50%       { opacity: 1.0; }
+        }
+
+        #playAgainLink:hover {
+            opacity: 1;
+            animation: none;
         }
 
         #graphViewToggle {
@@ -2280,6 +2287,7 @@
                     <button class="key" data-key="l">L</button>
                 </div>
                 <div class="keyboard-row">
+                    <button class="key" data-key=".">.</button>
                     <button class="key" data-key="z">Z</button>
                     <button class="key" data-key="x">X</button>
                     <button class="key" data-key="c">C</button>
@@ -2287,6 +2295,7 @@
                     <button class="key" data-key="b">B</button>
                     <button class="key" data-key="n">N</button>
                     <button class="key" data-key="m">M</button>
+                    <button class="key" data-key=",">,</button>
                 </div>
                 <div class="keyboard-row" id="spacebarRow" style="display:none;">
                     <button class="key key-space" data-key=" ">SPACE</button>
@@ -2388,6 +2397,9 @@
                 <button id="celebrationShuffleBtn" class="celebration-top-btn" title="Shuffle test data" style="display:none;">
                     <span class="material-symbols-outlined">shuffle</span>
                 </button>
+                <button id="celebrationTopRestartBtn" class="celebration-top-btn" title="Restart">
+                    <span class="material-symbols-outlined">refresh</span>
+                </button>
                 <button id="celebrationTopHomeBtn" class="celebration-top-btn" title="Home">
                     <span class="material-symbols-outlined">home</span>
                 </button>
@@ -2453,7 +2465,7 @@
                             </div>
                         </div>
                         <div id="scoreboardLink">
-                            <span>Add to scoreboard (soon)</span>
+                            <span id="playAgainLink">Play Again</span>
                         </div>
                     </div>
                 </div>
@@ -2605,8 +2617,8 @@
             "The jay, pig, fox, zebra and my wolves quack.",
             "Crazy Fredrick bought many very exquisite jewels.",
             "We promptly judged antique ivory buckles for prizes.",
-            "A wizard's job is to vex chumps quickly in fog.",
-            "Watch Jeopardy, Alex Trebek's fun TV quiz game.",
+            "A wizard job is to vex chumps quickly in fog.",
+            "Watch Jeopardy, Alex Trebek hosted fun TV quiz games.",
             "Public buildings facing hazards jeopardize workers.",
             "Few black taxis drive up major roads on quiet nights.",
             "The job requires extra pluck and zeal from every worker."
@@ -4182,18 +4194,17 @@
                     }
                 }
 
-                // Progressive difficulty - increase speed every 100 points
-                // Only applies in words/sentences modes (not during journey phase transitions)
+                // Progressive difficulty — increase speed each time score crosses a new 20-pt threshold
                 const currentMode = game.mode === 'journey' ? getJourneyPhaseMode() : game.mode;
-                if (game.score > 0 && game.score % 100 === 0 && game.score !== game.lastSpeedIncrease) {
+                const currentThreshold = Math.floor(game.score / 20) * 20;
+                if (game.score > 0 && currentThreshold > game.lastSpeedIncrease) {
+                    const steps = (currentThreshold - game.lastSpeedIncrease) / 20;
                     if (currentMode === 'math') {
-                        // Math gets half the speed increase - more time to think
-                        game.invaderSpeed = Math.min(game.invaderSpeed + 0.05, 0.9);
+                        game.invaderSpeed += 0.05 * steps;
                     } else if (currentMode !== 'sentences') {
-                        // Words/letters get full speed increase
-                        game.invaderSpeed = Math.min(game.invaderSpeed + 0.1, 1.5);
+                        game.invaderSpeed += 0.1 * steps;
                     }
-                    game.lastSpeedIncrease = game.score;
+                    game.lastSpeedIncrease = currentThreshold;
                 }
             }
             
@@ -4531,10 +4542,9 @@
         const sentenceSpeedDurations = { 1: 24, 2: 18, 3: 12 };
 
         speedDisplay.addEventListener('click', () => {
-            // Disabled only in journey mode (auto-controlled)
-            if (game.mode === 'journey') return;
-
+            // Only active during sentences mode (standalone or journey sentences phases)
             const currentMode = game.mode === 'journey' ? getJourneyPhaseMode() : game.mode;
+            if (currentMode !== 'sentences') return;
             const currentIndex = speedLevels.indexOf(speedMultiplier);
             speedMultiplier = speedLevels[(currentIndex + 1) % speedLevels.length];
             speedDisplay.textContent = speedMultiplier + 'x';
@@ -4639,15 +4649,19 @@
 
         // Update speed button state based on mode
         function updateSpeedButtonState() {
-            // Only disable in journey mode (sentences mode is now speed-controllable)
-            if (game.mode === 'journey') {
-                speedDisplay.style.opacity = '0.35';
-                speedDisplay.style.cursor = 'not-allowed';
-                speedDisplay.title = 'Speed controlled automatically in Journey mode';
-            } else {
+            const currentMode = game.mode === 'journey' ? getJourneyPhaseMode() : game.mode;
+            if (currentMode === 'sentences') {
+                // Sentences: fully active, visible
+                speedDisplay.style.display = '';
                 speedDisplay.style.opacity = '1';
                 speedDisplay.style.cursor = 'pointer';
                 speedDisplay.title = '';
+            } else if (game.mode === 'journey') {
+                // Journey non-sentences phases: hide (auto-controlled)
+                speedDisplay.style.display = 'none';
+            } else {
+                // Words / math standalone: hide — speed auto-scales with score
+                speedDisplay.style.display = 'none';
             }
         }
 
@@ -4676,7 +4690,7 @@
                 'words': {
                     spawnInterval: 2500,
                     invaderSpeed: 0.3,
-                    maxInvaders: 5
+                    maxInvaders: 6
                 },
                 'sentences': {
                     spawnInterval: 3000,
@@ -5470,6 +5484,16 @@ Play now at: ${window.location.href}`;
             }
         });
         
+        document.getElementById('celebrationTopRestartBtn').addEventListener('click', () => {
+            document.getElementById('celebrationScreen').style.display = 'none';
+            startGame(game.mode);
+        });
+
+        document.getElementById('playAgainLink').addEventListener('click', () => {
+            document.getElementById('celebrationScreen').style.display = 'none';
+            startGame(game.mode);
+        });
+
         document.getElementById('celebrationTopHomeBtn').addEventListener('click', () => {
             document.getElementById('celebrationScreen').style.display = 'none';
             gameContainer.classList.add('hidden');
