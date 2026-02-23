@@ -902,6 +902,36 @@
             transform: scale(1.05);
         }
 
+        #muteBtn {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #muteBtn .material-symbols-outlined {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        #muteBtn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
         /* Game Over Screen */
         #gameOver {
             position: fixed;
@@ -1720,74 +1750,18 @@
         }
         
         /* Floating words background */
-        #floatingWordsBackground {
+
+
+        #menuStarCanvas {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 0;
             pointer-events: none;
-        }
-        
-        .floating-word {
-            position: absolute;
-            background: rgba(0, 0, 0, 0.3);
-            color: rgba(255, 255, 255, 0.3);
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-size: 16px;
-            white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            font-family: 'Press Start 2P', cursive;
-            letter-spacing: 2px;
-            pointer-events: none;
-        }
-        
-        @keyframes float-across {
-            0% {
-                transform: translate(0, 0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.1;
-            }
-            90% {
-                opacity: 0.1;
-            }
-            100% {
-                transform: translate(var(--end-x), var(--end-y));
-                opacity: 0;
-            }
         }
 
         #timeSelection::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                radial-gradient(2px 2px at 20% 30%, white, transparent),
-                radial-gradient(2px 2px at 60% 70%, white, transparent),
-                radial-gradient(1px 1px at 50% 50%, white, transparent),
-                radial-gradient(1px 1px at 80% 10%, white, transparent),
-                radial-gradient(2px 2px at 90% 60%, white, transparent),
-                radial-gradient(1px 1px at 33% 80%, white, transparent),
-                radial-gradient(1px 1px at 15% 55%, white, transparent),
-                radial-gradient(2px 2px at 70% 25%, white, transparent),
-                radial-gradient(1px 1px at 45% 15%, white, transparent),
-                radial-gradient(1px 1px at 25% 90%, white, transparent);
-            background-size: 200% 200%, 300% 300%, 250% 250%, 280% 280%, 220% 220%, 
-                             260% 260%, 290% 290%, 240% 240%, 270% 270%, 230% 230%;
-            background-position: 0% 0%, 40% 60%, 50% 50%, 80% 10%, 90% 60%, 
-                                 33% 80%, 15% 55%, 70% 25%, 45% 15%, 25% 90%;
-            background-repeat: repeat;
-            opacity: 0.6;
-            z-index: 0;
+            display: none;
         }
 
         #timeSelection.hidden {
@@ -1795,13 +1769,13 @@
         }
 
         #startScreenContent {
-            background: rgba(26, 41, 66, 0.6);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(26, 41, 66, 0.05);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 20px;
-            padding: 20px 24px;  /* Match tablet size */
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            padding: 20px 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
             width: fit-content;
             max-width: calc(100vw - 40px);
             position: relative;
@@ -2072,7 +2046,7 @@
             
             /* Pills are already sized correctly via .topbar-pill */
             
-            #pauseBtn, #restartGameBtn, #homeBtn {
+            #pauseBtn, #restartGameBtn, #homeBtn, #muteBtn {
                 width: 32px;
                 height: 32px;
                 font-size: 12px;
@@ -2084,7 +2058,8 @@
             
             #pauseBtn .material-symbols-outlined,
             #restartGameBtn .material-symbols-outlined,
-            #homeBtn .material-symbols-outlined {
+            #homeBtn .material-symbols-outlined,
+            #muteBtn .material-symbols-outlined {
                 font-size: 18px;  /* Increased to 18px (was 16px) */
             }
             
@@ -2183,7 +2158,7 @@
                 /* covered by .topbar-pill above */
             }
             
-            #pauseBtn, #restartGameBtn, #homeBtn {
+            #pauseBtn, #restartGameBtn, #homeBtn, #muteBtn {
                 width: 28px;
                 height: 28px;
                 font-size: 10px;
@@ -2191,7 +2166,8 @@
             
             #pauseBtn .material-symbols-outlined,
             #restartGameBtn .material-symbols-outlined,
-            #homeBtn .material-symbols-outlined {
+            #homeBtn .material-symbols-outlined,
+            #muteBtn .material-symbols-outlined {
                 font-size: 14px;
             }
             
@@ -2303,6 +2279,7 @@
             <button id="pauseBtn"><span class="material-symbols-outlined">pause</span></button>
             <button id="restartGameBtn"><span class="material-symbols-outlined">refresh</span></button>
             <button id="homeBtn"><span class="material-symbols-outlined">home</span></button>
+            <button id="muteBtn"><span class="material-symbols-outlined">volume_up</span></button>
         </div>
     </div>
 
@@ -2377,8 +2354,7 @@
 
     <!-- Time Selection Screen (outside gameContainer) -->
     <div id="timeSelection">
-        <!-- Floating words background -->
-        <div id="floatingWordsBackground"></div>
+        <canvas id="menuStarCanvas"></canvas>
         
         <div id="startScreenContent">
             <div id="rocketIcon">🚀</div>
@@ -3152,110 +3128,114 @@
         const timeSelection = document.getElementById('timeSelection');
         const topbar = document.getElementById('topbar');
 
-        // ── Animated Starfield ──────────────────────────────────────────────
         (function initStarfield() {
-            const canvas = document.getElementById('starCanvas');
-            const ctx = canvas.getContext('2d');
-
-            let W, H;
-            function resize() {
-                W = canvas.width  = canvas.offsetWidth;
-                H = canvas.height = canvas.offsetHeight;
+            // Shared star data factory
+            function makeStars() {
+                const LAYERS = [
+                    { count: 120, speed: 0.18, minR: 0.3, maxR: 0.8,  alpha: 0.45 },
+                    { count: 60,  speed: 0.55, minR: 0.6, maxR: 1.3,  alpha: 0.65 },
+                    { count: 28,  speed: 1.4,  minR: 1.0, maxR: 2.2,  alpha: 0.85 },
+                ];
+                const NEBULAE = Array.from({ length: 5 }, () => ({
+                    x: Math.random() * 100,
+                    y: Math.random() * 100,
+                    r: 40 + Math.random() * 80,
+                    hue: [200, 230, 260, 180][Math.floor(Math.random() * 4)],
+                    alpha: 0.018 + Math.random() * 0.022,
+                }));
+                const stars = LAYERS.flatMap(layer =>
+                    Array.from({ length: layer.count }, () => ({
+                        x: Math.random(),
+                        y: Math.random(),
+                        r: layer.minR + Math.random() * (layer.maxR - layer.minR),
+                        speed: layer.speed * (0.7 + Math.random() * 0.6),
+                        alpha: layer.alpha * (0.6 + Math.random() * 0.4),
+                        twinkle: Math.random() * Math.PI * 2,
+                        twinkleSpeed: 0.01 + Math.random() * 0.025,
+                        trail: layer.speed > 1 ? (0.012 + Math.random() * 0.018) : 0,
+                    }))
+                );
+                return { stars, NEBULAE };
             }
-            resize();
-            window.addEventListener('resize', resize);
 
-            // Three layers: far (slow, tiny), mid, near (fast, big)
-            const LAYERS = [
-                { count: 120, speed: 0.18, minR: 0.3, maxR: 0.8,  alpha: 0.45 },
-                { count: 60,  speed: 0.55, minR: 0.6, maxR: 1.3,  alpha: 0.65 },
-                { count: 28,  speed: 1.4,  minR: 1.0, maxR: 2.2,  alpha: 0.85 },
-            ];
+            function initCanvas(canvas, getSpeedScale) {
+                const ctx = canvas.getContext('2d');
+                let W, H;
+                function resize() {
+                    W = canvas.width  = canvas.offsetWidth;
+                    H = canvas.height = canvas.offsetHeight;
+                }
+                resize();
+                window.addEventListener('resize', resize);
 
-            // Occasional bright nebula streaks
-            const NEBULAE = Array.from({ length: 5 }, () => ({
-                x: Math.random() * 100,  // percentage
-                y: Math.random() * 100,
-                r: 40 + Math.random() * 80,
-                hue: [200, 230, 260, 180][Math.floor(Math.random() * 4)],
-                alpha: 0.018 + Math.random() * 0.022,
-            }));
+                const { stars, NEBULAE } = makeStars();
 
-            const stars = LAYERS.flatMap(layer =>
-                Array.from({ length: layer.count }, () => ({
-                    x: Math.random(),  // 0-1 normalised
-                    y: Math.random(),
-                    r: layer.minR + Math.random() * (layer.maxR - layer.minR),
-                    speed: layer.speed * (0.7 + Math.random() * 0.6),
-                    alpha: layer.alpha * (0.6 + Math.random() * 0.4),
-                    twinkle: Math.random() * Math.PI * 2,
-                    twinkleSpeed: 0.01 + Math.random() * 0.025,
-                    // trail length proportional to speed
-                    trail: layer.speed > 1 ? (0.012 + Math.random() * 0.018) : 0,
-                }))
-            );
+                function draw() {
+                    ctx.clearRect(0, 0, W, H);
 
-            let raf;
-            function draw(ts) {
-                ctx.clearRect(0, 0, W, H);
-
-                // Subtle nebula blobs
-                NEBULAE.forEach(n => {
-                    const gx = n.x / 100 * W;
-                    const gy = n.y / 100 * H;
-                    const g = ctx.createRadialGradient(gx, gy, 0, gx, gy, n.r);
-                    g.addColorStop(0, `hsla(${n.hue},70%,60%,${n.alpha})`);
-                    g.addColorStop(1, 'transparent');
-                    ctx.fillStyle = g;
-                    ctx.beginPath();
-                    ctx.arc(gx, gy, n.r, 0, Math.PI * 2);
-                    ctx.fill();
-                });
-
-                stars.forEach(s => {
-                    // Speed tied to score with exponential ramp:
-                    // score 0   → nearly imperceptible drift (~stargazing)
-                    // score 200 → gentle glide
-                    // score 600+ → warp feel
-                    const score = (typeof game !== 'undefined') ? (game.score || 0) : 0;
-                    const speedScale = 0.008 + 0.292 * Math.pow(Math.min(score, 1000) / 1000, 2.2);
-
-                    // Move downward (rocket flying up = stars scroll down)
-                    s.y += s.speed * speedScale / H * 60;
-                    if (s.y > 1) { s.y = 0; s.x = Math.random(); }
-
-                    s.twinkle += s.twinkleSpeed;
-                    const twinkleAlpha = s.alpha * (0.75 + 0.25 * Math.sin(s.twinkle));
-
-                    const sx = s.x * W;
-                    const sy = s.y * H;
-
-                    // Trail for fast stars
-                    if (s.trail > 0) {
-                        const trailLen = s.trail * H;
-                        const grad = ctx.createLinearGradient(sx, sy - trailLen, sx, sy);
-                        grad.addColorStop(0, 'transparent');
-                        grad.addColorStop(1, `rgba(200,220,255,${twinkleAlpha * 0.6})`);
-                        ctx.strokeStyle = grad;
-                        ctx.lineWidth = s.r * 0.8;
+                    NEBULAE.forEach(n => {
+                        const gx = n.x / 100 * W;
+                        const gy = n.y / 100 * H;
+                        const g = ctx.createRadialGradient(gx, gy, 0, gx, gy, n.r);
+                        g.addColorStop(0, `hsla(${n.hue},70%,60%,${n.alpha})`);
+                        g.addColorStop(1, 'transparent');
+                        ctx.fillStyle = g;
                         ctx.beginPath();
-                        ctx.moveTo(sx, sy - trailLen);
-                        ctx.lineTo(sx, sy);
-                        ctx.stroke();
-                    }
+                        ctx.arc(gx, gy, n.r, 0, Math.PI * 2);
+                        ctx.fill();
+                    });
 
-                    // Star dot
-                    ctx.beginPath();
-                    ctx.arc(sx, sy, s.r, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(210,228,255,${twinkleAlpha})`;
-                    ctx.fill();
-                });
+                    const speedScale = getSpeedScale();
 
-                raf = requestAnimationFrame(draw);
+                    stars.forEach(s => {
+                        s.y += s.speed * speedScale / H * 60;
+                        if (s.y > 1) { s.y = 0; s.x = Math.random(); }
+
+                        s.twinkle += s.twinkleSpeed;
+                        const twinkleAlpha = s.alpha * (0.75 + 0.25 * Math.sin(s.twinkle));
+
+                        const sx = s.x * W;
+                        const sy = s.y * H;
+
+                        if (s.trail > 0) {
+                            const trailLen = s.trail * H;
+                            const grad = ctx.createLinearGradient(sx, sy - trailLen, sx, sy);
+                            grad.addColorStop(0, 'transparent');
+                            grad.addColorStop(1, `rgba(200,220,255,${twinkleAlpha * 0.6})`);
+                            ctx.strokeStyle = grad;
+                            ctx.lineWidth = s.r * 0.8;
+                            ctx.beginPath();
+                            ctx.moveTo(sx, sy - trailLen);
+                            ctx.lineTo(sx, sy);
+                            ctx.stroke();
+                        }
+
+                        ctx.beginPath();
+                        ctx.arc(sx, sy, s.r, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(210,228,255,${twinkleAlpha})`;
+                        ctx.fill();
+                    });
+
+                    requestAnimationFrame(draw);
+                }
+                requestAnimationFrame(draw);
             }
-            raf = requestAnimationFrame(draw);
+
+            // Game screen canvas — speed follows score
+            const gameCanvas = document.getElementById('starCanvas');
+            if (gameCanvas) {
+                initCanvas(gameCanvas, () => {
+                    const score = (typeof game !== 'undefined') ? (game.score || 0) : 0;
+                    return 0.008 + 0.292 * Math.pow(Math.min(score, 1000) / 1000, 2.2);
+                });
+            }
+
+            // Menu/main page canvas — always barely visible (fixed 0.008)
+            const menuCanvas = document.getElementById('menuStarCanvas');
+            if (menuCanvas) {
+                initCanvas(menuCanvas, () => 0.008);
+            }
         })();
-        // ────────────────────────────────────────────────────────────────────
 
         // Invader class
         class Invader {
@@ -4182,6 +4162,238 @@
             gunElement.style.transform = `rotate(${angleDeg}deg)`;
         }
 
+        // ── Ambient Space Music (CBL-style: downtempo atmospheric electronic) ──
+        const ambientMusic = (() => {
+            let ctx = null, masterGain = null, reverbNode = null;
+            let started = false, muted = false;
+            let nodes = [];
+            const MASTER_VOL = 0.20;
+            const BPM = 75;
+            const STEP = (60 / BPM) * 1000;
+
+            function getCtx() {
+                if (!ctx) {
+                    ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    masterGain = ctx.createGain();
+                    masterGain.gain.value = muted ? 0 : MASTER_VOL;
+
+                    // Spacious reverb
+                    reverbNode = ctx.createConvolver();
+                    const revLen = ctx.sampleRate * 4;
+                    const revBuf = ctx.createBuffer(2, revLen, ctx.sampleRate);
+                    for (let c = 0; c < 2; c++) {
+                        const d = revBuf.getChannelData(c);
+                        for (let i = 0; i < revLen; i++)
+                            d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / revLen, 1.8);
+                    }
+                    reverbNode.buffer = revBuf;
+                    const revGain = ctx.createGain();
+                    revGain.gain.value = 0.5;
+                    reverbNode.connect(revGain);
+                    revGain.connect(masterGain);
+                    masterGain.connect(ctx.destination);
+                }
+                return ctx;
+            }
+
+            // Slow pad layer — warm sine/triangle blend, fades in gently
+            function makePad(freq, vol, lfoHz, fadeIn) {
+                const ac = getCtx();
+                const osc1 = ac.createOscillator();
+                const osc2 = ac.createOscillator();
+                const lfo  = ac.createOscillator();
+                const lfoG = ac.createGain();
+                const g    = ac.createGain();
+
+                osc1.type = 'sine';     osc1.frequency.value = freq;
+                osc2.type = 'triangle'; osc2.frequency.value = freq * 1.002;
+                lfo.type  = 'sine';     lfo.frequency.value  = lfoHz;
+                lfoG.gain.value = freq * 0.002;
+
+                lfo.connect(lfoG);
+                lfoG.connect(osc1.frequency);
+                lfoG.connect(osc2.frequency);
+
+                g.gain.setValueAtTime(0, ac.currentTime);
+                g.gain.linearRampToValueAtTime(vol, ac.currentTime + fadeIn);
+
+                osc1.connect(g); osc2.connect(g);
+                g.connect(masterGain);
+                g.connect(reverbNode);
+                osc1.start(); osc2.start(); lfo.start();
+                nodes.push(osc1, osc2, lfo);
+            }
+
+            // Steady sub-bass pulse — the groove heartbeat at 75 BPM
+            function makeBassPulse() {
+                const BASS = [110, 130.81, 146.83, 164.81, 196];
+                const pattern = [0, 0, 2, 0, 1, 0, 3, 2];
+                let step = 0;
+                function beat() {
+                    if (!started) return;
+                    const freq = BASS[pattern[step % pattern.length]];
+                    const ac = getCtx();
+                    const osc = ac.createOscillator();
+                    const g   = ac.createGain();
+                    const lp  = ac.createBiquadFilter();
+                    lp.type = 'lowpass'; lp.frequency.value = 280;
+                    osc.type = 'sine'; osc.frequency.value = freq;
+                    const now = ac.currentTime;
+                    g.gain.setValueAtTime(0, now);
+                    g.gain.linearRampToValueAtTime(0.22, now + 0.02);
+                    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.55);
+                    osc.connect(lp); lp.connect(g); g.connect(masterGain);
+                    osc.start(now); osc.stop(now + 0.6);
+                    step++;
+                    setTimeout(beat, STEP);
+                }
+                setTimeout(beat, 2000);
+            }
+
+            // Synth melody — slow, wandering, evolving Am pentatonic
+            function makeMelody() {
+                const MELODY = [440, 523.25, 587.33, 659.25, 783.99, 880];
+                const PHRASES = [
+                    [0, 2, 4, 3, 1, 0],
+                    [5, 4, 2, 0, 1, 3],
+                    [2, 4, 5, 4, 2, 1],
+                    [0, 1, 3, 5, 3, 2],
+                ];
+                let phraseIdx = 0, noteIdx = 0;
+                const NOTE_LEN = 1100;
+                function note() {
+                    if (!started) return;
+                    const phrase = PHRASES[phraseIdx];
+                    const freq = MELODY[phrase[noteIdx]];
+                    const ac = getCtx();
+                    const osc = ac.createOscillator();
+                    const g   = ac.createGain();
+                    osc.type = 'sine'; osc.frequency.value = freq;
+                    const now = ac.currentTime;
+                    g.gain.setValueAtTime(0, now);
+                    g.gain.linearRampToValueAtTime(0.055, now + 0.08);
+                    g.gain.exponentialRampToValueAtTime(0.0001, now + 1.6);
+                    osc.connect(g);
+                    g.connect(masterGain);
+                    g.connect(reverbNode);
+                    osc.start(now); osc.stop(now + 1.7);
+                    noteIdx++;
+                    if (noteIdx >= phrase.length) {
+                        noteIdx = 0;
+                        phraseIdx = (phraseIdx + 1) % PHRASES.length;
+                        setTimeout(note, NOTE_LEN + 800);
+                    } else {
+                        setTimeout(note, NOTE_LEN);
+                    }
+                }
+                setTimeout(note, 5000);
+            }
+
+            // Hi-frequency shimmer noise — like stars twinkling
+            function makeSpaceTexture() {
+                const ac = getCtx();
+                const bufSize = ac.sampleRate * 4;
+                const buf = ac.createBuffer(2, bufSize, ac.sampleRate);
+                for (let c = 0; c < 2; c++) {
+                    const d = buf.getChannelData(c);
+                    for (let i = 0; i < bufSize; i++) d[i] = Math.random() * 2 - 1;
+                }
+                const src = ac.createBufferSource();
+                src.buffer = buf; src.loop = true;
+                const hp = ac.createBiquadFilter();
+                hp.type = 'highpass'; hp.frequency.value = 6000;
+                const g = ac.createGain();
+                g.gain.setValueAtTime(0, ac.currentTime);
+                g.gain.linearRampToValueAtTime(0.06, ac.currentTime + 10);
+                src.connect(hp); hp.connect(g);
+                g.connect(reverbNode);
+                src.start();
+                nodes.push(src);
+            }
+
+            // Soft rhythmic hi-hat — CBL electronic groove feel
+            function makeHihat() {
+                const HAT_PAT = [1, 0, 1, 1, 0, 1, 0, 1];
+                let step = 0;
+                function tick() {
+                    if (!started) return;
+                    if (HAT_PAT[step % HAT_PAT.length]) {
+                        const ac = getCtx();
+                        const bufSize = Math.floor(ac.sampleRate * 0.04);
+                        const buf = ac.createBuffer(1, bufSize, ac.sampleRate);
+                        const d = buf.getChannelData(0);
+                        for (let i = 0; i < bufSize; i++)
+                            d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufSize, 3);
+                        const src = ac.createBufferSource();
+                        src.buffer = buf;
+                        const hp = ac.createBiquadFilter();
+                        hp.type = 'highpass'; hp.frequency.value = 8000;
+                        const g = ac.createGain();
+                        g.gain.value = 0.055;
+                        src.connect(hp); hp.connect(g); g.connect(masterGain);
+                        src.start(); src.stop(ac.currentTime + 0.04);
+                    }
+                    step++;
+                    setTimeout(tick, STEP * 2);
+                }
+                setTimeout(tick, 3000);
+            }
+
+            return {
+                start() {
+                    if (started) return;
+                    started = true;
+                    getCtx();
+                    makePad(110.00, 0.16, 0.07, 6.0);
+                    makePad(164.81, 0.12, 0.05, 8.0);
+                    makePad(220.00, 0.10, 0.09, 10.0);
+                    makePad(261.63, 0.07, 0.06, 12.0);
+                    makePad(329.63, 0.05, 0.04, 14.0);
+                    makeSpaceTexture();
+                    makeBassPulse();
+                    makeHihat();
+                    makeMelody();
+                },
+                stop() {
+                    if (!started) return;
+                    started = false;
+                    if (masterGain) {
+                        masterGain.gain.linearRampToValueAtTime(0, ctx.currentTime + 2.0);
+                    }
+                    setTimeout(() => {
+                        nodes.forEach(n => { try { n.stop(); } catch(e){} });
+                        nodes = [];
+                        if (ctx) { ctx.close(); ctx = null; masterGain = null; reverbNode = null; }
+                    }, 2100);
+                },
+                setMute(val) {
+                    muted = val;
+                    if (masterGain) {
+                        masterGain.gain.linearRampToValueAtTime(
+                            val ? 0 : MASTER_VOL,
+                            (ctx ? ctx.currentTime : 0) + 0.3
+                        );
+                    }
+                },
+                isMuted() { return muted; },
+                suspend() {
+                    if (ctx && ctx.state === 'running') ctx.suspend();
+                },
+                resume() {
+                    if (ctx && ctx.state === 'suspended') ctx.resume();
+                }
+            };
+        })();
+
+        // Mute button logic
+        document.getElementById('muteBtn').addEventListener('click', () => {
+            const nowMuted = !ambientMusic.isMuted();
+            ambientMusic.setMute(nowMuted);
+            document.querySelector('#muteBtn .material-symbols-outlined').textContent =
+                nowMuted ? 'volume_off' : 'volume_up';
+        });
+        // ──────────────────────────────────────────────────────────────────
+
         // Simple shoot sound using Web Audio API
         function playShootSound() {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -4944,6 +5156,7 @@
         // Restart game
         function restartGame() {
             fullCleanup();
+            ambientMusic.stop();
             game.completedChallenges = [];
 
             // Hide game container and show time selection screen
@@ -5073,6 +5286,10 @@
             timeSelection.classList.add('hidden');
             gameContainer.classList.remove('hidden');
             topbar.classList.add('show');
+            ambientMusic.start();
+            // Sync mute icon with current mute state
+            document.querySelector('#muteBtn .material-symbols-outlined').textContent =
+                ambientMusic.isMuted() ? 'volume_off' : 'volume_up';
             
             // Focus mobile input only on mobile/tablet devices
             // Desktop will use document keydown listener directly
@@ -5733,8 +5950,10 @@
                 const randomIndex = Math.floor(Math.random() * pauseMicrocopyMessages.length);
                 pauseMicrocopy.textContent = pauseMicrocopyMessages[randomIndex];
                 pauseOverlay.classList.add('show');
+                ambientMusic.suspend();
             } else {
                 pauseOverlay.classList.remove('show');
+                ambientMusic.resume();
             }
         }
 
@@ -5919,6 +6138,7 @@ Play now at: ${window.location.href}`;
         const homeBtn = document.getElementById('homeBtn');
         homeBtn.addEventListener('click', () => {
             fullCleanup();
+            ambientMusic.stop();
             game.completedChallenges = [];
 
             // Hide game container and show time selection
@@ -6398,88 +6618,6 @@ Play now at: ${window.location.href}`;
         }
 
         // Floating words background animation
-        function createFloatingWords() {
-            const container = document.getElementById('floatingWordsBackground');
-            if (!container) return;
-            
-            // Use same word lists as the game
-            const floatingWords = [
-                'cat', 'dog', 'lion', 'tiger', 'bear', 'wolf', 'fox', 'eagle',
-                'tree', 'rose', 'lily', 'oak', 'pine', 'fern', 'moss', 'vine',
-                'atom', 'star', 'moon', 'solar', 'orbit', 'planet', 'galaxy', 'nebula',
-                'code', 'type', 'shoot', 'game', 'play', 'win', 'score', 'fast'
-            ];
-            
-            // Spawn words continuously like invaders in the game
-            setInterval(() => {
-                if (!document.getElementById('timeSelection') || 
-                    document.getElementById('timeSelection').classList.contains('hidden')) {
-                    return;
-                }
-                
-                const word = floatingWords[Math.floor(Math.random() * floatingWords.length)];
-                const wordEl = document.createElement('div');
-                wordEl.className = 'floating-word';
-                wordEl.textContent = word;
-                
-                // Estimate width for positioning (will get actual width after append)
-                const estimatedWidth = (word.length * 15) + 40;
-                const startX = Math.random() * Math.max(100, window.innerWidth - estimatedWidth);
-                wordEl.style.left = startX + 'px';
-                wordEl.style.top = '-60px';
-                
-                // Movement speeds matching game invaders (0.8-1.2 speed range for medium difficulty)
-                const speedY = 0.8 * (0.8 + Math.random() * 0.4); // pixels per frame
-                let speedX = (Math.random() - 0.5) * 0.3; // slight horizontal drift
-                
-                let posY = -60;
-                let posX = startX;
-                
-                container.appendChild(wordEl);
-                
-                // Animate like game invaders using requestAnimationFrame
-                function animate() {
-                    if (!document.getElementById('timeSelection') || 
-                        document.getElementById('timeSelection').classList.contains('hidden')) {
-                        wordEl.remove();
-                        return;
-                    }
-                    
-                    posY += speedY;
-                    posX += speedX;
-                    
-                    // Get actual element width for proper boundary checking
-                    const elementWidth = wordEl.offsetWidth || estimatedWidth;
-                    
-                    // Bounce off edges with proper boundary checking
-                    if (posX < 0) {
-                        posX = 0;
-                        speedX *= -1;
-                    } else if (posX + elementWidth > window.innerWidth) {
-                        posX = window.innerWidth - elementWidth;
-                        speedX *= -1;
-                    }
-                    
-                    wordEl.style.top = posY + 'px';
-                    wordEl.style.left = posX + 'px';
-                    
-                    // Remove when off screen
-                    if (posY > window.innerHeight) {
-                        wordEl.remove();
-                        return;
-                    }
-                    
-                    requestAnimationFrame(animate);
-                }
-                
-                requestAnimationFrame(animate);
-                
-            }, 2000); // Spawn every 2 seconds like game spawn rate
-        }
-        
-        // Start floating words when page loads
-        createFloatingWords();
-
         // Handle window resize to keep invaders in bounds
         window.addEventListener('resize', () => {
             game.invaders.forEach(invader => {
