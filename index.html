@@ -1768,18 +1768,67 @@
             display: none;
         }
 
+        /* Animated gradient border — @property technique from codepen.io/seyedi/pen/OJdEVXZ */
+        @property --card-angle {
+            syntax: "<angle>";
+            inherits: false;
+            initial-value: 0turn;
+        }
+
+        @keyframes card-border-spin {
+            to { --card-angle: 1turn; }
+        }
+
         #startScreenContent {
-            background: rgba(26, 41, 66, 0.05);
+            --border-w: 1.5px;
+            --radius: 20px;
+
+            background: rgba(10, 18, 40, 0.05);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
+            border-radius: var(--radius);
+            /* transparent border — space reserved for the ::before mask */
+            border: var(--border-w) solid transparent;
             padding: 20px 24px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 40px 0 rgba(0, 0, 0, 0.2);
             width: fit-content;
             max-width: calc(100vw - 40px);
             position: relative;
             z-index: 10;
+            isolation: isolate;
+        }
+
+        /* The animated gradient border layer */
+        #startScreenContent::before {
+            content: "";
+            position: absolute;
+            inset: calc(var(--border-w) * -1);
+            z-index: -1;
+            border-radius: inherit;
+            border: inherit;
+            /* Glass sweep: white at near-zero opacity → full white → fade out */
+            background-image: conic-gradient(
+                from var(--card-angle),
+                rgba(255,255,255,0.04) 0%,
+                rgba(255,255,255,0.04) 60%,
+                rgba(255,255,255,0.25) 70%,
+                rgba(255,255,255,1.00) 80%,
+                rgba(255,255,255,0.25) 90%,
+                rgba(255,255,255,0.04) 100%
+            );
+            background-origin: border-box;
+            /* Mask trick: show only the border strip, hide the interior */
+            -webkit-mask:
+                linear-gradient(black, black) content-box,
+                linear-gradient(black, black);
+            mask:
+                linear-gradient(black, black) content-box,
+                linear-gradient(black, black);
+            -webkit-mask-clip: content-box, border-box;
+            mask-clip: content-box, border-box;
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: card-border-spin 4s linear infinite;
         }
 
         #startScreenContent #rocketIcon {
@@ -2842,6 +2891,13 @@
             });
             game.invaders = [];
             game.isSentenceActive = false;
+
+            // Clear any in-progress input so it doesn't bleed into the new phase
+            game.currentInput = '';
+            game.targetInvader = null;
+            game.wordStartTime = null;
+            setMobileInput('');
+            updateInputDisplay();
             
             // Reset mode flags based on new phase
             game.isMathMode = (newMode === 'math');
@@ -3646,7 +3702,7 @@
             game.currentInput = '';
             // Also clear mobileInput so stale text doesn't dispatch phantom keypresses on mobile
             const _mobileInput = document.getElementById('mobileInput');
-            if (_mobileInput) _mobileInput.value = '';
+            if (_mobileInput) setMobileInput('');
             
             // Pick a sentence (avoid recent repeats)
             let availableSentences = sentences.filter((_, i) => !game.usedSentences.includes(i));
@@ -4525,8 +4581,17 @@
         }
 
         // Mobile input handler - converts input events to keyboard events
+        let _suppressInput = false; // guard: prevents mobileInput 'input' event re-entry when we set .value programmatically
+
+        function setMobileInput(val) {
+            _suppressInput = true;
+            mobileInput.value = val;
+            _suppressInput = false;
+        }
+
         mobileInput.addEventListener('input', (e) => {
             if (game.isGameOver || game.isPaused) return;
+            if (_suppressInput) return; // skip programmatic value changes
             
             const newValue = e.target.value;
             const oldValue = game.currentInput;
@@ -4586,7 +4651,7 @@
             // ── Backspace ──────────────────────────────────────────────────────
             if (e.key === 'Backspace') {
                 game.currentInput = game.currentInput.slice(0, -1);
-                mobileInput.value = game.currentInput;
+                setMobileInput(game.currentInput);
                 updateWordProgress();
                 updateInputDisplay();
                 updateKeyboardHighlight();
@@ -5010,7 +5075,7 @@
             const inputDisplay = document.getElementById('inputDisplay');
             if (inputDisplay) { inputDisplay.innerHTML = ''; inputDisplay.classList.remove('active', 'error'); }
             const mobileIn = document.getElementById('mobileInput');
-            if (mobileIn) mobileIn.value = '';
+            if (mobileIn) setMobileInput('');
 
             // Reset mode flags
             game.isMathMode         = false;
@@ -5260,7 +5325,7 @@
             };
             
             // Clear mobile input value
-            mobileInput.value = '';
+            setMobileInput('');
             
             // Reset UI
             scoreValue.textContent = '0';
@@ -6294,7 +6359,7 @@ Play now at: ${window.location.href}`;
                     }, travelTime + 500);
                 }
                 game.currentInput = '';
-                mobileInput.value = '';
+                setMobileInput('');
                 game.targetInvader = null;
                 game.wordStartTime = null;
                 rotateRocketToTarget(null);
@@ -6306,7 +6371,7 @@ Play now at: ${window.location.href}`;
 
             // Accumulate digit
             game.currentInput = newInput;
-            mobileInput.value = newInput;
+            setMobileInput(newInput);
 
             // If typed as many digits as the answer length → wrong answer, reset
             const activeInvader = game.invaders.find(z => !z.isDying && z.isMathQuestion);
@@ -6315,8 +6380,15 @@ Play now at: ${window.location.href}`;
                 resetCombo();
                 playErrorSound();
                 game.currentInput = '';
-                mobileInput.value = '';
+                setMobileInput('');
                 game.wordStartTime = null;
+                // Flash input display red briefly so player sees the mistake
+                inputDisplay.classList.add('error');
+                setTimeout(() => inputDisplay.classList.remove('error'), 400);
+                updateWordProgress();
+                updateInputDisplay();
+                updateKeyboardHighlight();
+                return; // early return — don't fall through to aim/update below
             }
 
             // Aim rocket at active math invader
@@ -6341,7 +6413,7 @@ Play now at: ${window.location.href}`;
                 resetCombo();
                 playErrorSound();
                 game.currentInput = '';
-                mobileInput.value = '';
+                setMobileInput('');
                 game.targetInvader = null;
                 rotateRocketToTarget(null);
                 updateWordProgress();
@@ -6357,7 +6429,7 @@ Play now at: ${window.location.href}`;
             game.correctCharacters++;
             if (!game.wordStartTime) game.wordStartTime = Date.now();
             game.currentInput = newInput;
-            mobileInput.value = newInput;
+            setMobileInput(newInput);
 
             // Exact match → shoot
             const matchedInvader = game.invaders.find(z => !z.isDying && z.word === newInput);
@@ -6378,7 +6450,7 @@ Play now at: ${window.location.href}`;
                 }, travelTime);
                 updateScore(matchedInvader.word, matchedInvader);
                 game.currentInput = '';
-                mobileInput.value = '';
+                setMobileInput('');
                 game.targetInvader = null;
                 rotateRocketToTarget(null);
                 updateWordProgress();
@@ -6419,7 +6491,7 @@ Play now at: ${window.location.href}`;
 
             if (keyValue === 'Backspace') {
                 game.currentInput = game.currentInput.slice(0, -1);
-                mobileInput.value = game.currentInput;
+                setMobileInput(game.currentInput);
                 updateWordProgress();
                 updateInputDisplay();
                 updateKeyboardHighlight();
