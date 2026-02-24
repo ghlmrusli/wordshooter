@@ -1,0 +1,113 @@
+/* ============================================
+   Game Over Screen
+   ============================================ */
+
+.gameOver {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    background: radial-gradient(ellipse at center, #1a2942 0%, #0a1628 50%, #000814 100%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    overflow: hidden;
+}
+
+.show {
+    display: flex;
+}
+
+.gameOver h1 {
+    font-size: 72px;
+    margin-bottom: 20px;
+    color: #ff4757;
+    text-shadow: 0 0 20px rgba(255, 71, 87, 0.5);
+}
+
+.finalScore {
+    font-size: 36px;
+    margin-bottom: 30px;
+}
+
+.restartBtn {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 15px 40px;
+    font-size: 24px;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+    font-family: 'Press Start 2P', cursive;
+}
+
+.restartBtn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* ============================================
+   Responsive: Game Over
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .gameOver h1 {
+        font-size: 48px;
+        margin-bottom: 15px;
+    }
+
+    .finalScore {
+        font-size: 24px;
+        margin-bottom: 25px;
+    }
+
+    .restartBtn {
+        font-size: 16px;
+        padding: 12px 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .gameOver {
+        padding: 20px;
+    }
+
+    .gameOver h1 {
+        font-size: 36px;
+        margin-bottom: 12px;
+    }
+
+    .finalScore {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    .restartBtn {
+        font-size: 14px;
+        padding: 10px 25px;
+    }
+}
+
+@media (max-width: 375px) {
+    .gameOver h1 {
+        font-size: 32px;
+    }
+
+    .finalScore {
+        font-size: 18px;
+    }
+
+    .restartBtn {
+        font-size: 12px;
+        padding: 8px 20px;
+    }
+}

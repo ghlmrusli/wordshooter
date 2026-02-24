@@ -1,0 +1,267 @@
+/* ============================================
+   Start Screen / Time Selection
+   ============================================ */
+
+.timeSelection {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    background: radial-gradient(ellipse at center, #1a2942 0%, #0a1628 50%, #000814 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 20px;
+}
+
+.timeSelection::before {
+    display: none;
+}
+
+.hidden {
+    display: none;
+}
+
+.menuStarCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* --- Animated gradient border card --- */
+.startScreenContent {
+    --border-w: 1.5px;
+    --radius: 20px;
+
+    background: rgba(10, 18, 40, 0.05);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: var(--radius);
+    border: var(--border-w) solid transparent;
+    padding: 20px 24px;
+    box-shadow: 0 8px 40px 0 rgba(0, 0, 0, 0.2);
+    width: fit-content;
+    max-width: calc(100vw - 40px);
+    position: relative;
+    z-index: 10;
+    isolation: isolate;
+}
+
+/* The animated gradient border layer */
+.startScreenContent::before {
+    content: "";
+    position: absolute;
+    inset: calc(var(--border-w) * -1);
+    z-index: -1;
+    border-radius: inherit;
+    border: inherit;
+    background-image: conic-gradient(
+        from var(--card-angle),
+        rgba(255, 255, 255, 0.04) 0%,
+        rgba(255, 255, 255, 0.04) 60%,
+        rgba(255, 255, 255, 0.25) 70%,
+        rgba(255, 255, 255, 1.00) 80%,
+        rgba(255, 255, 255, 0.25) 90%,
+        rgba(255, 255, 255, 0.04) 100%
+    );
+    background-origin: border-box;
+    -webkit-mask:
+        linear-gradient(black, black) content-box,
+        linear-gradient(black, black);
+    mask:
+        linear-gradient(black, black) content-box,
+        linear-gradient(black, black);
+    -webkit-mask-clip: content-box, border-box;
+    mask-clip: content-box, border-box;
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: card-border-spin 4s linear infinite;
+}
+
+/* --- Rocket icon --- */
+.rocketIcon {
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 20px;
+    animation: rotate360 8s linear infinite;
+}
+
+/* --- Title --- */
+.gameTitle {
+    font-size: 16px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #ff8c00 0%, #ff0000 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+    line-height: 1.2;
+    margin-bottom: 10px;
+}
+
+/* --- Subtitle --- */
+.gameSubtitle {
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+/* --- Difficulty Options --- */
+.difficultyOptions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 300px;
+    max-width: calc(100vw - 88px);
+}
+
+.difficultyText {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.difficultyOption {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.difficultyOption:hover {
+    background: rgba(78, 205, 196, 0.2);
+    border-color: rgba(78, 205, 196, 0.6);
+    transform: scale(1.05);
+}
+
+.difficultyName {
+    font-size: 13px;
+    font-weight: bold;
+    color: white;
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
+}
+
+.difficultyDesc {
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 0;
+    padding: 0;
+    line-height: 1.2;
+}
+
+.modeEmoji {
+    font-size: 22px;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.difficultyOption:hover .modeEmoji {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* ============================================
+   Responsive: Start Screen
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .startScreenContent {
+        padding: 20px 24px;
+        max-width: 90%;
+    }
+
+    .rocketIcon {
+        font-size: 36px;
+    }
+
+    .gameTitle {
+        font-size: 16px;
+    }
+
+    .gameSubtitle {
+        font-size: 9px;
+    }
+
+    .difficultyOption {
+        padding: 12px 14px;
+    }
+
+    .difficultyName {
+        font-size: 13px;
+    }
+
+    .difficultyDesc {
+        font-size: 9px;
+    }
+}
+
+@media (max-width: 480px) {
+    .startScreenContent {
+        padding: 16px 20px;
+        max-width: 95%;
+    }
+
+    .rocketIcon {
+        font-size: 32px;
+    }
+
+    .gameTitle {
+        font-size: 16px;
+    }
+
+    .gameSubtitle {
+        font-size: 8px;
+    }
+
+    .difficultyOptions {
+        gap: 10px;
+    }
+
+    .difficultyOption {
+        padding: 12px 15px;
+    }
+
+    .difficultyName {
+        font-size: 13px;
+    }
+
+    .difficultyDesc {
+        font-size: 8px;
+    }
+}
+
+@media (max-width: 375px) {
+    .gameTitle {
+        font-size: 14px;
+    }
+
+    .difficultyName {
+        font-size: 11px;
+    }
+}
