@@ -6,7 +6,7 @@
 export type GameMode = 'words' | 'sentences' | 'math' | 'journey';
 
 /** Top-level screen the app can show. */
-export type Screen = 'start' | 'game' | 'celebration';
+export type Screen = 'start' | 'game' | 'celebration' | 'leaderboard' | 'lobby' | 'mpGame' | 'mpScoreboard';
 
 /** The sub-type that an individual invader represents. */
 export type InvaderType = 'word' | 'math' | 'letter';
@@ -70,6 +70,8 @@ export interface BulletData {
   angle: number;
   /** Reference to the DOM element. */
   elementRef: HTMLDivElement | null;
+  /** Optional color override for multiplayer (killer's color). */
+  color?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -201,6 +203,7 @@ export interface GameState {
 
   // Combo system
   consecutiveHits: number;
+  maxConsecutiveHits: number;
   comboMultiplier: number;
 
   // Stats tracking

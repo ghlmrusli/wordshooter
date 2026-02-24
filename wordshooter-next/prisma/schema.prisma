@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           String       @id @default(cuid())
+  username     String?      @unique
+  passwordHash String?
+  displayName  String?
+  guestId      String?      @unique
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  gameRecords  GameRecord[]
+}
+
+model GameRecord {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  mode              String
+  score             Int
+  durationMs        Int
+  totalChars        Int      @default(0)
+  correctChars      Int      @default(0)
+  incorrectAttempts Int      @default(0)
+  missedWords       Int      @default(0)
+  maxCombo          Int      @default(0)
+  mathSolved        Int      @default(0)
+  mathTotalTime     Int      @default(0)
+  journeyStats      String?
+  wpm               Float    @default(0)
+  accuracy          Float    @default(0)
+  isMultiplayer     Boolean  @default(false)
+  playedAt          DateTime @default(now())
+
+  @@index([userId, mode])
+  @@index([mode, score])
+}

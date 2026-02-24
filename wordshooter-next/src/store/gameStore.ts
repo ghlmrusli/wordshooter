@@ -167,6 +167,7 @@ function createInitialState(): GameState {
 
     // Combo system
     consecutiveHits: 0,
+    maxConsecutiveHits: 0,
     comboMultiplier: 1,
 
     // Stats tracking
@@ -347,7 +348,13 @@ const useGameStore = create<GameStore>((set, get) => ({
   // ── Combo ────────────────────────────────────────────────────────────
 
   incrementHits: () =>
-    set((s) => ({ consecutiveHits: s.consecutiveHits + 1 })),
+    set((s) => {
+      const next = s.consecutiveHits + 1;
+      return {
+        consecutiveHits: next,
+        maxConsecutiveHits: Math.max(next, s.maxConsecutiveHits),
+      };
+    }),
   resetCombo: () =>
     set({ consecutiveHits: 0, comboMultiplier: 1 }),
   setComboMultiplier: (multiplier) => set({ comboMultiplier: multiplier }),

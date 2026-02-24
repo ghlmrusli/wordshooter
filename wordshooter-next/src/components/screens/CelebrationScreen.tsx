@@ -30,6 +30,13 @@ export default function CelebrationScreen() {
           <button className={styles.celebrationTopBtn} onClick={handleHome} title="Home">
             <span className="material-symbols-outlined">home</span>
           </button>
+          <button
+            className={styles.celebrationTopBtn}
+            onClick={() => useGameStore.setState({ screen: 'leaderboard' })}
+            title="Leaderboard"
+          >
+            <span className="material-symbols-outlined">leaderboard</span>
+          </button>
           <ShareButton />
         </div>
       </div>

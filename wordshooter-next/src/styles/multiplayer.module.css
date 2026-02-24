@@ -1,0 +1,268 @@
+/* ============================================
+   Multiplayer Game Screen
+   ============================================ */
+
+.mpTopBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  z-index: 500;
+  pointer-events: none;
+}
+
+.mpTimer {
+  font-size: 18px;
+  font-weight: bold;
+  color: #4ecca3;
+  font-family: 'Press Start 2P', cursive;
+}
+
+.mpRoomCode {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: 'Press Start 2P', cursive;
+  letter-spacing: 2px;
+}
+
+/* --- Player scores sidebar --- */
+.mpSidebar {
+  position: fixed;
+  top: 50px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 500;
+  pointer-events: none;
+}
+
+.mpPlayerScore {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(10, 18, 40, 0.7);
+  backdrop-filter: blur(8px);
+  border-radius: 8px;
+  padding: 6px 10px;
+  min-width: 120px;
+}
+
+.mpPlayerDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mpPlayerInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.mpPlayerName {
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Press Start 2P', cursive;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mpPlayerPts {
+  font-size: 10px;
+  color: white;
+  font-weight: bold;
+  font-family: 'Press Start 2P', cursive;
+}
+
+.mpCombo {
+  font-size: 9px;
+  color: #ffd700;
+  font-family: 'Press Start 2P', cursive;
+}
+
+/* --- Kill feed --- */
+.mpKillFeed {
+  position: fixed;
+  top: 50px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 500;
+  pointer-events: none;
+}
+
+.mpKillToast {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Press Start 2P', cursive;
+  background: rgba(10, 18, 40, 0.6);
+  padding: 4px 8px;
+  border-radius: 6px;
+  animation: killToastIn 0.3s ease-out, killToastOut 0.3s 2.7s ease-in forwards;
+}
+
+@keyframes killToastIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes killToastOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* --- Hidden input for keyboard capture --- */
+.mpHiddenInput {
+  position: fixed;
+  top: -100px;
+  left: -100px;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* --- Input display --- */
+.mpInputDisplay {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  color: #4ecca3;
+  font-family: 'Press Start 2P', cursive;
+  background: rgba(10, 18, 40, 0.85);
+  padding: 8px 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(78, 204, 163, 0.3);
+  min-width: 100px;
+  text-align: center;
+  z-index: 510;
+}
+
+/* --- Multiplayer Rockets --- */
+.mpRocketRow {
+  position: fixed;
+  bottom: 5%;
+  left: 0;
+  right: 0;
+  height: 120px;
+  z-index: 500;
+  pointer-events: none;
+}
+
+.mpRocket {
+  position: absolute;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: left 0.3s ease;
+}
+
+.mpRocketEmojiWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+}
+
+.mpRocketGlow {
+  position: absolute;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: rocketGlowPulse 2.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes rocketGlowPulse {
+  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+  50%      { opacity: 1;   transform: translate(-50%, -50%) scale(1.15); }
+}
+
+.mpRocketMe .mpRocketEmojiWrap {
+  width: 70px;
+  height: 70px;
+}
+
+.mpRocketMe .mpRocketEmoji {
+  font-size: 44px;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.mpRocketMe .mpRocketGlow {
+  width: 110px;
+  height: 110px;
+}
+
+.mpRocketOther .mpRocketEmoji {
+  font-size: 32px;
+  line-height: 1;
+  opacity: 0.75;
+  position: relative;
+  z-index: 1;
+}
+
+.mpRocketOther .mpRocketGlow {
+  width: 80px;
+  height: 80px;
+  opacity: 0.5;
+}
+
+.mpRocketLabel {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 8px;
+  text-align: center;
+  white-space: nowrap;
+  margin-top: 12px;
+  letter-spacing: 0.5px;
+}
+
+.mpRocketOther .mpRocketLabel {
+  font-size: 7px;
+  opacity: 0.75;
+  margin-top: 10px;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .mpSidebar {
+    top: auto;
+    bottom: 120px;
+    right: 8px;
+  }
+
+  .mpPlayerScore {
+    padding: 4px 8px;
+    min-width: 100px;
+  }
+
+  .mpPlayerName {
+    font-size: 7px;
+  }
+
+  .mpPlayerPts {
+    font-size: 8px;
+  }
+
+  .mpKillFeed {
+    top: 40px;
+    left: 8px;
+  }
+
+  .mpKillToast {
+    font-size: 7px;
+  }
+}

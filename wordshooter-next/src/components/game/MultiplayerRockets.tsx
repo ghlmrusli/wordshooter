@@ -1,0 +1,80 @@
+'use client';
+
+import { useMultiplayerStore } from '@/multiplayer/multiplayerStore';
+import { PLAYER_COLORS } from '../../../party/types';
+import type { PlayerInfo } from '../../../party/types';
+import styles from '@/styles/multiplayer.module.css';
+
+/**
+ * Sort players so "me" is in the center, others flanking.
+ */
+function sortPlayersForLayout(players: PlayerInfo[], myId: string | null): PlayerInfo[] {
+  const me = players.find((p) => p.id === myId);
+  const others = players.filter((p) => p.id !== myId);
+
+  if (!me) return players;
+  if (others.length === 0) return [me];
+  if (others.length === 1) return [others[0], me];
+  return [others[0], me, others[1]];
+}
+
+/**
+ * Get the X position for a player's rocket based on their sorted index.
+ */
+export function getRocketX(players: PlayerInfo[], myId: string | null, playerId: string): number {
+  const sorted = sortPlayersForLayout(players, myId);
+  const count = sorted.length;
+  const index = sorted.findIndex((p) => p.id === playerId);
+  if (index === -1) return window.innerWidth / 2;
+  return ((index + 1) / (count + 1)) * window.innerWidth;
+}
+
+export default function MultiplayerRockets() {
+  const players = useMultiplayerStore((s) => s.players);
+  const myId = useMultiplayerStore((s) => s.myId);
+  const rocketRotations = useMultiplayerStore((s) => s.rocketRotations);
+
+  const sorted = sortPlayersForLayout(players, myId);
+  const count = sorted.length;
+
+  return (
+    <div className={styles.mpRocketRow}>
+      {sorted.map((player, index) => {
+        const xPercent = ((index + 1) / (count + 1)) * 100;
+        const color = PLAYER_COLORS[player.color];
+        const isMe = player.id === myId;
+        const rotation = rocketRotations.get(player.id) ?? -45;
+
+        return (
+          <div
+            key={player.id}
+            className={`${styles.mpRocket} ${isMe ? styles.mpRocketMe : styles.mpRocketOther}`}
+            style={{ left: `${xPercent}%` }}
+          >
+            <div className={styles.mpRocketEmojiWrap}>
+              <div
+                className={styles.mpRocketGlow}
+                style={{
+                  background: `radial-gradient(circle, ${color}35 0%, ${color}15 40%, transparent 70%)`,
+                  boxShadow: `0 0 20px 8px ${color}20`,
+                }}
+              />
+              <div
+                className={styles.mpRocketEmoji}
+                style={{ transform: `rotate(${rotation}deg)`, transition: 'transform 0.15s ease-out' }}
+              >
+                {'\u{1F680}'}
+              </div>
+            </div>
+            <div
+              className={styles.mpRocketLabel}
+              style={{ color, textShadow: `0 0 8px ${color}60` }}
+            >
+              {isMe ? 'You' : player.name}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}

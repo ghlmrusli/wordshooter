@@ -1,0 +1,223 @@
+/* ============================================
+   Leaderboard Screen
+   ============================================ */
+
+.leaderboardContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    background: radial-gradient(ellipse at center, #1a2942 0%, #0a1628 50%, #000814 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 3000;
+    overflow: hidden;
+}
+
+.starCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.leaderboardContent {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    height: 100%;
+    padding: 16px 20px;
+}
+
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
+
+.title {
+    font-size: 14px;
+    font-weight: bold;
+    font-family: 'Press Start 2P', cursive;
+    background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.backBtn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.backBtn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.backBtn .material-symbols-outlined {
+    font-size: 18px;
+    line-height: 1;
+}
+
+/* --- Mode Tabs --- */
+.modeTabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
+
+.modeTab {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 7px;
+    color: rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.modeTabActive {
+    background: rgba(255, 215, 0, 0.15);
+    border-color: rgba(255, 215, 0, 0.4);
+    color: #ffd700;
+}
+
+.modeTab:hover:not(.modeTabActive) {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* --- Table --- */
+.tableWrapper {
+    flex: 1;
+    overflow-y: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tableHeader {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.tableHeader th {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 6px;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: left;
+    padding: 8px 6px;
+    background: rgba(10, 22, 40, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tableHeader th:first-child {
+    width: 30px;
+    text-align: center;
+}
+
+.tableRow {
+    transition: background 0.2s;
+}
+
+.tableRow:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.tableRow td {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 7px;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 10px 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tableRow td:first-child {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.rankGold { color: #ffd700 !important; }
+.rankSilver { color: #c0c0c0 !important; }
+.rankBronze { color: #cd7f32 !important; }
+
+.scoreCell {
+    color: #ffd700 !important;
+}
+
+.emptyState {
+    text-align: center;
+    padding: 40px 20px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.4);
+    line-height: 2;
+}
+
+/* --- Personal Bests --- */
+.personalBests {
+    width: 100%;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
+
+.pbTitle {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 7px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 8px;
+}
+
+.pbRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 215, 0, 0.06);
+    border: 1px solid rgba(255, 215, 0, 0.15);
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+
+.pbLabel {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 7px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.pbValue {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    color: #ffd700;
+}
