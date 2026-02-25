@@ -46,6 +46,9 @@ export interface MultiplayerState {
   // Rocket aim rotation (degrees) per player
   rocketRotations: Map<string, number>; // playerId → rotation deg
 
+  // Emoji reactions floating above rockets
+  playerEmojis: Map<string, { emoji: string; timestamp: number }>;
+
   // Error
   error: string | null;
 
@@ -75,6 +78,8 @@ export interface MultiplayerState {
   setRocketRotation: (playerId: string, rotation: number) => void;
   clearRocketRotation: (playerId: string) => void;
 
+  setPlayerEmoji: (playerId: string, emoji: string) => void;
+
   setError: (error: string | null) => void;
 
   reset: () => void;
@@ -96,6 +101,7 @@ const initialState = {
   killToasts: [],
   playerTyping: new Map<string, string>(),
   rocketRotations: new Map<string, number>(),
+  playerEmojis: new Map<string, { emoji: string; timestamp: number }>(),
   error: null,
 };
 
@@ -174,6 +180,21 @@ export const useMultiplayerStore = create<MultiplayerState>((set, get) => ({
     set({ rocketRotations: next });
   },
 
+  setPlayerEmoji: (playerId, emoji) => {
+    const next = new Map(get().playerEmojis);
+    next.set(playerId, { emoji, timestamp: Date.now() });
+    set({ playerEmojis: next });
+    // Auto-clear after 2 seconds
+    setTimeout(() => {
+      const current = get().playerEmojis.get(playerId);
+      if (current && current.emoji === emoji && Date.now() - current.timestamp >= 1900) {
+        const cleared = new Map(get().playerEmojis);
+        cleared.delete(playerId);
+        set({ playerEmojis: cleared });
+      }
+    }, 2000);
+  },
+
   setError: (error) => set({ error }),
 
   reset: () => set({
@@ -182,5 +203,6 @@ export const useMultiplayerStore = create<MultiplayerState>((set, get) => ({
     killedInvaderIds: new Set(),
     playerTyping: new Map(),
     rocketRotations: new Map(),
+    playerEmojis: new Map(),
   }),
 }));

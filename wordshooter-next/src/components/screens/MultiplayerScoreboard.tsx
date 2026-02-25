@@ -5,6 +5,7 @@ import { useGameStore } from '@/store/gameStore';
 import { useMultiplayerStore } from '@/multiplayer/multiplayerStore';
 import { useAuthStore } from '@/store/authStore';
 import { useStarfield } from '@/hooks/useStarfield';
+import { playLoseSound } from '@/audio/SoundEffects';
 import { PLAYER_COLORS } from '../../../party/types';
 import styles from '@/styles/scoreboard.module.css';
 
@@ -13,12 +14,18 @@ export default function MultiplayerScoreboard() {
   const getSpeedScale = useCallback(() => 0.008, []);
   useStarfield(canvasRef, getSpeedScale);
 
-  // Save MP game record on mount
+  // Save MP game record on mount + play lose sound if not 1st
   useEffect(() => {
     const mp = useMultiplayerStore.getState();
     const myId = mp.myId;
     const myEntry = mp.scoreboard.find((e) => e.id === myId);
     if (!myEntry) return;
+
+    // Play lose sound if not in 1st place
+    const isWinner = mp.scoreboard.length > 0 && mp.scoreboard[0].id === myId;
+    if (!isWinner) {
+      try { playLoseSound(); } catch { /* */ }
+    }
 
     const guestId = useAuthStore.getState().guestId;
     const headers: Record<string, string> = { 'Content-Type': 'application/json' };

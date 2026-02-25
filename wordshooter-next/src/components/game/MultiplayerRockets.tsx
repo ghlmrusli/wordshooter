@@ -33,6 +33,7 @@ export default function MultiplayerRockets() {
   const players = useMultiplayerStore((s) => s.players);
   const myId = useMultiplayerStore((s) => s.myId);
   const rocketRotations = useMultiplayerStore((s) => s.rocketRotations);
+  const playerEmojis = useMultiplayerStore((s) => s.playerEmojis);
 
   const sorted = sortPlayersForLayout(players, myId);
   const count = sorted.length;
@@ -45,12 +46,19 @@ export default function MultiplayerRockets() {
         const isMe = player.id === myId;
         const rotation = rocketRotations.get(player.id) ?? -45;
 
+        const emojiData = playerEmojis.get(player.id);
+
         return (
           <div
             key={player.id}
             className={`${styles.mpRocket} ${isMe ? styles.mpRocketMe : styles.mpRocketOther}`}
             style={{ left: `${xPercent}%` }}
           >
+            {emojiData && (
+              <div key={emojiData.timestamp} className={styles.mpFloatingEmoji}>
+                {emojiData.emoji}
+              </div>
+            )}
             <div className={styles.mpRocketEmojiWrap}>
               <div
                 className={styles.mpRocketGlow}

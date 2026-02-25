@@ -80,12 +80,18 @@ export type C2S_Leave = {
   type: 'leave';
 };
 
+export type C2S_Reaction = {
+  type: 'reaction';
+  emoji: string;
+};
+
 export type ClientMessage =
   | C2S_Join
   | C2S_Attempt
   | C2S_Typing
   | C2S_StartGame
-  | C2S_Leave;
+  | C2S_Leave
+  | C2S_Reaction;
 
 // ═══════════════════════════════════════════
 // Server → Client messages
@@ -156,6 +162,12 @@ export type S2C_Error = {
   message: string;
 };
 
+export type S2C_Reaction = {
+  type: 'reaction';
+  playerId: string;
+  emoji: string;
+};
+
 export type ServerMessage =
   | S2C_RoomState
   | S2C_Spawn
@@ -166,4 +178,5 @@ export type ServerMessage =
   | S2C_GameOver
   | S2C_PlayerTyping
   | S2C_Countdown
-  | S2C_Error;
+  | S2C_Error
+  | S2C_Reaction;

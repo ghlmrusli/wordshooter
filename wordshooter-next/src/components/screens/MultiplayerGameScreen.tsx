@@ -80,6 +80,7 @@ export default function MultiplayerGameScreen() {
   const lastFrameRef = useRef<number>(performance.now());
   const inputRef = useRef<HTMLInputElement>(null);
   const [currentInput, setCurrentInput] = useState('');
+  const lastEmojiTime = useRef<number>(0);
 
   const invaders = useGameStore((s) => s.invaders);
   const bullets = useGameStore((s) => s.bullets);
@@ -208,6 +209,11 @@ export default function MultiplayerGameScreen() {
         break;
       }
 
+      case 'reaction': {
+        mp.setPlayerEmoji(msg.playerId, msg.emoji);
+        break;
+      }
+
       default:
         break;
     }
@@ -301,6 +307,15 @@ export default function MultiplayerGameScreen() {
     }
   }, []);
 
+  const REACTION_EMOJIS = ['\u{1F525}', '\u{1F480}', '\u{1F3C6}', '\u{1F624}', '\u{1F4AA}', '\u{1F3AF}'];
+
+  const handleEmojiClick = useCallback((emoji: string) => {
+    const now = Date.now();
+    if (now - lastEmojiTime.current < 2000) return; // 2s cooldown
+    lastEmojiTime.current = now;
+    sendMessage({ type: 'reaction', emoji });
+  }, []);
+
   // Keep input focused
   useEffect(() => {
     const focus = () => inputRef.current?.focus();
@@ -371,6 +386,20 @@ export default function MultiplayerGameScreen() {
         autoCorrect="off"
         spellCheck={false}
       />
+
+      {/* Emoji reaction bar */}
+      <div className={styles.mpEmojiBar}>
+        {REACTION_EMOJIS.map((emoji) => (
+          <button
+            key={emoji}
+            className={styles.mpEmojiBtn}
+            onClick={() => handleEmojiClick(emoji)}
+            type="button"
+          >
+            {emoji}
+          </button>
+        ))}
+      </div>
 
       {/* Visible input display */}
       <div className={styles.mpInputDisplay}>

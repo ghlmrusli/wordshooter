@@ -146,6 +146,56 @@
   z-index: 510;
 }
 
+/* --- Emoji reaction bar --- */
+.mpEmojiBar {
+  position: fixed;
+  bottom: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 510;
+}
+
+.mpEmojiBtn {
+  background: rgba(10, 18, 40, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.15s ease;
+  line-height: 1;
+}
+
+.mpEmojiBtn:hover {
+  background: rgba(78, 204, 163, 0.25);
+  transform: scale(1.15);
+}
+
+.mpEmojiBtn:active {
+  transform: scale(0.9);
+}
+
+/* --- Floating emoji above rockets --- */
+.mpFloatingEmoji {
+  font-size: 32px;
+  line-height: 1;
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: emojiFloat 2s ease-out forwards;
+  pointer-events: none;
+  z-index: 2;
+}
+
+@keyframes emojiFloat {
+  0%   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+  50%  { opacity: 1; transform: translateX(-50%) translateY(-30px) scale(1.2); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-60px) scale(0.8); }
+}
+
 /* --- Multiplayer Rockets --- */
 .mpRocketRow {
   position: fixed;

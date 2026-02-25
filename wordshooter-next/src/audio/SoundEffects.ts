@@ -61,6 +61,15 @@ export function playErrorSound(): void {
  * Success sound — cheerful ascending C-E-G arpeggio (C5, E5, G5).
  * Each note is a short sine-wave burst with staggered start times.
  */
+/**
+ * Lose sound — plays the "fahhhhh" mp3 clip.
+ */
+export function playLoseSound(): void {
+  const audio = new Audio('/fahhhhh.mp3');
+  audio.volume = 0.5;
+  audio.play().catch(() => {/* user hasn't interacted yet */});
+}
+
 export function playSuccessSound(): void {
   const ctx = audioManager.getContext();
 

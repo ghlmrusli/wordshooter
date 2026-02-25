@@ -80,6 +80,18 @@ export default class WordShooterServer implements Party.Server {
         }
         break;
 
+      case 'reaction':
+        if (this.room.players.has(sender.id)) {
+          this.party.broadcast(
+            JSON.stringify({
+              type: 'reaction',
+              playerId: sender.id,
+              emoji: msg.emoji,
+            })
+          );
+        }
+        break;
+
       case 'leave':
         this._handleLeave(sender);
         break;
