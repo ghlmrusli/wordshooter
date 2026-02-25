@@ -26,6 +26,7 @@ export class RoomState {
   invaders: Map<string, ServerInvader> = new Map();
   timeRemaining = 0;
   hostId: string | null = null;
+  private _gameStartTime = 0;
 
   // Intervals
   private _spawnInterval: ReturnType<typeof setInterval> | null = null;
@@ -135,9 +136,21 @@ export class RoomState {
     }, 1000);
   }
 
+  /** Get current base speed, increasing over elapsed game time.
+   *  Words: starts at 0.3, +0.1 every 20s.  Math: starts at 0.35, +0.05 every 20s. */
+  private _getCurrentBaseSpeed(): number {
+    const elapsed = (Date.now() - this._gameStartTime) / 1000;
+    const steps = Math.floor(elapsed / 20);
+    if (this.mode === 'math') {
+      return 0.35 + 0.05 * steps;
+    }
+    return 0.3 + 0.1 * steps;
+  }
+
   private _startPlaying() {
     this.phase = 'playing';
     this.invaders.clear();
+    this._gameStartTime = Date.now();
 
     this._broadcastRoomState();
 
@@ -214,8 +227,9 @@ export class RoomState {
 
   private _spawnWordInvaders(count: number) {
     const usedWords = Array.from(this.invaders.values()).map((i) => i.word);
+    const baseSpeed = this._getCurrentBaseSpeed();
     for (let i = 0; i < count; i++) {
-      const inv = generateWordInvader(usedWords);
+      const inv = generateWordInvader(usedWords, baseSpeed);
       this.invaders.set(inv.id, inv);
       usedWords.push(inv.word);
       this._broadcast?.({ type: 'spawn', invader: inv });
@@ -223,7 +237,8 @@ export class RoomState {
   }
 
   private _spawnMathInvader() {
-    const inv = generateMathInvader();
+    const baseSpeed = this._getCurrentBaseSpeed();
+    const inv = generateMathInvader(baseSpeed);
     this.invaders.set(inv.id, inv);
     this._broadcast?.({ type: 'spawn', invader: inv });
   }

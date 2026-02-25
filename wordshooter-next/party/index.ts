@@ -91,11 +91,11 @@ export default class WordShooterServer implements Party.Server {
   }
 
   private _handleJoin(conn: Party.Connection, name: string, colorIdx: number) {
-    // Max 3 players
-    if (this.room.players.size >= 3 && !this.room.players.has(conn.id)) {
+    // Max 5 players
+    if (this.room.players.size >= 5 && !this.room.players.has(conn.id)) {
       conn.send(JSON.stringify({
         type: 'error',
-        message: 'Room is full (max 3 players).',
+        message: 'Room is full (max 5 players).',
       }));
       return;
     }

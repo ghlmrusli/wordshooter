@@ -155,6 +155,15 @@ export default function MultiplayerGameScreen() {
           points: msg.pointsEarned,
           timestamp: Date.now(),
         });
+
+        // Reset input only if the player was typing the same word that was killed
+        if (inv) {
+          const currentValue = inputRef.current?.value ?? '';
+          if (currentValue.length > 0 && inv.answer.toLowerCase().startsWith(currentValue.toLowerCase())) {
+            setCurrentInput('');
+            if (inputRef.current) inputRef.current.value = '';
+          }
+        }
         break;
       }
 
@@ -168,6 +177,9 @@ export default function MultiplayerGameScreen() {
         try { playErrorSound(); } catch { /* */ }
         useGameStore.setState({ inputError: true });
         setTimeout(() => useGameStore.setState({ inputError: false }), 300);
+        // Reset input on rejected attempt
+        setCurrentInput('');
+        if (inputRef.current) inputRef.current.value = '';
         break;
       }
 
@@ -274,6 +286,17 @@ export default function MultiplayerGameScreen() {
         setCurrentInput('');
         e.target.value = '';
         return;
+      }
+    }
+
+    // Reset input if typed text doesn't match any living invader as a prefix
+    if (value.length > 0) {
+      const matchesAnyPrefix = state.invaders.some(
+        (inv) => !inv.isDying && inv.answer.toLowerCase().startsWith(value.toLowerCase())
+      );
+      if (!matchesAnyPrefix) {
+        setCurrentInput('');
+        e.target.value = '';
       }
     }
   }, []);

@@ -46,14 +46,14 @@ export const REF_WIDTH = 1024;
  * Generate a word invader for multiplayer.
  * @param usedWords words currently alive on the field (avoid duplicates)
  */
-export function generateWordInvader(usedWords: string[]): ServerInvader {
+export function generateWordInvader(usedWords: string[], baseSpeed = 0.3): ServerInvader {
   let available = WORD_LIST.filter((w) => !usedWords.includes(w));
   if (available.length === 0) available = [...WORD_LIST];
 
   const word = available[Math.floor(Math.random() * available.length)];
   const estimatedWidth = word.length * 15 + 40;
   const x = Math.random() * Math.max(100, REF_WIDTH - estimatedWidth);
-  const speed = 0.3 * (0.8 + Math.random() * 0.4);
+  const speed = baseSpeed * (0.8 + Math.random() * 0.4);
   const horizontalDrift = (Math.random() - 0.5) * 0.3;
 
   return {
@@ -73,7 +73,7 @@ export function generateWordInvader(usedWords: string[]): ServerInvader {
 /**
  * Generate a math invader for multiplayer.
  */
-export function generateMathInvader(): ServerInvader {
+export function generateMathInvader(baseSpeed = 0.35): ServerInvader {
   const ops = ['+', '-', '*'] as const;
   const op = ops[Math.floor(Math.random() * ops.length)];
 
@@ -102,7 +102,7 @@ export function generateMathInvader(): ServerInvader {
 
   const estimatedWidth = display!.length * 15 + 40;
   const x = Math.max(0, REF_WIDTH / 2 - estimatedWidth / 2);
-  const speed = 0.35 * (0.8 + Math.random() * 0.4);
+  const speed = baseSpeed * (0.8 + Math.random() * 0.4);
   const horizontalDrift = (Math.random() - 0.5) * 0.3;
 
   return {
