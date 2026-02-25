@@ -86,7 +86,7 @@ export default function MultiplayerScoreboard() {
               <div className={styles.podiumName}>{entry.name}</div>
               <div className={styles.podiumScore}>{entry.score} pts</div>
               <div className={styles.podiumStats}>
-                {entry.wordsKilled} kills | {entry.maxCombo} max combo | {entry.accuracy}% acc
+                {entry.wordsKilled} kills | {entry.maxCombo} combo | {entry.accuracy}% acc
               </div>
             </div>
           ))}

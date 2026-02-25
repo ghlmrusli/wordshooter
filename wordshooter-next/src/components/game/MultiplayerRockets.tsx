@@ -6,7 +6,8 @@ import type { PlayerInfo } from '../../../party/types';
 import styles from '@/styles/multiplayer.module.css';
 
 /**
- * Sort players so "me" is in the center, others flanking.
+ * Sort players so "me" is in the center, others flanking evenly.
+ * Supports up to 5 players.
  */
 function sortPlayersForLayout(players: PlayerInfo[], myId: string | null): PlayerInfo[] {
   const me = players.find((p) => p.id === myId);
@@ -14,8 +15,13 @@ function sortPlayersForLayout(players: PlayerInfo[], myId: string | null): Playe
 
   if (!me) return players;
   if (others.length === 0) return [me];
-  if (others.length === 1) return [others[0], me];
-  return [others[0], me, others[1]];
+
+  // Split others into left half and right half
+  const half = Math.ceil(others.length / 2);
+  const left = others.slice(0, half);
+  const right = others.slice(half);
+
+  return [...left, me, ...right];
 }
 
 /**
@@ -61,13 +67,6 @@ export default function MultiplayerRockets() {
             )}
             <div className={styles.mpRocketEmojiWrap}>
               <div
-                className={styles.mpRocketGlow}
-                style={{
-                  background: `radial-gradient(circle, ${color}35 0%, ${color}15 40%, transparent 70%)`,
-                  boxShadow: `0 0 20px 8px ${color}20`,
-                }}
-              />
-              <div
                 className={styles.mpRocketEmoji}
                 style={{ transform: `rotate(${rotation}deg)`, transition: 'transform 0.15s ease-out' }}
               >
@@ -76,7 +75,7 @@ export default function MultiplayerRockets() {
             </div>
             <div
               className={styles.mpRocketLabel}
-              style={{ color, textShadow: `0 0 8px ${color}60` }}
+              style={{ color: isMe ? '#ffd700' : '#ffffff', textShadow: isMe ? '0 0 8px rgba(255, 215, 0, 0.5)' : 'none' }}
             >
               {isMe ? 'You' : player.name}
             </div>

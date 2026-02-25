@@ -28,22 +28,60 @@
   pointer-events: none;
 }
 
+/* --- Animated border card (matches lobby/start screen) --- */
 .scoreboardContent {
-  position: relative;
-  z-index: 10;
-  background: rgba(10, 18, 40, 0.8);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
+  --border-w: 1.5px;
+  --radius: 20px;
+
+  background: rgba(26, 41, 66, 0.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: var(--radius);
+  border: var(--border-w) solid transparent;
   padding: 28px 32px;
+  box-shadow: 0 8px 40px 0 rgba(0, 0, 0, 0.2);
   max-width: 420px;
   width: 95%;
   text-align: center;
+  position: relative;
+  z-index: 10;
+  isolation: isolate;
+}
+
+.scoreboardContent::before {
+  content: "";
+  position: absolute;
+  inset: calc(var(--border-w) * -1);
+  z-index: -1;
+  border-radius: inherit;
+  border: inherit;
+  background-image: conic-gradient(
+    from var(--card-angle),
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.04) 60%,
+    rgba(255, 255, 255, 0.25) 70%,
+    rgba(255, 255, 255, 1.00) 80%,
+    rgba(255, 255, 255, 0.25) 90%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  background-origin: border-box;
+  -webkit-mask:
+    linear-gradient(black, black) content-box,
+    linear-gradient(black, black);
+  mask:
+    linear-gradient(black, black) content-box,
+    linear-gradient(black, black);
+  -webkit-mask-clip: content-box, border-box;
+  mask-clip: content-box, border-box;
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: card-border-spin 4s linear infinite;
 }
 
 .scoreboardTitle {
   font-size: 16px;
   font-weight: bold;
+  font-family: 'Press Start 2P', cursive;
   background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -54,23 +92,34 @@
 .podium {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 24px;
 }
 
 .podiumEntry {
   display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 10px;
   background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   padding: 10px 14px;
+  transition: background 0.2s;
+  flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.podiumEntry:first-child {
+  background: rgba(255, 215, 0, 0.08);
+  border-color: rgba(255, 215, 0, 0.15);
 }
 
 .podiumMedal {
   font-size: 20px;
   flex-shrink: 0;
-  width: 30px;
+  width: 28px;
   text-align: center;
 }
 
@@ -79,28 +128,35 @@
   height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
+  box-shadow: 0 0 6px currentColor;
 }
 
 .podiumName {
-  font-size: 11px;
+  font-size: 10px;
   color: white;
   font-weight: bold;
+  font-family: 'Press Start 2P', cursive;
   flex: 1;
   text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .podiumScore {
-  font-size: 12px;
+  font-size: 11px;
   color: #ffd700;
   font-weight: bold;
   font-family: 'Press Start 2P', cursive;
+  text-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+  flex-shrink: 0;
 }
 
 .podiumStats {
   font-size: 7px;
   color: rgba(255, 255, 255, 0.4);
-  width: 100%;
-  text-align: right;
+  font-family: 'Press Start 2P', cursive;
+  flex-shrink: 0;
 }
 
 .buttonRow {
@@ -113,7 +169,7 @@
   background: linear-gradient(135deg, rgba(78, 204, 163, 0.4), rgba(74, 144, 226, 0.4));
   border: 1px solid rgba(78, 204, 163, 0.6);
   border-radius: 10px;
-  padding: 10px;
+  padding: 12px;
   cursor: pointer;
   transition: all 0.3s;
   font-size: 10px;
@@ -124,14 +180,15 @@
 
 .scoreboardBtn:hover {
   transform: scale(1.03);
+  border-color: rgba(78, 204, 163, 0.9);
 }
 
 .scoreboardBtnSecondary {
   flex: 1;
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 10px;
-  padding: 10px;
+  padding: 12px;
   cursor: pointer;
   transition: all 0.3s;
   font-size: 10px;
@@ -144,20 +201,24 @@
   color: white;
 }
 
+@keyframes card-border-spin {
+  to { --card-angle: 1turn; }
+}
+
 @media (max-width: 480px) {
   .scoreboardContent {
     padding: 20px 16px;
   }
 
   .podiumEntry {
-    padding: 8px 10px;
-    flex-wrap: wrap;
+    padding: 10px 12px;
   }
 
-  .podiumStats {
-    width: 100%;
-    text-align: left;
-    padding-left: 40px;
-    margin-top: 4px;
+  .podiumName {
+    font-size: 7px;
+  }
+
+  .podiumScore {
+    font-size: 10px;
   }
 }

@@ -80,6 +80,7 @@ export default function MultiplayerGameScreen() {
   const lastFrameRef = useRef<number>(performance.now());
   const inputRef = useRef<HTMLInputElement>(null);
   const [currentInput, setCurrentInput] = useState('');
+  const [pointPopups, setPointPopups] = useState<{ id: string; x: number; y: number; points: number; color: string }[]>([]);
   const lastEmojiTime = useRef<number>(0);
 
   const invaders = useGameStore((s) => s.invaders);
@@ -89,7 +90,6 @@ export default function MultiplayerGameScreen() {
   const myId = useMultiplayerStore((s) => s.myId);
   const timeRemaining = useMultiplayerStore((s) => s.timeRemaining);
   const roomCode = useMultiplayerStore((s) => s.roomCode) ?? '';
-  const killToasts = useMultiplayerStore((s) => s.killToasts);
 
   // Wire up the singleton socket's message handler
   const handleMessage = useCallback((msg: ServerMessage) => {
@@ -148,14 +148,15 @@ export default function MultiplayerGameScreen() {
           )
         );
 
-        mp.addKillToast({
-          id: `kill_${Date.now()}_${Math.random()}`,
-          killerName: msg.killerName,
-          killerColor: msg.killerColor,
-          word: inv?.displayWord ?? '',
-          points: msg.pointsEarned,
-          timestamp: Date.now(),
-        });
+        // Show floating +points at the invader's position
+        if (inv) {
+          const popupId = `pts_${Date.now()}_${Math.random()}`;
+          const killerColor = PLAYER_COLORS[msg.killerColor];
+          setPointPopups((prev) => [...prev, { id: popupId, x: inv.x + 30, y: inv.y, points: msg.pointsEarned, color: killerColor }]);
+          setTimeout(() => {
+            setPointPopups((prev) => prev.filter((p) => p.id !== popupId));
+          }, 1000);
+        }
 
         // Reset input only if the player was typing the same word that was killed
         if (inv) {
@@ -328,46 +329,35 @@ export default function MultiplayerGameScreen() {
     <div ref={containerRef} className={gameStyles.gameContainer} tabIndex={0}>
       <StarfieldCanvas mode="game" />
 
-      {/* Top bar with timer and scores */}
+      {/* Top bar with timer, player scores (centered), and room code */}
       <div className={styles.mpTopBar}>
         <div className={styles.mpTimer}>
           {timeRemaining != null ? `${timeRemaining}s` : ''}
         </div>
-        <div className={styles.mpRoomCode}>{roomCode}</div>
-      </div>
-
-      {/* Player scores sidebar */}
-      <div className={styles.mpSidebar}>
-        {players.map((p) => (
-          <div key={p.id} className={styles.mpPlayerScore}>
-            <div
-              className={styles.mpPlayerDot}
-              style={{ background: PLAYER_COLORS[p.color] }}
-            />
-            <div className={styles.mpPlayerInfo}>
+        <div className={styles.mpScoresRow}>
+          {players.map((p) => (
+            <div key={p.id} className={styles.mpPlayerScore}>
+              <div className={styles.mpPlayerDot} style={{ background: PLAYER_COLORS[p.color] }} />
               <div className={styles.mpPlayerName}>
-                {p.name} {p.id === myId ? '(You)' : ''}
+                {p.name}{p.id === myId ? ' (You)' : ''}
               </div>
               <div className={styles.mpPlayerPts}>{p.score} pts</div>
             </div>
-            {p.combo >= 3 && (
-              <div className={styles.mpCombo}>x{p.combo}</div>
-            )}
-          </div>
-        ))}
+          ))}
+        </div>
+        <div className={styles.mpRoomCode}>{roomCode}</div>
       </div>
 
-      {/* Kill feed */}
-      <div className={styles.mpKillFeed}>
-        {killToasts.map((toast) => (
-          <div key={toast.id} className={styles.mpKillToast}>
-            <span style={{ color: PLAYER_COLORS[toast.killerColor] }}>
-              {toast.killerName}
-            </span>
-            : {toast.word} +{toast.points}
-          </div>
-        ))}
-      </div>
+      {/* Floating point popups */}
+      {pointPopups.map((p) => (
+        <div
+          key={p.id}
+          className={styles.mpPointPopup}
+          style={{ left: p.x, top: p.y, color: p.color }}
+        >
+          +{p.points}
+        </div>
+      ))}
 
       <InvaderArea />
       {bullets.map((b) => (
@@ -387,24 +377,12 @@ export default function MultiplayerGameScreen() {
         spellCheck={false}
       />
 
-      {/* Emoji reaction bar */}
-      <div className={styles.mpEmojiBar}>
-        {REACTION_EMOJIS.map((emoji) => (
-          <button
-            key={emoji}
-            className={styles.mpEmojiBtn}
-            onClick={() => handleEmojiClick(emoji)}
-            type="button"
-          >
-            {emoji}
-          </button>
-        ))}
-      </div>
-
-      {/* Visible input display */}
-      <div className={styles.mpInputDisplay}>
-        {currentInput || '\u00A0'}
-      </div>
+      {/* Visible input display — only shown when typing */}
+      {currentInput && (
+        <div className={styles.mpInputDisplay}>
+          {currentInput}
+        </div>
+      )}
     </div>
   );
 }

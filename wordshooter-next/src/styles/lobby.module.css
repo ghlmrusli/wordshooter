@@ -33,7 +33,7 @@
   --border-w: 1.5px;
   --radius: 20px;
 
-  background: rgba(10, 18, 40, 0.05);
+  background: rgba(26, 41, 66, 0.85);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   border-radius: var(--radius);
@@ -187,6 +187,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: center;
+  font-family: 'Press Start 2P', cursive;
 }
 
 .lobbyBtn:hover {
@@ -313,6 +314,7 @@
   cursor: pointer;
   text-align: center;
   transition: all 0.2s;
+  font-family: 'Press Start 2P', cursive;
 }
 
 .modeOption:hover {
@@ -353,6 +355,7 @@
   transition: all 0.2s;
   font-size: 10px;
   color: rgba(255, 255, 255, 0.7);
+  font-family: 'Press Start 2P', cursive;
 }
 
 .durationOption:hover {
@@ -395,6 +398,10 @@
   color: #ff4444;
   text-align: center;
   margin-top: 8px;
+}
+
+@keyframes card-border-spin {
+  to { --card-angle: 1turn; }
 }
 
 @media (max-width: 480px) {

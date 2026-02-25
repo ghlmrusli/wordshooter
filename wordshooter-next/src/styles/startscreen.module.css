@@ -44,7 +44,7 @@
     --border-w: 1.5px;
     --radius: 20px;
 
-    background: rgba(10, 18, 40, 0.05);
+    background: rgba(26, 41, 66, 0.85);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     border-radius: var(--radius);
@@ -87,6 +87,15 @@
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     animation: card-border-spin 4s linear infinite;
+}
+
+@keyframes card-border-spin {
+  to { --card-angle: 1turn; }
+}
+
+@keyframes rotate360 {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* --- Rocket icon --- */

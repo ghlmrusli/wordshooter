@@ -141,19 +141,6 @@ export default function LobbyScreen() {
                 />
               </div>
 
-              <div className={styles.inputGroup}>
-                <span className={styles.inputLabel}>Color</span>
-                <div className={styles.colorPicker}>
-                  {PLAYER_COLORS.map((color, i) => (
-                    <div
-                      key={i}
-                      className={clsx(styles.colorSwatch, i === selectedColor && styles.colorSwatchSelected)}
-                      style={{ background: color }}
-                      onClick={() => setSelectedColor(i)}
-                    />
-                  ))}
-                </div>
-              </div>
             </div>
 
             <div className={styles.buttonRow}>
@@ -235,7 +222,7 @@ export default function LobbyScreen() {
 
             {mpStore.players.length < 2 && (
               <div className={styles.waitingText}>
-                Waiting for players... ({mpStore.players.length}/3)
+                Waiting for players... ({mpStore.players.length}/5)
               </div>
             )}
 

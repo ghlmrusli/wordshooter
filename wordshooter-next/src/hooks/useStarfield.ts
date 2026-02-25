@@ -25,56 +25,37 @@ function createStarData(W: number, H: number) {
   const stars: Star[] = [];
   const nebulae: Nebula[] = [];
 
-  // Layer 1: slow background stars
-  for (let i = 0; i < 120; i++) {
-    stars.push({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      size: Math.random() * 1.5 + 0.5,
-      speed: Math.random() * 0.3 + 0.1,
-      opacity: Math.random() * 0.5 + 0.3,
-      twinkleSpeed: Math.random() * 0.02 + 0.005,
-      twinkleOffset: Math.random() * Math.PI * 2,
-      layer: 1,
-    });
+  // Match index.html starfield layers exactly
+  const LAYERS = [
+    { count: 120, speed: 0.18, minR: 0.3, maxR: 0.8, alpha: 0.45 },
+    { count: 60,  speed: 0.55, minR: 0.6, maxR: 1.3, alpha: 0.65 },
+    { count: 28,  speed: 1.2,  minR: 1.0, maxR: 2.0, alpha: 0.85 },
+  ];
+
+  for (let li = 0; li < LAYERS.length; li++) {
+    const layer = LAYERS[li];
+    for (let i = 0; i < layer.count; i++) {
+      stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        size: layer.minR + Math.random() * (layer.maxR - layer.minR),
+        speed: layer.speed * (0.7 + Math.random() * 0.6),
+        opacity: layer.alpha * (0.6 + Math.random() * 0.4),
+        twinkleSpeed: 0.01 + Math.random() * 0.025,
+        twinkleOffset: Math.random() * Math.PI * 2,
+        layer: li + 1,
+      });
+    }
   }
 
-  // Layer 2: medium stars
-  for (let i = 0; i < 60; i++) {
-    stars.push({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      size: Math.random() * 2 + 1,
-      speed: Math.random() * 0.6 + 0.3,
-      opacity: Math.random() * 0.6 + 0.3,
-      twinkleSpeed: Math.random() * 0.03 + 0.01,
-      twinkleOffset: Math.random() * Math.PI * 2,
-      layer: 2,
-    });
-  }
-
-  // Layer 3: fast foreground stars
-  for (let i = 0; i < 28; i++) {
-    stars.push({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      size: Math.random() * 2.5 + 1.5,
-      speed: Math.random() * 1.0 + 0.6,
-      opacity: Math.random() * 0.7 + 0.3,
-      twinkleSpeed: Math.random() * 0.04 + 0.015,
-      twinkleOffset: Math.random() * Math.PI * 2,
-      layer: 3,
-    });
-  }
-
-  // 5 nebulae
-  for (let i = 0; i < 5; i++) {
+  // 4 nebulae
+  for (let i = 0; i < 4; i++) {
     nebulae.push({
       x: Math.random() * W,
       y: Math.random() * H,
       radius: Math.random() * 150 + 80,
       hue: Math.random() * 360,
-      opacity: Math.random() * 0.06 + 0.02,
+      opacity: 0.018 + Math.random() * 0.022,
     });
   }
 
