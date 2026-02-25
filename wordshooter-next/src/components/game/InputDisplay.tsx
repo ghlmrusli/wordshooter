@@ -9,6 +9,10 @@ export default function InputDisplay() {
   const targetInvaderId = useGameStore((s) => s.targetInvaderId);
   const invaders = useGameStore((s) => s.invaders);
   const inputError = useGameStore((s) => s.inputError);
+  const isSentenceActive = useGameStore((s) => s.isSentenceActive);
+
+  // Hide during sentences mode — input is shown inline on the sentence
+  if (isSentenceActive) return null;
 
   const targetInvader = invaders.find((i) => i.id === targetInvaderId);
   const targetWord = targetInvader

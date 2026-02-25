@@ -31,7 +31,7 @@ export interface MultiplayerState {
   countdownValue: number | null;
 
   // Adventure mode phase info
-  adventurePhase: { name: string; emoji: string; type: string } | null;
+  adventurePhase: { number: number; name: string; color: string; type: string } | null;
 
   // Invaders (server-authoritative, client animates positions)
   serverInvaders: Map<string, ServerInvader>;
@@ -62,7 +62,7 @@ export interface MultiplayerState {
   setPhase: (phase: MPPhase) => void;
   setPlayers: (players: PlayerInfo[]) => void;
   setMode: (mode: 'words' | 'math' | 'adventure' | null) => void;
-  setAdventurePhase: (phase: { name: string; emoji: string; type: string } | null) => void;
+  setAdventurePhase: (phase: { number: number; name: string; color: string; type: string } | null) => void;
   setDuration: (duration: number | null) => void;
   setTimeRemaining: (time: number | null) => void;
   setCountdown: (count: number | null) => void;

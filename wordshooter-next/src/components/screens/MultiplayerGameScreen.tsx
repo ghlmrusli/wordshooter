@@ -217,7 +217,7 @@ export default function MultiplayerGameScreen() {
       }
 
       case 'adventurePhase': {
-        mp.setAdventurePhase({ name: msg.phaseName, emoji: msg.phaseEmoji, type: msg.phaseType });
+        mp.setAdventurePhase({ number: msg.phaseNumber, name: msg.phaseName, color: msg.phaseColor, type: msg.phaseType });
         // Clear current invaders for clean transition
         useGameStore.setState({ invaders: [] });
         break;
@@ -352,8 +352,8 @@ export default function MultiplayerGameScreen() {
             </div>
           ))}
         </div>
-        <div className={styles.mpRoomCode}>
-          {adventurePhase ? `${adventurePhase.emoji} ${adventurePhase.name}` : roomCode}
+        <div className={styles.mpRoomCode} style={adventurePhase ? { color: adventurePhase.color } : undefined}>
+          {adventurePhase ? `Phase ${adventurePhase.number}: ${adventurePhase.name}` : roomCode}
         </div>
       </div>
 

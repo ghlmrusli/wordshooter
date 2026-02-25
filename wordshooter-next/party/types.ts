@@ -170,8 +170,9 @@ export type S2C_Reaction = {
 
 export type S2C_AdventurePhase = {
   type: 'adventurePhase';
+  phaseNumber: number;
   phaseName: string;
-  phaseEmoji: string;
+  phaseColor: string;
   phaseType: 'words' | 'letters' | 'math';
 };
 

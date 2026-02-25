@@ -7,16 +7,45 @@ import { generateWordInvader, generateMathInvader, generateLetterInvader } from 
 export type Phase = 'lobby' | 'countdown' | 'playing' | 'finished';
 export type GameMode = 'words' | 'math' | 'adventure';
 
-// Adventure mode phase cycle — each phase lasts ~20 seconds
-type AdventurePhaseType = 'words' | 'letters' | 'math';
-const ADVENTURE_PHASES: { type: AdventurePhaseType; duration: number; emoji: string; name: string }[] = [
-  { type: 'words',   duration: 20, emoji: '👾', name: 'WORDS' },
-  { type: 'letters', duration: 15, emoji: '🔤', name: 'LETTERS' },
-  { type: 'math',    duration: 20, emoji: '👽', name: 'MATH' },
-  { type: 'words',   duration: 15, emoji: '👾', name: 'WORDS' },
-  { type: 'letters', duration: 10, emoji: '🔤', name: 'LETTERS' },
-  { type: 'math',    duration: 15, emoji: '👽', name: 'MATH' },
+// ── Journey/Adventure mode phases (mirrors single-player journeyPhases.ts) ──
+// Sentences phases are substituted with words at 1x speed in multiplayer.
+type AdventureSpawnType = 'words' | 'letters' | 'math';
+interface JourneyPhase {
+  phase: number;
+  scoreThreshold: number; // min score to enter this phase
+  spawnType: AdventureSpawnType;
+  speedMultiplier: number;
+  name: string;
+  color: string;
+  maxInvaders: number;   // max alive at once
+  spawnIntervalMs: number; // ms between spawns
+}
+
+const JOURNEY_PHASES: JourneyPhase[] = [
+  // Phase 1: words 2x   (score 0-99)
+  { phase: 1, scoreThreshold: 0,   spawnType: 'words',   speedMultiplier: 2, name: 'WORDS (2x)',      color: '#FFFFFF', maxInvaders: 5, spawnIntervalMs: 2500 },
+  // Phase 2: sentences→words 1x (score 100-199)
+  { phase: 2, scoreThreshold: 100, spawnType: 'words',   speedMultiplier: 1, name: 'WORDS (1x)',      color: '#4A90E2', maxInvaders: 5, spawnIntervalMs: 2500 },
+  // Phase 3: letters 2x (score 200-299)
+  { phase: 3, scoreThreshold: 200, spawnType: 'letters', speedMultiplier: 2, name: 'LETTERS (2x)',    color: '#00D4FF', maxInvaders: 10, spawnIntervalMs: 800 },
+  // Phase 4: math 2x    (score 300-399)
+  { phase: 4, scoreThreshold: 300, spawnType: 'math',    speedMultiplier: 2, name: 'MATH (2x)',       color: '#E67E22', maxInvaders: 1, spawnIntervalMs: 4000 },
+  // Phase 5: words 3x   (score 400-499)
+  { phase: 5, scoreThreshold: 400, spawnType: 'words',   speedMultiplier: 3, name: 'WORDS (3x)',      color: '#FF4500', maxInvaders: 5, spawnIntervalMs: 2500 },
+  // Phase 6: sentences→words 1x (score 500-799)
+  { phase: 6, scoreThreshold: 500, spawnType: 'words',   speedMultiplier: 1, name: 'WORDS (1x)',      color: '#4A90E2', maxInvaders: 5, spawnIntervalMs: 2500 },
+  // Phase 7: letters 3x (score 800-899)
+  { phase: 7, scoreThreshold: 800, spawnType: 'letters', speedMultiplier: 3, name: 'LETTERS (3x)',    color: '#00D4FF', maxInvaders: 10, spawnIntervalMs: 800 },
+  // Phase 8: math 3x    (score 900+)
+  { phase: 8, scoreThreshold: 900, spawnType: 'math',    speedMultiplier: 3, name: 'MATH (3x)',       color: '#E67E22', maxInvaders: 1, spawnIntervalMs: 4000 },
 ];
+
+function getJourneyPhaseForScore(score: number): JourneyPhase {
+  for (let i = JOURNEY_PHASES.length - 1; i >= 0; i--) {
+    if (score >= JOURNEY_PHASES[i].scoreThreshold) return JOURNEY_PHASES[i];
+  }
+  return JOURNEY_PHASES[0];
+}
 
 // Combo thresholds (same as single-player ScoreManager)
 function getComboMultiplier(combo: number): number {
@@ -40,9 +69,7 @@ export class RoomState {
   private _gameStartTime = 0;
 
   // Adventure mode state
-  private _adventurePhaseIndex = 0;
-  private _adventurePhaseTimer: ReturnType<typeof setTimeout> | null = null;
-  private _currentAdventureType: AdventurePhaseType = 'words';
+  private _currentJourneyPhase: JourneyPhase = JOURNEY_PHASES[0];
 
   // Intervals
   private _spawnInterval: ReturnType<typeof setInterval> | null = null;
@@ -158,10 +185,11 @@ export class RoomState {
     const elapsed = (Date.now() - this._gameStartTime) / 1000;
     const steps = Math.floor(elapsed / 20);
     if (this.mode === 'adventure') {
-      // Adventure: speed based on current phase type
-      if (this._currentAdventureType === 'math') return 0.35 + 0.05 * steps;
-      if (this._currentAdventureType === 'letters') return 0.4 + 0.1 * steps;
-      return 0.3 + 0.1 * steps;
+      // Adventure: base speed scaled by journey phase speed multiplier
+      const phase = this._currentJourneyPhase;
+      const base = phase.spawnType === 'math' ? 0.35 : 0.3;
+      const increment = phase.spawnType === 'math' ? 0.05 : 0.1;
+      return (base + increment * steps) * (phase.speedMultiplier / 2); // /2 because base already assumes ~2x feel
     }
     if (this.mode === 'math') {
       return 0.35 + 0.05 * steps;
@@ -221,72 +249,77 @@ export class RoomState {
   }
 
   private _startAdventureMode() {
-    this._adventurePhaseIndex = 0;
-    this._enterAdventurePhase(0);
+    this._currentJourneyPhase = JOURNEY_PHASES[0];
+    this._enterJourneyPhase(this._currentJourneyPhase);
   }
 
-  private _enterAdventurePhase(index: number) {
-    // Clear existing spawn interval and invaders for phase transition
+  /** Get the highest individual score among all players. */
+  private _getHighestPlayerScore(): number {
+    let max = 0;
+    for (const p of this.players.values()) {
+      if (p.score > max) max = p.score;
+    }
+    return max;
+  }
+
+  /** Check if the journey phase should change based on highest player score. */
+  private _checkJourneyPhaseTransition(): void {
+    const highScore = this._getHighestPlayerScore();
+    const newPhase = getJourneyPhaseForScore(highScore);
+    if (newPhase.phase !== this._currentJourneyPhase.phase) {
+      this._currentJourneyPhase = newPhase;
+      this._enterJourneyPhase(newPhase);
+    }
+  }
+
+  private _enterJourneyPhase(journeyPhase: JourneyPhase) {
+    // Clear existing spawn interval
     if (this._spawnInterval) { clearInterval(this._spawnInterval); this._spawnInterval = null; }
-    if (this._adventurePhaseTimer) { clearTimeout(this._adventurePhaseTimer); this._adventurePhaseTimer = null; }
 
-    const phaseIdx = index % ADVENTURE_PHASES.length;
-    const phase = ADVENTURE_PHASES[phaseIdx];
-    this._adventurePhaseIndex = phaseIdx;
-    this._currentAdventureType = phase.type;
-
-    // Clear current invaders for clean transition
+    // Clear current invaders for clean phase transition
     for (const [id] of this.invaders) {
       this._broadcast?.({ type: 'missed', invaderId: id });
     }
     this.invaders.clear();
 
-    // Broadcast phase change
+    // Broadcast phase change to all clients
     this._broadcast?.({
       type: 'adventurePhase',
-      phaseName: phase.name,
-      phaseEmoji: phase.emoji,
-      phaseType: phase.type,
+      phaseNumber: journeyPhase.phase,
+      phaseName: journeyPhase.name,
+      phaseColor: journeyPhase.color,
+      phaseType: journeyPhase.spawnType,
     });
 
     // Spawn initial invaders for this phase
-    this._spawnForAdventurePhase(phase.type, 3);
+    const initialCount = journeyPhase.spawnType === 'math' ? 1 : journeyPhase.spawnType === 'letters' ? 5 : 3;
+    this._spawnForJourneyPhase(journeyPhase, initialCount);
 
     // Spawn loop for this phase
-    const spawnMs = phase.type === 'math' ? 4000 : phase.type === 'letters' ? 1500 : 2500;
     this._spawnInterval = setInterval(() => {
       if (this.phase !== 'playing') return;
-      if (phase.type === 'math') {
-        if (this._aliveInvaderCount() === 0) {
-          this._spawnForAdventurePhase(phase.type, 1);
-        }
+      const alive = this._aliveInvaderCount();
+      if (journeyPhase.spawnType === 'math') {
+        if (alive === 0) this._spawnForJourneyPhase(journeyPhase, 1);
       } else {
-        const maxAlive = phase.type === 'letters' ? 8 : 6;
-        if (this._aliveInvaderCount() < maxAlive) {
-          this._spawnForAdventurePhase(phase.type, 1);
+        if (alive < journeyPhase.maxInvaders) {
+          this._spawnForJourneyPhase(journeyPhase, 1);
         }
       }
-    }, spawnMs);
-
-    // Schedule next phase transition
-    this._adventurePhaseTimer = setTimeout(() => {
-      if (this.phase === 'playing') {
-        this._enterAdventurePhase(index + 1);
-      }
-    }, phase.duration * 1000);
+    }, journeyPhase.spawnIntervalMs);
   }
 
-  private _spawnForAdventurePhase(type: AdventurePhaseType, count: number) {
+  private _spawnForJourneyPhase(journeyPhase: JourneyPhase, count: number) {
     const baseSpeed = this._getCurrentBaseSpeed();
     for (let i = 0; i < count; i++) {
       let inv: import('./types').ServerInvader;
-      if (type === 'letters') {
-        const usedLetters = Array.from(this.invaders.values()).map((i) => i.word);
+      if (journeyPhase.spawnType === 'letters') {
+        const usedLetters = Array.from(this.invaders.values()).map((inv) => inv.word);
         inv = generateLetterInvader(usedLetters, baseSpeed);
-      } else if (type === 'math') {
+      } else if (journeyPhase.spawnType === 'math') {
         inv = generateMathInvader(baseSpeed);
       } else {
-        const usedWords = Array.from(this.invaders.values()).map((i) => i.word);
+        const usedWords = Array.from(this.invaders.values()).map((inv) => inv.word);
         inv = generateWordInvader(usedWords, baseSpeed);
       }
       this.invaders.set(inv.id, inv);
@@ -319,7 +352,6 @@ export class RoomState {
     if (this._spawnInterval) { clearInterval(this._spawnInterval); this._spawnInterval = null; }
     if (this._tickInterval) { clearInterval(this._tickInterval); this._tickInterval = null; }
     if (this._countdownInterval) { clearInterval(this._countdownInterval); this._countdownInterval = null; }
-    if (this._adventurePhaseTimer) { clearTimeout(this._adventurePhaseTimer); this._adventurePhaseTimer = null; }
     this.invaders.clear();
   }
 
@@ -422,13 +454,18 @@ export class RoomState {
       newCombo: player.combo,
     });
 
+    // Check for adventure phase transition after scoring
+    if (this.mode === 'adventure') {
+      this._checkJourneyPhaseTransition();
+    }
+
     // In math mode (or adventure math phase), spawn next invader after a short delay
-    const isMathPhase = this.mode === 'math' || (this.mode === 'adventure' && this._currentAdventureType === 'math');
+    const isMathPhase = this.mode === 'math' || (this.mode === 'adventure' && this._currentJourneyPhase.spawnType === 'math');
     if (isMathPhase) {
       setTimeout(() => {
         if (this.phase === 'playing' && this._aliveInvaderCount() === 0) {
           if (this.mode === 'adventure') {
-            this._spawnForAdventurePhase('math', 1);
+            this._spawnForJourneyPhase(this._currentJourneyPhase, 1);
           } else {
             this._spawnMathInvader();
           }
