@@ -90,6 +90,7 @@ export default function MultiplayerGameScreen() {
   const myId = useMultiplayerStore((s) => s.myId);
   const timeRemaining = useMultiplayerStore((s) => s.timeRemaining);
   const roomCode = useMultiplayerStore((s) => s.roomCode) ?? '';
+  const adventurePhase = useMultiplayerStore((s) => s.adventurePhase);
 
   // Wire up the singleton socket's message handler
   const handleMessage = useCallback((msg: ServerMessage) => {
@@ -215,6 +216,13 @@ export default function MultiplayerGameScreen() {
         break;
       }
 
+      case 'adventurePhase': {
+        mp.setAdventurePhase({ name: msg.phaseName, emoji: msg.phaseEmoji, type: msg.phaseType });
+        // Clear current invaders for clean transition
+        useGameStore.setState({ invaders: [] });
+        break;
+      }
+
       default:
         break;
     }
@@ -337,7 +345,6 @@ export default function MultiplayerGameScreen() {
         <div className={styles.mpScoresRow}>
           {players.map((p) => (
             <div key={p.id} className={styles.mpPlayerScore}>
-              <div className={styles.mpPlayerDot} style={{ background: PLAYER_COLORS[p.color] }} />
               <div className={styles.mpPlayerName}>
                 {p.name}{p.id === myId ? ' (You)' : ''}
               </div>
@@ -345,7 +352,9 @@ export default function MultiplayerGameScreen() {
             </div>
           ))}
         </div>
-        <div className={styles.mpRoomCode}>{roomCode}</div>
+        <div className={styles.mpRoomCode}>
+          {adventurePhase ? `${adventurePhase.emoji} ${adventurePhase.name}` : roomCode}
+        </div>
       </div>
 
       {/* Floating point popups */}

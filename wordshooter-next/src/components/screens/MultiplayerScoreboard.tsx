@@ -35,7 +35,7 @@ export default function MultiplayerScoreboard() {
       method: 'POST',
       headers,
       body: JSON.stringify({
-        mode: mp.mode || 'words',
+        mode: mp.mode === 'adventure' ? 'journey' : (mp.mode || 'words'),
         score: myEntry.score,
         durationMs: (mp.duration || 60) * 1000,
         totalChars: 0,
@@ -49,6 +49,7 @@ export default function MultiplayerScoreboard() {
         wpm: 0,
         accuracy: myEntry.accuracy,
         isMultiplayer: true,
+        playerName: myEntry.name,
       }),
     }).catch(console.error);
   }, []);
@@ -79,11 +80,7 @@ export default function MultiplayerScoreboard() {
           {scoreboard.map((entry, i) => (
             <div key={entry.id} className={styles.podiumEntry}>
               <div className={styles.podiumMedal}>{medals[i] ?? `#${i + 1}`}</div>
-              <div
-                className={styles.podiumDot}
-                style={{ background: PLAYER_COLORS[entry.color] }}
-              />
-              <div className={styles.podiumName}>{entry.name}</div>
+              <div className={styles.podiumName}>{entry.name || 'Player'}</div>
               <div className={styles.podiumScore}>{entry.score} pts</div>
               <div className={styles.podiumStats}>
                 {entry.wordsKilled} kills | {entry.maxCombo} combo | {entry.accuracy}% acc

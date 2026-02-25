@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { resolveUser } from '@/lib/auth';
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,13 +8,15 @@ export async function GET(request: NextRequest) {
     const mode = searchParams.get('mode') || 'words';
     const limit = Math.min(parseInt(searchParams.get('limit') || '50'), 100);
 
+    const user = await resolveUser(request).catch(() => null);
+
     const records = await prisma.gameRecord.findMany({
       where: { mode },
       orderBy: { score: 'desc' },
       take: limit,
       include: {
         user: {
-          select: { username: true, displayName: true },
+          select: { username: true, displayName: true, id: true },
         },
       },
     });
@@ -26,6 +29,7 @@ export async function GET(request: NextRequest) {
       maxCombo: r.maxCombo,
       displayName: r.user.displayName || r.user.username || 'Guest',
       playedAt: r.playedAt,
+      isYou: user ? r.user.id === user.id : false,
     }));
 
     return NextResponse.json({ leaderboard });

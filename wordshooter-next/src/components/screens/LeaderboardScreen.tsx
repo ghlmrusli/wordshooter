@@ -15,13 +15,7 @@ interface LeaderboardEntry {
   maxCombo: number;
   displayName: string;
   playedAt: string;
-}
-
-interface PersonalBest {
-  mode: string;
-  bestScore: number;
-  bestWpm: number;
-  gamesPlayed: number;
+  isYou?: boolean;
 }
 
 const MODES: { key: GameMode; label: string }[] = [
@@ -38,37 +32,37 @@ export default function LeaderboardScreen() {
 
   const [mode, setMode] = useState<GameMode>('words');
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
-  const [personalBest, setPersonalBest] = useState<PersonalBest | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const guestId = useAuthStore((s) => s.guestId);
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/leaderboard?mode=${mode}&limit=50`)
+    const guestId = useAuthStore.getState().guestId;
+    const headers: Record<string, string> = {};
+    if (guestId) headers['x-guest-id'] = guestId;
+
+    fetch(`/api/leaderboard?mode=${mode}&limit=10`, { headers })
       .then((r) => r.json())
       .then((data) => setEntries(data.leaderboard || []))
       .catch(() => setEntries([]))
       .finally(() => setLoading(false));
   }, [mode]);
 
-  useEffect(() => {
-    const headers: Record<string, string> = {};
-    if (guestId) headers['x-guest-id'] = guestId;
-
-    fetch('/api/games/personal-bests', { headers })
-      .then((r) => r.json())
-      .then((data) => {
-        const bests: PersonalBest[] = data.personalBests || [];
-        const current = bests.find((b) => b.mode === mode);
-        setPersonalBest(current || null);
-      })
-      .catch(() => setPersonalBest(null));
-  }, [mode, guestId]);
-
   const handleBack = () => {
     useGameStore.setState({ screen: 'start' });
   };
+
+  // Find the latest "isYou" entry to highlight
+  const latestYouIndex = (() => {
+    let latestIdx = -1;
+    let latestTime = '';
+    entries.forEach((e, i) => {
+      if (e.isYou && e.playedAt > latestTime) {
+        latestTime = e.playedAt;
+        latestIdx = i;
+      }
+    });
+    return latestIdx;
+  })();
 
   const rankClass = (rank: number) => {
     if (rank === 1) return styles.rankGold;
@@ -81,14 +75,16 @@ export default function LeaderboardScreen() {
     <div className={styles.leaderboardContainer}>
       <canvas ref={canvasRef} className={styles.starCanvas} />
 
-      <div className={styles.leaderboardContent}>
-        <div className={styles.topBar}>
-          <span className={styles.title}>Leaderboard</span>
-          <button className={styles.backBtn} onClick={handleBack}>
-            <span className="material-symbols-outlined">arrow_back</span>
-          </button>
-        </div>
+      {/* Fixed top bar */}
+      <div className={styles.topBar}>
+        <button className={styles.backBtn} onClick={handleBack}>
+          Back
+        </button>
+        <span className={styles.title}>Leaderboard</span>
+        <div style={{ width: 60 }} />
+      </div>
 
+      <div className={styles.leaderboardContent}>
         <div className={styles.modeTabs}>
           {MODES.map(({ key, label }) => (
             <button
@@ -100,18 +96,6 @@ export default function LeaderboardScreen() {
             </button>
           ))}
         </div>
-
-        {personalBest && (
-          <div className={styles.personalBests}>
-            <div className={styles.pbTitle}>Your Best</div>
-            <div className={styles.pbRow}>
-              <span className={styles.pbLabel}>
-                {personalBest.gamesPlayed} game{personalBest.gamesPlayed !== 1 ? 's' : ''}
-              </span>
-              <span className={styles.pbValue}>{personalBest.bestScore} pts</span>
-            </div>
-          </div>
-        )}
 
         <div className={styles.tableWrapper}>
           {loading ? (
@@ -132,10 +116,13 @@ export default function LeaderboardScreen() {
                 </tr>
               </thead>
               <tbody>
-                {entries.map((entry) => (
-                  <tr key={`${entry.rank}-${entry.playedAt}`} className={styles.tableRow}>
+                {entries.map((entry, i) => (
+                  <tr
+                    key={`${entry.rank}-${entry.playedAt}`}
+                    className={`${styles.tableRow} ${i === latestYouIndex ? styles.highlightRow : ''}`}
+                  >
                     <td className={rankClass(entry.rank)}>{entry.rank}</td>
-                    <td>{entry.displayName}</td>
+                    <td>{entry.displayName}{i === latestYouIndex ? ' (You)' : ''}</td>
                     <td className={styles.scoreCell}>{entry.score}</td>
                     <td>{Math.round(entry.wpm)}</td>
                     <td>{Math.round(entry.accuracy)}%</td>

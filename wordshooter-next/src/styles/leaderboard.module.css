@@ -27,29 +27,26 @@
     pointer-events: none;
 }
 
-.leaderboardContent {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 400px;
-    height: 100%;
-    padding: 16px 20px;
-}
-
+/* --- Fixed top bar (matches multiplayer) --- */
 .topBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
-    margin-bottom: 16px;
-    flex-shrink: 0;
+    padding: 8px 12px;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
 .title {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
     font-family: 'Press Start 2P', cursive;
     background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
@@ -60,27 +57,36 @@
 
 .backBtn {
     background: rgba(255, 255, 255, 0.1);
-    color: white;
+    color: rgba(255, 255, 255, 0.7);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 0;
-    width: 32px;
-    height: 32px;
     border-radius: 10px;
+    padding: 0 12px;
+    height: 32px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 8px;
 }
 
 .backBtn:hover {
     background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.05);
+    color: white;
 }
 
-.backBtn .material-symbols-outlined {
-    font-size: 18px;
-    line-height: 1;
+/* --- Content below top bar --- */
+.leaderboardContent {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    height: 100%;
+    padding: 60px 20px 16px;
 }
 
 /* --- Mode Tabs --- */
@@ -93,12 +99,12 @@
 
 .modeTab {
     font-family: 'Press Start 2P', cursive;
-    font-size: 7px;
+    font-size: 8px;
     color: rgba(255, 255, 255, 0.45);
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 8px;
-    padding: 8px 10px;
+    padding: 8px 12px;
     cursor: pointer;
     transition: all 0.2s;
 }
@@ -135,16 +141,16 @@
 
 .tableHeader th {
     font-family: 'Press Start 2P', cursive;
-    font-size: 6px;
+    font-size: 8px;
     color: rgba(255, 255, 255, 0.5);
     text-align: left;
-    padding: 8px 6px;
+    padding: 10px 8px;
     background: rgba(10, 22, 40, 0.95);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .tableHeader th:first-child {
-    width: 30px;
+    width: 36px;
     text-align: center;
 }
 
@@ -158,9 +164,9 @@
 
 .tableRow td {
     font-family: 'Press Start 2P', cursive;
-    font-size: 7px;
+    font-size: 10px;
     color: rgba(255, 255, 255, 0.8);
-    padding: 10px 6px;
+    padding: 12px 8px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -177,47 +183,36 @@
     color: #ffd700 !important;
 }
 
+.highlightRow {
+    background: rgba(255, 215, 0, 0.12) !important;
+    border-left: 3px solid #ffd700;
+}
+
+.highlightRow td {
+    color: #ffd700 !important;
+}
+
 .emptyState {
     text-align: center;
     padding: 40px 20px;
     font-family: 'Press Start 2P', cursive;
-    font-size: 8px;
+    font-size: 9px;
     color: rgba(255, 255, 255, 0.4);
     line-height: 2;
 }
 
-/* --- Personal Bests --- */
-.personalBests {
-    width: 100%;
-    margin-bottom: 16px;
-    flex-shrink: 0;
-}
+@media (max-width: 480px) {
+    .leaderboardContent {
+        padding: 56px 12px 12px;
+    }
 
-.pbTitle {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 7px;
-    color: rgba(255, 255, 255, 0.5);
-    margin-bottom: 8px;
-}
+    .tableRow td {
+        font-size: 8px;
+        padding: 10px 6px;
+    }
 
-.pbRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: rgba(255, 215, 0, 0.06);
-    border: 1px solid rgba(255, 215, 0, 0.15);
-    border-radius: 8px;
-    padding: 8px 12px;
-}
-
-.pbLabel {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 7px;
-    color: rgba(255, 255, 255, 0.6);
-}
-
-.pbValue {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 10px;
-    color: #ffd700;
+    .tableHeader th {
+        font-size: 7px;
+        padding: 8px 6px;
+    }
 }

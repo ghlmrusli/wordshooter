@@ -26,13 +26,15 @@ export default function LobbyScreen() {
 
   const [view, setView] = useState<LobbyView>('menu');
   const [playerName, setPlayerName] = useState('');
+  const playerNameRef = useRef('');
   const [selectedColor, setSelectedColor] = useState(0);
   const [joinCode, setJoinCode] = useState('');
   const [roomCode, setRoomCode] = useState('');
   const joinSentRef = useRef(false);
+  const isCreatingRef = useRef(false);
 
   // Host settings
-  const [selectedMode, setSelectedMode] = useState<'words' | 'math'>('words');
+  const [selectedMode, setSelectedMode] = useState<'words' | 'math' | 'adventure'>('words');
   const [selectedDuration, setSelectedDuration] = useState<60 | 90 | 120>(60);
 
   const mpStore = useMultiplayerStore();
@@ -50,8 +52,17 @@ export default function LobbyScreen() {
 
         // Auto-send join if we haven't yet
         if (!joinSentRef.current) {
+          // If joining (not creating) and room is empty, it doesn't exist
+          if (!isCreatingRef.current && msg.players.length === 0) {
+            disconnect();
+            setRoomCode('');
+            setJoinCode('');
+            setView('join');
+            useMultiplayerStore.getState().setError('Room not found');
+            return;
+          }
           joinSentRef.current = true;
-          const name = playerName.trim() || 'Player';
+          const name = playerNameRef.current.trim() || 'Player';
           sendMessage({ type: 'join', playerName: name, playerColor: selectedColor });
         }
         break;
@@ -73,7 +84,7 @@ export default function LobbyScreen() {
       default:
         break;
     }
-  }, [playerName, selectedColor]);
+  }, [selectedColor]);
 
   // Connect when roomCode is set and view is waiting
   useEffect(() => {
@@ -85,6 +96,7 @@ export default function LobbyScreen() {
 
   const handleCreate = () => {
     if (!playerName.trim()) return;
+    isCreatingRef.current = true;
     const code = generateRoomCode();
     setRoomCode(code);
     setView('waiting');
@@ -107,6 +119,8 @@ export default function LobbyScreen() {
       setRoomCode('');
       mpStore.reset();
     }
+    isCreatingRef.current = false;
+    mpStore.setError(null);
     setView('menu');
   };
 
@@ -136,7 +150,11 @@ export default function LobbyScreen() {
                   className={styles.textInput}
                   placeholder="Enter name..."
                   value={playerName}
-                  onChange={(e) => setPlayerName(e.target.value.slice(0, 12))}
+                  onChange={(e) => {
+                    const v = e.target.value.slice(0, 12);
+                    setPlayerName(v);
+                    playerNameRef.current = v;
+                  }}
                   maxLength={12}
                 />
               </div>
@@ -146,11 +164,9 @@ export default function LobbyScreen() {
             <div className={styles.buttonRow}>
               <div className={clsx(styles.lobbyBtn, styles.lobbyBtnPrimary)} onClick={handleCreate}>
                 <div className={styles.lobbyBtnLabel}>Create Room</div>
-                <div className={styles.lobbyBtnDesc}>Host a game</div>
               </div>
               <div className={styles.lobbyBtn} onClick={() => playerName.trim() && setView('join')}>
                 <div className={styles.lobbyBtnLabel}>Join Room</div>
-                <div className={styles.lobbyBtnDesc}>Enter code</div>
               </div>
             </div>
 
@@ -176,19 +192,24 @@ export default function LobbyScreen() {
                 className={clsx(styles.textInput, styles.codeInput)}
                 placeholder="ABCD"
                 value={joinCode}
-                onChange={(e) => setJoinCode(e.target.value.replace(/[^a-zA-Z]/g, '').slice(0, 4).toUpperCase())}
+                onChange={(e) => {
+                  const code = e.target.value.replace(/[^a-zA-Z]/g, '').slice(0, 4).toUpperCase();
+                  setJoinCode(code);
+                  if (mpStore.error) mpStore.setError(null);
+                  if (code.length === 4 && playerName.trim()) {
+                    isCreatingRef.current = false;
+                    setRoomCode(code);
+                    setView('waiting');
+                  }
+                }}
                 maxLength={4}
                 autoFocus
               />
             </div>
 
-            <div
-              className={clsx(styles.lobbyBtn, styles.lobbyBtnPrimary)}
-              onClick={handleJoin}
-              style={{ opacity: joinCode.length === 4 ? 1 : 0.4 }}
-            >
-              <div className={styles.lobbyBtnLabel}>Join</div>
-            </div>
+            {mpStore.error && (
+              <div className={styles.errorMsg}>{mpStore.error}</div>
+            )}
           </>
         )}
 
@@ -209,10 +230,6 @@ export default function LobbyScreen() {
             <div className={styles.playerList}>
               {mpStore.players.map((p) => (
                 <div key={p.id} className={styles.playerItem}>
-                  <div
-                    className={styles.playerDot}
-                    style={{ background: PLAYER_COLORS[p.color] }}
-                  />
                   <span className={styles.playerName}>{p.name}</span>
                   {p.isHost && <span className={styles.playerHost}>HOST</span>}
                   {p.id === mpStore.myId && <span className={styles.playerYou}>YOU</span>}
@@ -244,6 +261,13 @@ export default function LobbyScreen() {
                     >
                       <div className={styles.modeOptionEmoji}>👽</div>
                       <div className={styles.modeOptionName}>Math</div>
+                    </div>
+                    <div
+                      className={clsx(styles.modeOption, selectedMode === 'adventure' && styles.modeOptionSelected)}
+                      onClick={() => setSelectedMode('adventure')}
+                    >
+                      <div className={styles.modeOptionEmoji}>🚀</div>
+                      <div className={styles.modeOptionName}>Adventure</div>
                     </div>
                   </div>
                 </div>

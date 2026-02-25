@@ -25,10 +25,13 @@ export interface MultiplayerState {
   players: PlayerInfo[];
 
   // Game config
-  mode: 'words' | 'math' | null;
+  mode: 'words' | 'math' | 'adventure' | null;
   duration: number | null;
   timeRemaining: number | null;
   countdownValue: number | null;
+
+  // Adventure mode phase info
+  adventurePhase: { name: string; emoji: string; type: string } | null;
 
   // Invaders (server-authoritative, client animates positions)
   serverInvaders: Map<string, ServerInvader>;
@@ -58,7 +61,8 @@ export interface MultiplayerState {
   setMyId: (id: string) => void;
   setPhase: (phase: MPPhase) => void;
   setPlayers: (players: PlayerInfo[]) => void;
-  setMode: (mode: 'words' | 'math' | null) => void;
+  setMode: (mode: 'words' | 'math' | 'adventure' | null) => void;
+  setAdventurePhase: (phase: { name: string; emoji: string; type: string } | null) => void;
   setDuration: (duration: number | null) => void;
   setTimeRemaining: (time: number | null) => void;
   setCountdown: (count: number | null) => void;
@@ -95,6 +99,7 @@ const initialState = {
   duration: null,
   timeRemaining: null,
   countdownValue: null,
+  adventurePhase: null,
   serverInvaders: new Map<string, ServerInvader>(),
   killedInvaderIds: new Set<string>(),
   scoreboard: [],
@@ -114,6 +119,7 @@ export const useMultiplayerStore = create<MultiplayerState>((set, get) => ({
   setPhase: (phase) => set({ phase }),
   setPlayers: (players) => set({ players }),
   setMode: (mode) => set({ mode }),
+  setAdventurePhase: (phase) => set({ adventurePhase: phase }),
   setDuration: (duration) => set({ duration }),
   setTimeRemaining: (time) => set({ timeRemaining: time }),
   setCountdown: (count) => set({ countdownValue: count }),

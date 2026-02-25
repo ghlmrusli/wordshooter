@@ -25,10 +25,19 @@ export async function POST(request: NextRequest) {
       wpm = 0,
       accuracy = 0,
       isMultiplayer = false,
+      playerName,
     } = body;
 
     if (!mode || score === undefined || !durationMs) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // Update displayName if provided
+    if (playerName && typeof playerName === 'string' && playerName.trim()) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { displayName: playerName.trim() },
+      });
     }
 
     const record = await prisma.gameRecord.create({

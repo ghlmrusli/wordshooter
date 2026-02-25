@@ -33,7 +33,7 @@ export interface ServerInvader {
   x: number;
   speed: number;
   horizontalDrift: number;
-  invaderType: 'word' | 'math';
+  invaderType: 'word' | 'math' | 'letter';
   emoji: string;
   spawnTime: number;
 }
@@ -72,7 +72,7 @@ export type C2S_Typing = {
 
 export type C2S_StartGame = {
   type: 'startGame';
-  mode: 'words' | 'math';
+  mode: 'words' | 'math' | 'adventure';
   duration: 60 | 90 | 120;
 };
 
@@ -102,7 +102,7 @@ export type S2C_RoomState = {
   roomCode: string;
   players: PlayerInfo[];
   phase: 'lobby' | 'countdown' | 'playing' | 'finished';
-  mode: 'words' | 'math' | null;
+  mode: 'words' | 'math' | 'adventure' | null;
   duration: number | null;
   timeRemaining: number | null;
   yourId: string;
@@ -168,6 +168,13 @@ export type S2C_Reaction = {
   emoji: string;
 };
 
+export type S2C_AdventurePhase = {
+  type: 'adventurePhase';
+  phaseName: string;
+  phaseEmoji: string;
+  phaseType: 'words' | 'letters' | 'math';
+};
+
 export type ServerMessage =
   | S2C_RoomState
   | S2C_Spawn
@@ -179,4 +186,5 @@ export type ServerMessage =
   | S2C_PlayerTyping
   | S2C_Countdown
   | S2C_Error
-  | S2C_Reaction;
+  | S2C_Reaction
+  | S2C_AdventurePhase;

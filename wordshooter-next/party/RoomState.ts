@@ -2,10 +2,21 @@
 
 import type { PlayerInfo, ServerInvader, ScoreboardEntry } from './types';
 import { PLAYER_COLORS } from './types';
-import { generateWordInvader, generateMathInvader } from './ServerSpawnManager';
+import { generateWordInvader, generateMathInvader, generateLetterInvader } from './ServerSpawnManager';
 
 export type Phase = 'lobby' | 'countdown' | 'playing' | 'finished';
-export type GameMode = 'words' | 'math';
+export type GameMode = 'words' | 'math' | 'adventure';
+
+// Adventure mode phase cycle — each phase lasts ~20 seconds
+type AdventurePhaseType = 'words' | 'letters' | 'math';
+const ADVENTURE_PHASES: { type: AdventurePhaseType; duration: number; emoji: string; name: string }[] = [
+  { type: 'words',   duration: 20, emoji: '👾', name: 'WORDS' },
+  { type: 'letters', duration: 15, emoji: '🔤', name: 'LETTERS' },
+  { type: 'math',    duration: 20, emoji: '👽', name: 'MATH' },
+  { type: 'words',   duration: 15, emoji: '👾', name: 'WORDS' },
+  { type: 'letters', duration: 10, emoji: '🔤', name: 'LETTERS' },
+  { type: 'math',    duration: 15, emoji: '👽', name: 'MATH' },
+];
 
 // Combo thresholds (same as single-player ScoreManager)
 function getComboMultiplier(combo: number): number {
@@ -28,6 +39,11 @@ export class RoomState {
   hostId: string | null = null;
   private _gameStartTime = 0;
 
+  // Adventure mode state
+  private _adventurePhaseIndex = 0;
+  private _adventurePhaseTimer: ReturnType<typeof setTimeout> | null = null;
+  private _currentAdventureType: AdventurePhaseType = 'words';
+
   // Intervals
   private _spawnInterval: ReturnType<typeof setInterval> | null = null;
   private _tickInterval: ReturnType<typeof setInterval> | null = null;
@@ -49,6 +65,7 @@ export class RoomState {
   // ── Player management ──
 
   addPlayer(id: string, name: string, colorIdx: number): PlayerInfo {
+    const safeName = name.trim() || 'Player';
     // Assign host to first player
     const isHost = this.players.size === 0;
     if (isHost) this.hostId = id;
@@ -58,7 +75,7 @@ export class RoomState {
 
     const player: PlayerInfo = {
       id,
-      name,
+      name: safeName,
       color,
       score: 0,
       combo: 0,
@@ -136,11 +153,16 @@ export class RoomState {
     }, 1000);
   }
 
-  /** Get current base speed, increasing over elapsed game time.
-   *  Words: starts at 0.3, +0.1 every 20s.  Math: starts at 0.35, +0.05 every 20s. */
+  /** Get current base speed, increasing over elapsed game time. */
   private _getCurrentBaseSpeed(): number {
     const elapsed = (Date.now() - this._gameStartTime) / 1000;
     const steps = Math.floor(elapsed / 20);
+    if (this.mode === 'adventure') {
+      // Adventure: speed based on current phase type
+      if (this._currentAdventureType === 'math') return 0.35 + 0.05 * steps;
+      if (this._currentAdventureType === 'letters') return 0.4 + 0.1 * steps;
+      return 0.3 + 0.1 * steps;
+    }
     if (this.mode === 'math') {
       return 0.35 + 0.05 * steps;
     }
@@ -154,28 +176,11 @@ export class RoomState {
 
     this._broadcastRoomState();
 
-    // Spawn initial invaders
-    if (this.mode === 'words') {
-      this._spawnWordInvaders(3); // Start with 3 invaders
+    if (this.mode === 'adventure') {
+      this._startAdventureMode();
     } else {
-      this._spawnMathInvader();
+      this._startStandardMode();
     }
-
-    // Spawn loop
-    const spawnMs = this.mode === 'words' ? 2500 : 4000;
-    this._spawnInterval = setInterval(() => {
-      if (this.mode === 'words') {
-        const alive = this._aliveInvaderCount();
-        if (alive < 6) {
-          this._spawnWordInvaders(1);
-        }
-      } else {
-        // Math: only spawn if none alive
-        if (this._aliveInvaderCount() === 0) {
-          this._spawnMathInvader();
-        }
-      }
-    }, spawnMs);
 
     // Time tick every second
     this._tickInterval = setInterval(() => {
@@ -189,6 +194,104 @@ export class RoomState {
         this._endGame();
       }
     }, 1000);
+  }
+
+  private _startStandardMode() {
+    // Spawn initial invaders
+    if (this.mode === 'words') {
+      this._spawnWordInvaders(3);
+    } else {
+      this._spawnMathInvader();
+    }
+
+    // Spawn loop
+    const spawnMs = this.mode === 'words' ? 2500 : 4000;
+    this._spawnInterval = setInterval(() => {
+      if (this.mode === 'words') {
+        const alive = this._aliveInvaderCount();
+        if (alive < 6) {
+          this._spawnWordInvaders(1);
+        }
+      } else {
+        if (this._aliveInvaderCount() === 0) {
+          this._spawnMathInvader();
+        }
+      }
+    }, spawnMs);
+  }
+
+  private _startAdventureMode() {
+    this._adventurePhaseIndex = 0;
+    this._enterAdventurePhase(0);
+  }
+
+  private _enterAdventurePhase(index: number) {
+    // Clear existing spawn interval and invaders for phase transition
+    if (this._spawnInterval) { clearInterval(this._spawnInterval); this._spawnInterval = null; }
+    if (this._adventurePhaseTimer) { clearTimeout(this._adventurePhaseTimer); this._adventurePhaseTimer = null; }
+
+    const phaseIdx = index % ADVENTURE_PHASES.length;
+    const phase = ADVENTURE_PHASES[phaseIdx];
+    this._adventurePhaseIndex = phaseIdx;
+    this._currentAdventureType = phase.type;
+
+    // Clear current invaders for clean transition
+    for (const [id] of this.invaders) {
+      this._broadcast?.({ type: 'missed', invaderId: id });
+    }
+    this.invaders.clear();
+
+    // Broadcast phase change
+    this._broadcast?.({
+      type: 'adventurePhase',
+      phaseName: phase.name,
+      phaseEmoji: phase.emoji,
+      phaseType: phase.type,
+    });
+
+    // Spawn initial invaders for this phase
+    this._spawnForAdventurePhase(phase.type, 3);
+
+    // Spawn loop for this phase
+    const spawnMs = phase.type === 'math' ? 4000 : phase.type === 'letters' ? 1500 : 2500;
+    this._spawnInterval = setInterval(() => {
+      if (this.phase !== 'playing') return;
+      if (phase.type === 'math') {
+        if (this._aliveInvaderCount() === 0) {
+          this._spawnForAdventurePhase(phase.type, 1);
+        }
+      } else {
+        const maxAlive = phase.type === 'letters' ? 8 : 6;
+        if (this._aliveInvaderCount() < maxAlive) {
+          this._spawnForAdventurePhase(phase.type, 1);
+        }
+      }
+    }, spawnMs);
+
+    // Schedule next phase transition
+    this._adventurePhaseTimer = setTimeout(() => {
+      if (this.phase === 'playing') {
+        this._enterAdventurePhase(index + 1);
+      }
+    }, phase.duration * 1000);
+  }
+
+  private _spawnForAdventurePhase(type: AdventurePhaseType, count: number) {
+    const baseSpeed = this._getCurrentBaseSpeed();
+    for (let i = 0; i < count; i++) {
+      let inv: import('./types').ServerInvader;
+      if (type === 'letters') {
+        const usedLetters = Array.from(this.invaders.values()).map((i) => i.word);
+        inv = generateLetterInvader(usedLetters, baseSpeed);
+      } else if (type === 'math') {
+        inv = generateMathInvader(baseSpeed);
+      } else {
+        const usedWords = Array.from(this.invaders.values()).map((i) => i.word);
+        inv = generateWordInvader(usedWords, baseSpeed);
+      }
+      this.invaders.set(inv.id, inv);
+      this._broadcast?.({ type: 'spawn', invader: inv });
+    }
   }
 
   private _endGame() {
@@ -216,6 +319,7 @@ export class RoomState {
     if (this._spawnInterval) { clearInterval(this._spawnInterval); this._spawnInterval = null; }
     if (this._tickInterval) { clearInterval(this._tickInterval); this._tickInterval = null; }
     if (this._countdownInterval) { clearInterval(this._countdownInterval); this._countdownInterval = null; }
+    if (this._adventurePhaseTimer) { clearTimeout(this._adventurePhaseTimer); this._adventurePhaseTimer = null; }
     this.invaders.clear();
   }
 
@@ -318,11 +422,16 @@ export class RoomState {
       newCombo: player.combo,
     });
 
-    // In math mode, spawn next invader after a short delay
-    if (this.mode === 'math') {
+    // In math mode (or adventure math phase), spawn next invader after a short delay
+    const isMathPhase = this.mode === 'math' || (this.mode === 'adventure' && this._currentAdventureType === 'math');
+    if (isMathPhase) {
       setTimeout(() => {
         if (this.phase === 'playing' && this._aliveInvaderCount() === 0) {
-          this._spawnMathInvader();
+          if (this.mode === 'adventure') {
+            this._spawnForAdventurePhase('math', 1);
+          } else {
+            this._spawnMathInvader();
+          }
         }
       }, 1000);
     }

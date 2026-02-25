@@ -71,6 +71,33 @@ export function generateWordInvader(usedWords: string[], baseSpeed = 0.3): Serve
 }
 
 /**
+ * Generate a letter invader for multiplayer (adventure mode).
+ */
+export function generateLetterInvader(usedLetters: string[], baseSpeed = 0.3): ServerInvader {
+  const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+  let available = alphabet.split('').filter((l) => !usedLetters.includes(l));
+  if (available.length === 0) available = alphabet.split('');
+
+  const letter = available[Math.floor(Math.random() * available.length)];
+  const x = Math.random() * Math.max(100, REF_WIDTH - 80);
+  const speed = baseSpeed * (0.8 + Math.random() * 0.4);
+  const horizontalDrift = (Math.random() - 0.5) * 0.4;
+
+  return {
+    id: genId(),
+    word: letter,
+    displayWord: letter,
+    answer: letter,
+    x,
+    speed,
+    horizontalDrift,
+    invaderType: 'letter',
+    emoji: '🔤',
+    spawnTime: Date.now(),
+  };
+}
+
+/**
  * Generate a math invader for multiplayer.
  */
 export function generateMathInvader(baseSpeed = 0.35): ServerInvader {
