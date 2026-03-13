@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { Analytics } from '@vercel/analytics/next';
 import { pressStart2P } from './fonts';
 import './globals.css';
 
@@ -52,6 +53,7 @@ export default function RootLayout({
       </head>
       <body className={pressStart2P.variable}>
         {children}
+        <Analytics />
       </body>
     </html>
   );

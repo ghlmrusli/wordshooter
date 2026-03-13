@@ -13,6 +13,7 @@
   "dependencies": {
     "@prisma/adapter-libsql": "^7.4.1",
     "@prisma/client": "^7.4.1",
+    "@vercel/analytics": "^1.6.1",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
     "jose": "^6.1.3",
