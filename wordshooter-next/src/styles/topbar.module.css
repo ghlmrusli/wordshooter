@@ -1,0 +1,244 @@
+/* ============================================
+   Topbar & Controls
+   ============================================ */
+
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    padding-top: calc(8px + env(safe-area-inset-top));
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.show {
+    display: flex;
+}
+
+.leftControls {
+    display: flex;
+    gap: 7.5px;
+    align-items: center;
+}
+
+.rightControls {
+    display: flex;
+    gap: 7.5px;
+    align-items: center;
+}
+
+/* --- Shared pill style --- */
+.topbarPill {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 0 10px;
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    font-size: 12px;
+    font-weight: bold;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+
+/* --- Score --- */
+.score {
+    justify-content: flex-start;
+    gap: 5px;
+}
+
+.scoreValue {
+    position: relative;
+    display: inline-block;
+    transition: color 0.3s ease;
+}
+
+.scoreIncrease {
+    animation: scoreUp 0.5s ease-out;
+}
+
+.scoreDecrease {
+    animation: scoreDown 0.5s ease-out;
+    color: #ff4444;
+}
+
+/* --- Display pills --- */
+.difficultyDisplay {
+    /* inherits from .topbarPill */
+}
+
+.difficultyDisplay:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.speedDisplay {
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.speedDisplay:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.categoryDisplay {
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.categoryDisplay:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* --- Topbar buttons (glassmorphism 32px squares) --- */
+.pauseBtn,
+.restartGameBtn,
+.homeBtn,
+.muteBtn {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pauseBtn .material-symbols-outlined,
+.restartGameBtn .material-symbols-outlined,
+.homeBtn .material-symbols-outlined,
+.muteBtn .material-symbols-outlined {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.pauseBtn:hover,
+.restartGameBtn:hover,
+.homeBtn:hover,
+.muteBtn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* --- Celebration Preview Button (gold themed) --- */
+.celebrationPreviewBtn {
+    background: rgba(255, 215, 0, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: white;
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.celebrationPreviewBtn .material-symbols-outlined {
+    font-size: 18px;
+    line-height: 1;
+    color: #FFD700;
+}
+
+.celebrationPreviewBtn:hover {
+    background: rgba(255, 215, 0, 0.25);
+    transform: scale(1.05);
+}
+
+/* ============================================
+   Responsive: Topbar
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .topbar {
+        padding: 8px 12px;
+    }
+
+    .pauseBtn,
+    .restartGameBtn,
+    .homeBtn,
+    .muteBtn {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+    }
+
+    .pauseBtn {
+        display: none;
+    }
+
+    .pauseBtn .material-symbols-outlined,
+    .restartGameBtn .material-symbols-outlined,
+    .homeBtn .material-symbols-outlined,
+    .muteBtn .material-symbols-outlined {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .topbar {
+        padding: 6px 10px;
+    }
+
+    .topbarPill {
+        font-size: 10px;
+        padding: 0 8px;
+        height: 28px;
+    }
+
+    .pauseBtn,
+    .restartGameBtn,
+    .homeBtn,
+    .muteBtn {
+        width: 28px;
+        height: 28px;
+        font-size: 10px;
+    }
+
+    .pauseBtn .material-symbols-outlined,
+    .restartGameBtn .material-symbols-outlined,
+    .homeBtn .material-symbols-outlined,
+    .muteBtn .material-symbols-outlined {
+        font-size: 14px;
+    }
+
+    .leftControls {
+        gap: 10px;
+    }
+
+    .rightControls {
+        gap: 10px;
+    }
+}

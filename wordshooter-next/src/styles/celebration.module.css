@@ -1,0 +1,498 @@
+/* ============================================
+   Celebration Screen
+   ============================================ */
+
+.celebrationScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    background: radial-gradient(ellipse at center, #1a2942 0%, #0a1628 50%, #000814 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    overflow-y: auto;
+    padding: 20px;
+    pointer-events: auto;
+}
+
+/* Star field overlay */
+.celebrationScreen::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        radial-gradient(2px 2px at 20% 30%, white, transparent),
+        radial-gradient(2px 2px at 60% 70%, white, transparent),
+        radial-gradient(1px 1px at 50% 50%, white, transparent),
+        radial-gradient(1px 1px at 80% 10%, white, transparent),
+        radial-gradient(2px 2px at 90% 60%, white, transparent),
+        radial-gradient(1px 1px at 33% 80%, white, transparent),
+        radial-gradient(1px 1px at 15% 55%, white, transparent),
+        radial-gradient(2px 2px at 70% 25%, white, transparent),
+        radial-gradient(1px 1px at 45% 15%, white, transparent),
+        radial-gradient(1px 1px at 25% 90%, white, transparent);
+    background-size: 200% 200%, 300% 300%, 250% 250%, 280% 280%, 220% 220%,
+                     260% 260%, 290% 290%, 240% 240%, 270% 270%, 230% 230%;
+    background-position: 0% 0%, 40% 60%, 50% 50%, 80% 10%, 90% 60%,
+                         33% 80%, 15% 55%, 70% 25%, 45% 15%, 25% 90%;
+    background-repeat: repeat;
+    opacity: 0.6;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* --- Celebration Top Bar --- */
+.celebrationTopBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    z-index: 3001;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    pointer-events: auto;
+    gap: 7.5px;
+}
+
+.celebrationTitle {
+    font-size: 16px;
+    font-weight: bold;
+    font-family: 'Press Start 2P', cursive;
+    background: linear-gradient(135deg, #ff8c00 0%, #ff0000 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.celebrationButtons {
+    display: flex;
+    gap: 7.5px;
+}
+
+.celebrationTopBtn {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.celebrationTopBtn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.celebrationTopBtn .material-symbols-outlined {
+    font-size: 18px;
+    line-height: 1;
+}
+
+/* --- Celebration Card --- */
+.celebrationCard {
+    background: rgba(30, 45, 70, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    width: 300px;
+    height: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+}
+
+/* --- 3D Hover Effect --- */
+.hover3dWrapper {
+    perspective: 1000px;
+    display: inline-block;
+}
+
+.hover3d {
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease-out;
+    will-change: transform;
+}
+
+/* Hide the effect overlay divs */
+.hover3d > div:not(.celebrationCard) {
+    display: none;
+}
+
+/* --- Header --- */
+.celebrationHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.headerLeft {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.headerLabel {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: 'Press Start 2P', cursive;
+    line-height: 1.2;
+}
+
+.headerRank {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.9);
+    font-family: 'Press Start 2P', cursive;
+    line-height: 1.2;
+}
+
+.headerValue {
+    font-size: 30px;
+    font-family: 'Press Start 2P', cursive;
+    color: #ffffff;
+    line-height: 1;
+}
+
+/* --- Body --- */
+.celebrationBody {
+    padding: 16px 20px 20px 20px;
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Left stats --- */
+.leftStats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.statLabel {
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'Press Start 2P', cursive;
+    line-height: 1.2;
+}
+
+.statValue {
+    font-size: 32px;
+    color: #ffd700;
+    font-family: 'Press Start 2P', cursive;
+    text-shadow: 0 0 6px rgba(255, 215, 0, 0.2);
+    line-height: 1;
+}
+
+.celebrationAccuracy {
+    color: #10b981;
+    text-shadow: 0 0 6px rgba(16, 185, 129, 0.2);
+}
+
+.celebrationRocketIcon {
+    position: absolute;
+    right: 20px;
+    top: 32px;
+    font-size: 56px;
+    opacity: 0.95;
+    animation: rocketFloat 3s ease-in-out infinite;
+}
+
+/* --- Bottom stats --- */
+.bottomStats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    align-items: flex-start;
+    padding: 0 0px;
+}
+
+.bottomStatsLeft,
+.bottomStatsRight {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.bottomStatsRight {
+    text-align: right;
+}
+
+.bottomStatLabel {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'Press Start 2P', cursive;
+    line-height: 1.2;
+}
+
+.bottomStatValue {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.9);
+    font-family: 'Press Start 2P', cursive;
+    line-height: 1.2;
+}
+
+/* --- Journey Tabs --- */
+.journeyTabs {
+    display: none;
+    flex-direction: column;
+    margin-bottom: 8px;
+}
+
+.journeyTabNav {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.journeyTabBtn {
+    flex: 0 0 auto;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 6px 6px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 7px;
+    color: rgba(255, 255, 255, 0.45);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.journeyTabBtnActive {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.35);
+    color: #fff;
+}
+
+.journeyTabContent {
+    display: none;
+}
+
+.journeyTabContentActive {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 12px;
+}
+
+.journeyStatBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.journeyStatBlockFullWidth {
+    grid-column: 1 / -1;
+}
+
+.journeyStatLabel {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 7px;
+    color: rgba(255, 255, 255, 0.45);
+    line-height: 1.3;
+}
+
+.journeyStatValue {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 20px;
+    color: #ffd700;
+    text-shadow: 0 0 6px rgba(255, 215, 0, 0.2);
+    line-height: 1;
+}
+
+/* --- Graph --- */
+.graphContainer {
+    margin-top: 8px;
+}
+
+.graphViewToggle {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+.btnViewToggle {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.btnViewToggle:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+/* --- Canvas styles --- */
+.performanceGraph {
+    width: 100%;
+    height: 135px;
+    display: block;
+}
+
+.speedometerCanvas {
+    width: 100%;
+    display: block;
+}
+
+.graphView {
+    /* container for graph view */
+}
+
+.speedoView {
+    /* container for speedometer view */
+}
+
+/* --- Graph labels --- */
+.graphLabels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0px 0 0px;
+}
+
+.graphTimeLabel {
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'Press Start 2P', cursive;
+    line-height: 1.2;
+}
+
+.graphTimeLabelCenter {
+    flex: 1;
+    text-align: center;
+}
+
+/* --- Graph Legend --- */
+.graphLegend {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 6px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 7px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* --- Links --- */
+.scoreboardLink {
+    text-align: center;
+    padding: 12px 0 4px;
+}
+
+.playAgainLink {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    color: #ffffff;
+    line-height: 1.2;
+    text-decoration: underline;
+    cursor: pointer;
+    display: inline-block;
+    animation: playAgainPulse 1.5s ease-in-out infinite;
+}
+
+.playAgainLink:hover {
+    opacity: 1;
+    animation: none;
+}
+
+/* ============================================
+   Responsive: Celebration
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .celebrationCard {
+        width: 280px;
+        height: auto;
+    }
+
+    .headerLabel,
+    .headerRank {
+        font-size: 11px;
+    }
+
+    .headerValue {
+        font-size: 32px;
+    }
+
+    .statLabel {
+        font-size: 9px;
+    }
+
+    .statValue {
+        font-size: 28px;
+    }
+
+    .celebrationRocketIcon {
+        font-size: 48px;
+        right: 18px;
+        top: 28px;
+    }
+
+    .performanceGraph {
+        height: 115px;
+    }
+
+    .bottomStatLabel,
+    .bottomStatValue {
+        font-size: 9px;
+    }
+
+    .celebrationTopBtn {
+        width: 28px;
+        height: 28px;
+    }
+
+    .celebrationTopBtn .material-symbols-outlined {
+        font-size: 16px;
+    }
+}

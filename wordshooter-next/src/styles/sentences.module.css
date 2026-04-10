@@ -1,0 +1,131 @@
+/* ============================================
+   Sentences Mode Overlay
+   ============================================ */
+
+.sentencesOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 600;
+    pointer-events: none;
+    padding: 20px;
+}
+
+.show {
+    display: flex;
+}
+
+/* --- Sentences Box (glassmorphism card) --- */
+.sentencesBox {
+    background: rgba(26, 41, 66, 0.92);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 20px 28px;
+    max-width: 700px;
+    width: 95%;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transform: translateY(-50px);
+}
+
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.animateIn {
+    animation: sentence-slide-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animateOut {
+    animation: sentence-slide-out 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* --- Duration Bar --- */
+.sentencesDurationBar {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+    margin-bottom: 14px;
+    overflow: hidden;
+}
+
+.sentencesDurationFill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #FFD700);
+    border-radius: 2px;
+    width: 100%;
+    transition: width 1s linear;
+}
+
+/* --- Meta (hint + timer) --- */
+.sentencesMeta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 14px;
+}
+
+.sentencesHint {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.35);
+    font-family: 'Press Start 2P', cursive;
+}
+
+.sentencesTimer {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'Press Start 2P', cursive;
+}
+
+/* --- Sentences Text --- */
+.sentencesText {
+    font-size: 18px;
+    color: white;
+    font-family: 'Press Start 2P', cursive;
+    line-height: 1.8;
+    letter-spacing: 1px;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    margin-top: 14px;
+}
+
+.word {
+    display: inline;
+}
+
+.correct {
+    color: #10b981;
+}
+
+.current {
+    background: rgba(255, 215, 0, 0.3);
+    animation: blink 0.8s ease-in-out infinite;
+}
+
+/* ============================================
+   Responsive: Sentences
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .sentencesText {
+        font-size: 13px;
+        letter-spacing: 0px;
+    }
+
+    .sentencesBox {
+        padding: 14px 16px;
+    }
+}

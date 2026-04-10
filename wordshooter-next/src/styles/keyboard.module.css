@@ -1,0 +1,307 @@
+/* ============================================
+   On-Screen Keyboard
+   ============================================ */
+
+/* Hidden on desktop by default */
+.onScreenKeyboard {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    padding-bottom: env(safe-area-inset-bottom);
+    background: transparent;
+    border-radius: 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 510;
+}
+
+/* Hide normal keyboard during challenge */
+.hideForChallenge {
+    display: none !important;
+}
+
+/* Number keyboard for math mode */
+.numberKeyboard {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 510;
+}
+
+.numberKeyboardShow {
+    display: flex;
+}
+
+.numberKeyboard .keyboardRow {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+}
+
+.numberKeyboard .key {
+    width: calc(100% / 5);
+    height: 52px;
+    font-size: 24px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    font-weight: bold;
+    font-family: 'Press Start 2P', cursive;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.1s;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    border-right: 0.5px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+}
+
+.numberKeyboard .key:active {
+    background: rgba(16, 185, 129, 0.5);
+    transform: scale(0.95);
+}
+
+/* --- Keyboard row & key base styles --- */
+.keyboardRow {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+}
+
+.key {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: 'Press Start 2P', cursive;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.1s;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.key:active {
+    background: rgba(16, 185, 129, 0.5);
+    transform: scale(0.95);
+}
+
+.keySpace {
+    width: 100%;
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+
+.spacebarRow {
+    width: 100%;
+}
+
+/* --- Key states --- */
+.pressed {
+    background: rgba(255, 215, 0, 0.7) !important;
+    border-color: rgba(255, 215, 0, 1) !important;
+}
+
+.active {
+    background: rgba(22, 160, 133, 0.7) !important;
+    border-color: rgba(22, 160, 133, 1) !important;
+}
+
+/* ============================================
+   Show keyboard ONLY on mobile
+   ============================================ */
+
+@media (max-width: 1024px), (pointer: coarse) {
+    .onScreenKeyboard {
+        display: flex;
+        gap: 0;
+        padding: 0;
+    }
+
+    .keyboardRow {
+        gap: 0;
+    }
+
+    .key {
+        width: calc(100% / 10);
+        height: 52px;
+        font-size: 18px;
+        border-radius: 0;
+        border-right: 0.5px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .keyboardRow:first-child .key {
+        width: calc(100% / 10);
+    }
+
+    .keyboardRow:nth-child(2) .key {
+        width: calc(100% / 9);
+    }
+
+    .keyboardRow:nth-child(3) .key {
+        width: calc(100% / 7);
+    }
+
+    .spacebarRow {
+        width: 100%;
+    }
+
+    .spacebarRow .keySpace {
+        width: 100%;
+        height: 52px;
+        font-size: 12px;
+        border-radius: 0;
+        border-right: none;
+        border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+        letter-spacing: 2px;
+    }
+}
+
+@media (max-width: 480px) {
+    .key {
+        height: 50px;
+        font-size: 16px;
+    }
+
+    .onScreenKeyboard {
+        gap: 0;
+        padding: 0;
+    }
+
+    .spacebarRow .keySpace {
+        height: 50px;
+    }
+}
+
+@media (max-width: 375px) {
+    .key {
+        height: 48px;
+        font-size: 14px;
+    }
+
+    .onScreenKeyboard {
+        gap: 0;
+        padding: 0;
+    }
+
+    .spacebarRow .keySpace {
+        height: 48px;
+    }
+}
+
+/* ============================================
+   Challenge Keyboard
+   ============================================ */
+
+/* Hidden on desktop */
+.challengeKeyboard {
+    display: none;
+}
+
+@media (max-width: 1024px), (pointer: coarse) {
+    .challengeKeyboard {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        width: 100%;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        z-index: 3000;
+    }
+
+    .challengeKeyboardRow {
+        display: flex;
+        justify-content: center;
+        gap: 0;
+    }
+
+    .challengeKey {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        font-size: 18px;
+        font-weight: bold;
+        font-family: 'Press Start 2P', cursive;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0;
+        cursor: pointer;
+        transition: all 0.1s;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        border-right: 0.5px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .challengeKey:active {
+        background: rgba(16, 185, 129, 0.5);
+        transform: scale(0.95);
+    }
+
+    .challengeKeyboardRow:first-child .challengeKey {
+        width: calc(100% / 10);
+    }
+
+    .challengeKeyboardRow:nth-child(2) .challengeKey {
+        width: calc(100% / 9);
+    }
+
+    .challengeKeyboardRow:nth-child(3) .challengeKey {
+        width: calc(100% / 8);
+    }
+
+    .challengeKeyboardRow:nth-child(4) .challengeKey {
+        width: 100%;
+    }
+
+    .spacebar {
+        width: 100%;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .challengeKey {
+        height: 50px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 375px) {
+    .challengeKey {
+        height: 48px;
+        font-size: 14px;
+    }
+}
