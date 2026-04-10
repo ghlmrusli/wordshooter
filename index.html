@@ -134,6 +134,10 @@
             padding-bottom: env(safe-area-inset-bottom);
         }
 
+        .pwa-standalone #gameContainer {
+            padding-bottom: 34px;
+        }
+
         #starCanvas {
             position: absolute;
             top: 0; left: 0;
@@ -152,7 +156,12 @@
             height: 70%;
             position: relative;
             background: linear-gradient(to bottom, #16213e, transparent);
-            padding-top: calc(48px + max(env(safe-area-inset-top), 44px));
+            padding-top: calc(48px + env(safe-area-inset-top, 0px));
+        }
+
+        /* PWA standalone: ensure invaders don't spawn behind status bar */
+        .pwa-standalone #topSide {
+            padding-top: calc(48px + 44px);
         }
 
         /* Bottom side - Spaceship area */
@@ -652,20 +661,25 @@
         /* Topbar Container */
         #topbar {
             position: fixed;
-            top: 0;
+            top: env(safe-area-inset-top, 0px);
             left: 0;
             width: 100%;
             display: none;
             justify-content: space-between;
             align-items: center;
             padding: 8px 12px;
-            padding-top: calc(8px + max(env(safe-area-inset-top), 44px));
             z-index: 1000;
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* PWA standalone: guarantee clearance when env() returns 0 */
+        /* PWA standalone: push topbar below iOS status bar */
+        .pwa-standalone #topbar {
+            top: 44px;
         }
 
         #topbar.show {
@@ -1003,9 +1017,14 @@
             z-index: 3000;
             overflow-y: auto;
             padding: 20px;
-            padding-top: calc(20px + max(env(safe-area-inset-top), 20px));
-            padding-bottom: calc(20px + max(env(safe-area-inset-bottom), 20px));
+            padding-top: calc(60px + env(safe-area-inset-top, 0px));
+            padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
             pointer-events: auto;
+        }
+
+        .pwa-standalone #celebrationScreen {
+            padding-top: calc(60px + 44px);
+            padding-bottom: calc(20px + 34px);
         }
 
         /* Star field overlay for celebration screen */
@@ -1039,14 +1058,13 @@
 
         #celebrationTopBar {
             position: fixed;
-            top: 0;
+            top: env(safe-area-inset-top, 0px);
             left: 0;
             right: 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 8px 12px;
-            padding-top: calc(8px + max(env(safe-area-inset-top), 44px));
             z-index: 3001;
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
@@ -1055,6 +1073,11 @@
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             pointer-events: auto;
             gap: 7.5px;
+        }
+
+        /* PWA standalone: push celebration topbar below iOS status bar */
+        .pwa-standalone #celebrationTopBar {
+            top: 44px;
         }
         
         #celebrationTopBar .celebration-title {
@@ -1737,8 +1760,13 @@
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
             padding: 20px;
-            padding-top: calc(20px + max(env(safe-area-inset-top), 20px));
-            padding-bottom: calc(20px + max(env(safe-area-inset-bottom), 20px));
+            padding-top: calc(20px + env(safe-area-inset-top, 0px));
+            padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+        }
+
+        .pwa-standalone #timeSelection {
+            padding-top: calc(20px + 44px);
+            padding-bottom: calc(20px + 34px);
         }
         
         /* Floating words background */
@@ -2685,6 +2713,17 @@
     </div>
 
     <script>
+        // PWA standalone safe-area fix:
+        // iOS Safari in standalone mode may not report env(safe-area-inset-top) correctly.
+        // Detect standalone mode and set a CSS custom property as fallback.
+        (function() {
+            const isStandalone = window.navigator.standalone === true || 
+                                 window.matchMedia('(display-mode: standalone)').matches;
+            if (isStandalone) {
+                document.documentElement.classList.add('pwa-standalone');
+            }
+        })();
+
         // Game state
         // sessionId: incremented each time a new game starts.
         // Every async callback captures the id at creation time and bails if it no longer matches.
