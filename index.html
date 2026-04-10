@@ -152,7 +152,7 @@
             height: 70%;
             position: relative;
             background: linear-gradient(to bottom, #16213e, transparent);
-            padding-top: calc(48px + env(safe-area-inset-top));
+            padding-top: calc(48px + max(env(safe-area-inset-top), 20px));
         }
 
         /* Bottom side - Spaceship area */
@@ -304,6 +304,7 @@
             flex-direction: column;
             gap: 0;
             padding: 0;
+            padding-bottom: env(safe-area-inset-bottom);
             background: transparent;
             border-radius: 0;
             position: absolute;
@@ -658,7 +659,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 8px 12px;
-            padding-top: calc(8px + env(safe-area-inset-top));
+            padding-top: calc(8px + max(env(safe-area-inset-top), 20px));
             z-index: 1000;
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
@@ -1002,8 +1003,8 @@
             z-index: 3000;
             overflow-y: auto;
             padding: 20px;
-            padding-top: calc(20px + env(safe-area-inset-top));
-            padding-bottom: calc(20px + env(safe-area-inset-bottom));
+            padding-top: calc(20px + max(env(safe-area-inset-top), 20px));
+            padding-bottom: calc(20px + max(env(safe-area-inset-bottom), 20px));
             pointer-events: auto;
         }
 
@@ -1045,7 +1046,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 8px 12px;
-            padding-top: calc(8px + env(safe-area-inset-top));
+            padding-top: calc(8px + max(env(safe-area-inset-top), 20px));
             z-index: 3001;
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
@@ -1073,8 +1074,6 @@
 
         .celebration-top-btn {
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             color: white;
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 0;
@@ -1738,8 +1737,8 @@
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
             padding: 20px;
-            padding-top: calc(20px + env(safe-area-inset-top));
-            padding-bottom: calc(20px + env(safe-area-inset-bottom));
+            padding-top: calc(20px + max(env(safe-area-inset-top), 20px));
+            padding-bottom: calc(20px + max(env(safe-area-inset-bottom), 20px));
         }
         
         /* Floating words background */
@@ -5055,6 +5054,9 @@
             const numberKb = document.getElementById('numberKeyboard');
             if (normalKb) { normalKb.style.display = ''; normalKb.classList.remove('hide-for-challenge'); }
             if (numberKb) { numberKb.classList.remove('show'); numberKb.style.display = ''; }
+
+            // Clear all keyboard key highlights
+            document.querySelectorAll('.key').forEach(k => { k.classList.remove('active'); k.classList.remove('pressed'); });
 
             // Reset challenge screen
             const challengeScreen = document.getElementById('challengeScreen');
