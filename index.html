@@ -986,6 +986,16 @@
             transform: scale(1.05);
         }
 
+        /* Celebration card play-again link row */
+        #scoreboardLink {
+            text-align: center;
+            padding: 12px 0 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
         /* Celebration Screen */
         #celebrationScreen {
             position: fixed;
@@ -1331,20 +1341,8 @@
             margin-top: 8px;
         }
 
-        #scoreboardLink {
-            text-align: center;
-            padding: 12px 0 4px;
-        }
-
         #playAgainLink {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 10px;
-            color: #ffffff;
-            line-height: 1.2;
-            text-decoration: underline;
-            cursor: pointer;
-            display: inline-block;
-            animation: playAgainPulse 1.5s ease-in-out infinite;
+            display: none;
         }
 
         @keyframes playAgainPulse {
@@ -2629,6 +2627,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- Pause Overlay -->
     <div id="pauseOverlay">
@@ -5009,7 +5008,6 @@
 
         // Game over
         function gameOver() {
-            // Use the celebration screen for all game-over scenarios
             if (game.isGameOver) return;
             showCelebration();
         }
