@@ -5129,9 +5129,9 @@
         const sentenceSpeedDurations = { 1: 24, 2: 18, 3: 12 };
 
         speedDisplay.addEventListener('click', () => {
-            // Only active during sentences mode (standalone or journey sentences phases)
+            // Active for all standalone modes and journey sentences phases
             const currentMode = game.mode === 'journey' ? getJourneyPhaseMode() : game.mode;
-            if (currentMode !== 'sentences') return;
+            if (game.mode === 'journey' && currentMode !== 'sentences') return;
             const currentIndex = speedLevels.indexOf(speedMultiplier);
             speedMultiplier = speedLevels[(currentIndex + 1) % speedLevels.length];
             speedDisplay.textContent = speedMultiplier + 'x';
@@ -5237,8 +5237,8 @@
         // Update speed button state based on mode
         function updateSpeedButtonState() {
             const currentMode = game.mode === 'journey' ? getJourneyPhaseMode() : game.mode;
-            if (currentMode === 'sentences') {
-                // Sentences: fully active, visible
+            if (currentMode === 'sentences' || game.mode === 'words' || game.mode === 'math') {
+                // Sentences, words, math: fully active, visible
                 speedDisplay.style.display = '';
                 speedDisplay.style.opacity = '1';
                 speedDisplay.style.cursor = 'pointer';
@@ -5247,7 +5247,6 @@
                 // Journey non-sentences phases: hide (auto-controlled)
                 speedDisplay.style.display = 'none';
             } else {
-                // Words / math standalone: hide — speed auto-scales with score
                 speedDisplay.style.display = 'none';
             }
         }
