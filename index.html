@@ -686,6 +686,22 @@
             display: flex;
         }
 
+        /* Cover the area above the topbar (iOS status bar zone) so invaders aren't visible */
+        #topbar::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            width: 100%;
+            height: env(safe-area-inset-top, 0px);
+            background: #0a1628;
+            z-index: 1000;
+        }
+
+        .pwa-standalone #topbar::before {
+            height: 44px;
+        }
+
         #leftControls {
             display: flex;
             gap: 7.5px;  /* Reduced by half (was 15px) */
